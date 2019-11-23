@@ -33,6 +33,7 @@ axios.interceptors.response.use(
       if (router.currentRoute.name !== "login")
         router.replace({ name: "login" });
     }
+    nprogress.done();
     throw error;
   }
 );

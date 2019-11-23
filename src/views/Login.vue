@@ -97,7 +97,7 @@ export default class Login extends Vue {
         username: this.user.username,
         password: this.user.password
       });
-      this.$router.replace({ name: "home" });
+      if (UsersModule.loggedIn) this.$router.replace({ name: "home" });
     }
   }
 }
