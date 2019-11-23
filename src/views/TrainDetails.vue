@@ -117,7 +117,7 @@
                           :key="policePersonIndex"
                         >
                           <v-row>
-                            <v-col cols="1">
+                            <v-col cols="12" sm="1" md="1">
                               <v-btn
                                 fab
                                 small
@@ -130,7 +130,7 @@
                                 </v-icon>
                               </v-btn>
                             </v-col>
-                            <v-col cols="1">
+                            <v-col cols="12" sm="1" md="1">
                               <v-combobox
                                 :rules="[v => !!v || 'برجاء ادخال الدرجة']"
                                 required
@@ -189,7 +189,7 @@
                                 "
                               ></v-combobox>
                             </v-col>
-                            <v-col cols="2">
+                            <v-col cols="12" sm="2" md="2">
                               <v-combobox
                                 :rules="[
                                   v => !!v || 'برجاء ادخال رقم التليفون'
