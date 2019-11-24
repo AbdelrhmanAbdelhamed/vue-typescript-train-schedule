@@ -44,7 +44,6 @@
                             :rules="[v => !!v || 'برجاء ادخال الرقم']"
                             required
                             @input="onNumberChange"
-                            v-model="newTrainNumber"
                             label="رقم القطار"
                             prepend-icon="mdi-train"
                           ></v-text-field>
@@ -198,9 +197,6 @@ export default class Trains extends Vue {
 
   onNumberChange(value: any) {
     TrainsModule.updateNewTrain({ number: value });
-    this.newTrainNumber = this.newTrainNumber
-      ? convertToArabic(this.newTrainNumber)
-      : "";
   }
 
   onLineNameChange(value: any) {

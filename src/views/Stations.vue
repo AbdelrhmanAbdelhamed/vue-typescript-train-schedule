@@ -69,7 +69,6 @@
                             required
                             @input="onLineStationOrderChange"
                             v-on:keypress="checkIfNotNumber($event)"
-                            v-model="newStationOrder"
                             label="ترتيب المحطة"
                             prepend-icon="mdi-reorder-horizontal"
                           ></v-text-field>
@@ -177,8 +176,6 @@ export default class Stations extends Vue {
   dialog: boolean = false;
   isNewStationValid = false;
 
-  newStationOrder = "";
-
   checkIfNotNumber(event: any) {
     if (!IsNumber(event.key)) return event.preventDefault();
   }
@@ -238,9 +235,6 @@ export default class Stations extends Vue {
 
   onLineStationOrderChange(value: any) {
     StationsModule.updateNewStation({ stationOrder: value });
-    this.newStationOrder = this.newStationOrder
-      ? convertToArabic(this.newStationOrder)
-      : "";
   }
 
   onLineNameChange(value: any) {

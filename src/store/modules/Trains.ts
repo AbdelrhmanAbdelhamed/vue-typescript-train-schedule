@@ -246,6 +246,7 @@ class TrainsModule extends VuexModule implements ITrainState {
       this.newTrain.createdAt = train.createdAt;
       this.newTrain.UpdatedAt = train.UpdatedAt;
       this.createTrain(this.newTrain);
+      this.resetNewTrain();
     }
     this.toggleLoading();
   }

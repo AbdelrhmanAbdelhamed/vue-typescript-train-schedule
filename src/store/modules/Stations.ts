@@ -127,6 +127,7 @@ class StationsModule extends VuexModule implements IStationState {
         this.newStation.lines.push(this.newStation.line);
       }
       this.createStation(this.newStation);
+      this.resetNewStation();
     }
     this.toggleLoading();
   }
