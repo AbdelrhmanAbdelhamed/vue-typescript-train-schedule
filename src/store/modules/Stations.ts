@@ -60,7 +60,10 @@ class StationsModule extends VuexModule implements IStationState {
       this.newStation.line &&
       this.newStation.line.LineStation
     ) {
-      this.newStation.line.LineStation.stationOrder = data.stationOrder;
+      this.newStation.line.LineStation = {
+        ...this.newStation.line.LineStation,
+        stationOrder: data.stationOrder
+      };
     }
   }
 
@@ -118,15 +121,15 @@ class StationsModule extends VuexModule implements IStationState {
 
     if (this.newStation.name !== "") {
       const station: IStation = await StationsAPI.create(this.newStation);
+      const createdStation: IStation = { ...this.newStation, ...station };
+      if (!this.newStation.lines) this.newStation.lines = [];
 
-      this.newStation.id = station.id;
-      this.newStation.createdAt = station.createdAt;
-      this.newStation.UpdatedAt = station.UpdatedAt;
+      createdStation.lines = [...this.newStation.lines];
 
-      if (this.newStation.lines && this.newStation.line) {
-        this.newStation.lines.push(this.newStation.line);
-      }
-      this.createStation(this.newStation);
+      if (createdStation.line)
+        createdStation.lines.push({ ...createdStation.line });
+
+      this.createStation({ ...createdStation });
     }
     this.toggleLoading();
   }

@@ -9,7 +9,11 @@
               <v-spacer />
             </v-toolbar>
             <v-card-text>
-              <v-form v-model="isUserValid">
+              <v-form
+                id="loginForm"
+                @submit.prevent="onLoginClick"
+                v-model="isUserValid"
+              >
                 <v-text-field
                   :rules="[v => !!v || 'برجاء ادخال اسم المستخدم']"
                   required
@@ -39,9 +43,9 @@
               <v-btn
                 :loading="loading"
                 :disabled="!isUserValid"
-                @click="onLoginClick"
                 color="primary"
                 type="submit"
+                form="loginForm"
                 >دخول</v-btn
               >
             </v-card-actions>

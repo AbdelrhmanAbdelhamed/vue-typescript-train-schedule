@@ -86,6 +86,23 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
+  resetNewTrainRun() {
+    this.newTrainRun = {
+      day: new Date().toLocaleDateString(),
+      policePeople: [
+        {
+          name: "",
+          phoneNumber: "",
+          rank: { name: "" },
+          policeDepartment: { name: "" }
+        }
+      ],
+      train: this.currentTrain,
+      trainId: this.currentTrain ? this.currentTrain.id : ""
+    };
+  }
+
+  @Mutation
   resetNewTrain() {
     this.newTrain = this.createEmptyTrain();
   }
@@ -164,6 +181,8 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Mutation
   updateNewTrainRun(data: any) {
     if (data.day) this.newTrainRun.day = data.day;
+    if (data.trainId) this.newTrainRun.trainId = data.trainId;
+    if (data.train) this.newTrainRun.train = data.train;
   }
 
   @Mutation
@@ -230,6 +249,7 @@ class TrainsModule extends VuexModule implements ITrainState {
     const train: ITrain = await TrainsAPI.getById(id);
     this.setCurrentTrain(train);
     this.toggleLoading();
+    return train;
   }
 
   @Action
@@ -245,7 +265,7 @@ class TrainsModule extends VuexModule implements ITrainState {
       this.newTrain.id = train.id;
       this.newTrain.createdAt = train.createdAt;
       this.newTrain.UpdatedAt = train.UpdatedAt;
-      this.createTrain(this.newTrain);
+      this.createTrain({ ...this.newTrain });
     }
     this.toggleLoading();
   }
@@ -269,18 +289,12 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
-  async createTrainRun() {
+  async createTrainRun({ trainId, data }: { trainId: string; data: any }) {
     this.toggleLoading();
 
-    this.newTrainRun.train = this.currentTrain;
-    this.newTrainRun.trainId = this.currentTrain.id;
     if (this.currentTrain.id) {
-      const trainRun: ITrainRun = await TrainsAPI.addRun(
-        this.currentTrain.id,
-        this.newTrainRun
-      );
-      this.newTrainRun.id = trainRun.id;
-      this.addTrainRun(this.newTrainRun);
+      const trainRun: ITrainRun = await TrainsAPI.addRun(trainId, data);
+      this.addTrainRun({ ...this.newTrainRun, ...trainRun });
     }
     this.toggleLoading();
   }

@@ -404,16 +404,30 @@ export default class TrainDetails extends Vue {
   }
 
   save() {
-    TrainsModule.createTrainRun();
+    if (this.train.id) {
+      TrainsModule.createTrainRun({
+        trainId: this.train.id,
+        data: this.newTrainRun
+      });
+    }
     this.close();
   }
 
-  created() {
+  async created() {
     if (!this.$route.params.train && this.id) {
-      TrainsModule.getById(this.id);
+      const train = await TrainsModule.getById(this.id);
+      if (train) {
+        TrainsModule.updateNewTrainRun({
+          trainId: train.id
+        });
+      }
     } else if (this.$route.params.train) {
       const train: any = this.$route.params.train;
       TrainsModule.setCurrentTrain(train);
+      TrainsModule.updateNewTrainRun({
+        trainId: train.id,
+        train
+      });
     }
     PolicePeopleModule.getAll();
     RanksModule.getAll();

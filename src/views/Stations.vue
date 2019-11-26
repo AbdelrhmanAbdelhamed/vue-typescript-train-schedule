@@ -103,13 +103,11 @@
               @click="toggleGroup(lineGroup.line, toggle)"
             >
               <span>
-                <v-icon>
-                  {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
-                </v-icon>
+                <v-icon>{{
+                  lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
+                }}</v-icon>
               </span>
-              <v-chip color="info">
-                {{ lineGroup.line.name }}
-              </v-chip>
+              <v-chip color="info">{{ lineGroup.line.name }}</v-chip>
             </th>
           </thead>
         </template>
@@ -130,9 +128,9 @@
           </v-edit-dialog>
         </template>
 
-        <template v-slot:item.line.LineStation.stationOrder="{ item }">
-          {{ item.line.LineStation.stationOrder | convertToArabic }}
-        </template>
+        <template v-slot:item.line.LineStation.stationOrder="{ item }">{{
+          item.line.LineStation.stationOrder | convertToArabic
+        }}</template>
 
         <template v-slot:item.action="{ item }">
           <StationActions :station="item" />

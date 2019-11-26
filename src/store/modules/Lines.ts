@@ -148,7 +148,7 @@ class LinesModule extends VuexModule implements ILineState {
       const line: ILine = await LinesAPI.create(this.newLine);
       line.trains = [];
       line.stations = [];
-      this.createLine(line);
+      this.createLine({ ...line });
     }
     this.toggleLoading();
   }
