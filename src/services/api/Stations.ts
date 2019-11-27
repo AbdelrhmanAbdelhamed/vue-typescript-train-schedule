@@ -31,4 +31,10 @@ export default class StationsAPI {
       .delete(`${StationsAPI.END_POINT}/${id}`)
       .then(response => response.data);
   }
+
+  static deleteLine(id: string, lineId: string) {
+    return axios
+      .delete(`${StationsAPI.END_POINT}/${id}/${lineId}`)
+      .then(response => response.data);
+  }
 }

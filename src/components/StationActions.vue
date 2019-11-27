@@ -42,7 +42,15 @@ export default class LineActions extends Vue {
   }
 
   onDeleteClicked() {
-    StationsModule.delete(this.station.id);
+    const preStations = [...StationsModule.stations];
+    if (preStations.filter(s => s.id === this.station.id).length > 1) {
+      StationsModule.deleteLine({
+        id: this.station.id,
+        lineId: this.station.line.id
+      });
+    } else {
+      StationsModule.delete(this.station.id);
+    }
     this.dialog = false;
   }
 }

@@ -43,9 +43,9 @@ const routes: RouteConfig[] = [
     name: "home",
     path: "/",
     meta: {
-      nameArabic: "الرئيسية",
+      nameArabic: "استعلام",
       visible: true,
-      icon: "mdi-home",
+      icon: "mdi-search",
       requiresAuth: true
     },
     // route level code-splitting

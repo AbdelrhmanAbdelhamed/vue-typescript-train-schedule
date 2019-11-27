@@ -73,7 +73,7 @@ class StationsModule extends VuexModule implements IStationState {
   }
 
   @Mutation
-  createStation(station: IStation) {
+  createStation(station: any) {
     this.stations.push(station);
   }
 
@@ -87,6 +87,22 @@ class StationsModule extends VuexModule implements IStationState {
   removeStation(id: string) {
     const index = this.stations.findIndex(station => station.id === id);
     if (index > -1) this.stations.splice(index, 1);
+  }
+
+  @Mutation
+  removeLineStation({ id, lineId }: { id: string; lineId: string }) {
+    const stationIndex = this.stations.findIndex(station => {
+      return station.id === id && station.line && station.line.id === lineId;
+    });
+    if (stationIndex > -1) {
+      const station: IStation = this.stations[stationIndex];
+      if (station.lines && station.lines.length > 0) {
+        const lineIndex = station.lines.findIndex(line => line.id == lineId);
+        if (lineIndex > -1) {
+          station.lines.splice(lineIndex, 1);
+        }
+      }
+    }
   }
 
   @Mutation
@@ -120,15 +136,12 @@ class StationsModule extends VuexModule implements IStationState {
     this.toggleLoading();
 
     if (this.newStation.name !== "") {
-      const station: IStation = await StationsAPI.create(this.newStation);
+      const { station } = await StationsAPI.create(this.newStation);
       const createdStation: IStation = { ...this.newStation, ...station };
       if (!this.newStation.lines) this.newStation.lines = [];
-
       createdStation.lines = [...this.newStation.lines];
-
       if (createdStation.line)
         createdStation.lines.push({ ...createdStation.line });
-
       this.createStation({ ...createdStation });
     }
     this.toggleLoading();
@@ -149,6 +162,14 @@ class StationsModule extends VuexModule implements IStationState {
     this.toggleLoading();
     await StationsAPI.delete(id);
     this.removeStation(id);
+    this.toggleLoading();
+  }
+
+  @Action
+  async deleteLine({ id, lineId }: { id: string; lineId: string }) {
+    this.toggleLoading();
+    await StationsAPI.deleteLine(id, lineId);
+    this.removeLineStation({ id, lineId });
     this.toggleLoading();
   }
 }

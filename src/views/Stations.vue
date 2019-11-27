@@ -166,7 +166,7 @@ export default class Stations extends Vue {
     {
       text: "ترتيب المحطة",
       value: "line.LineStation.stationOrder",
-      sortable: false
+      sortable: true
     },
     { text: "", value: "action", sortable: false }
   ];
