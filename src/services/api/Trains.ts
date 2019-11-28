@@ -4,9 +4,9 @@ import { ITrain } from "@/store/models";
 export default class TrainsAPI {
   static readonly END_POINT = "trains";
 
-  static get(fromStation?: string, toStation?: string) {
-    return fromStation && toStation
-      ? TrainsAPI.getByStations(fromStation, toStation)
+  static get(departureStation?: string, arrivalStation?: string) {
+    return departureStation && arrivalStation
+      ? TrainsAPI.getByStations(departureStation, arrivalStation)
       : TrainsAPI.getAll();
   }
 
@@ -14,10 +14,10 @@ export default class TrainsAPI {
     return axios.get(TrainsAPI.END_POINT).then(response => response.data);
   }
 
-  static getByStations(fromStation: string, toStation: string) {
+  static getByStations(departureStation: string, arrivalStation: string) {
     return axios
       .get(
-        `${TrainsAPI.END_POINT}?fromStation=${fromStation}&toStation=${toStation}`
+        `${TrainsAPI.END_POINT}?departureStation=${departureStation}&arrivalStation=${arrivalStation}`
       )
       .then(Response => Response.data);
   }

@@ -13,18 +13,24 @@
                 :rules="[v => !!v || 'برجاء اختيار المحطة']"
                 required
                 :loading="loading"
-                v-model="fromStation"
+                v-model="departureStation"
                 label="محطة القيام"
                 :items="stations"
                 item-value="name"
                 item-text="name"
                 prepend-icon="mdi-city"
               ></v-autocomplete>
+              <div class="text-center">
+                <v-btn @click="swapFormStations" text icon>
+                  <v-icon>mdi-swap-vertical-bold</v-icon>
+                </v-btn>
+              </div>
+
               <v-autocomplete
                 :rules="[v => !!v || 'برجاء اختيار المحطة']"
                 required
                 :loading="loading"
-                v-model="toStation"
+                v-model="arrivalStation"
                 label="محطة الوصول"
                 :items="stations"
                 item-value="name"
@@ -47,8 +53,8 @@
       </v-col>
       <v-col>
         <v-card>
-          <v-card-title v-if="showTable && toStation && fromStation">
-            <p>قطارات محطات {{ toStation }} - {{ fromStation }}</p>
+          <v-card-title v-if="showTable && arrivalStation && departureStation">
+            <p>قطارات محطات {{ arrivalStation }} - {{ departureStation }}</p>
             <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
@@ -67,9 +73,9 @@
             :items="trains"
             :search="search"
           >
-            <template v-slot:item.number="{ item }">
-              {{ item.number | convertToArabic }}
-            </template>
+            <template v-slot:item.number="{ item }">{{
+              item.number | convertToArabic
+            }}</template>
 
             <template v-slot:item.action="{ item }">
               <TrainActions
@@ -98,8 +104,8 @@ import { ILine, ITrain } from "@/store/models";
   components: { TrainActions }
 })
 export default class TrainsSearch extends Vue {
-  fromStation: string = "";
-  toStation: string = "";
+  departureStation: string = "";
+  arrivalStation: string = "";
   showTable = false;
   validSearch = false;
 
@@ -114,11 +120,19 @@ export default class TrainsSearch extends Vue {
     return TrainsModule.loading || StationsModule.loading;
   }
 
+  swapFormStations() {
+    if (this.departureStation && this.arrivalStation) {
+      let temp = this.departureStation;
+      this.departureStation = this.arrivalStation;
+      this.arrivalStation = temp;
+    }
+  }
+
   getTrainsByStations() {
     this.showTable = true;
     TrainsModule.get({
-      fromStation: this.fromStation,
-      toStation: this.toStation
+      departureStation: this.departureStation,
+      arrivalStation: this.arrivalStation
     });
   }
 

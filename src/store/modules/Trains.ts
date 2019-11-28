@@ -259,11 +259,14 @@ class TrainsModule extends VuexModule implements ITrainState {
 
   @Action
   async get({
-    fromStation,
-    toStation
-  }: { fromStation?: string; toStation?: string } = {}) {
+    departureStation,
+    arrivalStation
+  }: { departureStation?: string; arrivalStation?: string } = {}) {
     this.toggleLoading();
-    const trains: ITrain[] = await TrainsAPI.get(fromStation, toStation);
+    const trains: ITrain[] = await TrainsAPI.get(
+      departureStation,
+      arrivalStation
+    );
     this.setTrains(trains);
     this.toggleLoading();
   }
