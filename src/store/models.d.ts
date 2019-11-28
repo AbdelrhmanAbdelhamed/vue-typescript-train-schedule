@@ -6,9 +6,21 @@ export interface IStation {
   lines?: ILine[];
   line?: ILine;
   LineStation?: ILineStation;
+  lineStationId?: number;
+  LineStationTrain?: LineStationTrain;
+}
+
+export interface LineStationTrain {
+  arrivalTime?: string;
+  departureTime?: string;
+  isArrival: boolean;
+  isDeprature: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ILineStation {
+  id?: string;
   createdAt?: Date;
   UpdatedAt?: Date;
   lineId?: string;
@@ -99,9 +111,9 @@ export interface ITrain {
   number: string;
   createdAt?: Date;
   UpdatedAt?: Date;
-  line?: ILine;
-  lineId?: string;
+  lines?: ILine[];
   trainRuns?: ITrainRun[];
+  stations?: IStation[];
 }
 
 export interface ITrainState {

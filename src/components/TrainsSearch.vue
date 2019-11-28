@@ -14,7 +14,7 @@
                 required
                 :loading="loading"
                 v-model="fromStation"
-                label="من"
+                label="محطة القيام"
                 :items="stations"
                 item-value="name"
                 item-text="name"
@@ -25,7 +25,7 @@
                 required
                 :loading="loading"
                 v-model="toStation"
-                label="الى"
+                label="محطة الوصول"
                 :items="stations"
                 item-value="name"
                 item-text="name"

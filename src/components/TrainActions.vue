@@ -52,6 +52,9 @@ export default class TrainActions extends Vue {
   train: any;
 
   @Prop()
+  line: any;
+
+  @Prop()
   actions!: { delete: boolean; details: boolean };
 
   dialog = false;
@@ -60,8 +63,8 @@ export default class TrainActions extends Vue {
     return UsersModule.currentUser.isAdmin;
   }
 
-  onDeleteClicked() {
-    TrainsModule.delete(this.train.id);
+  async onDeleteClicked() {
+    await TrainsModule.deleteLine({ id: this.train.id, lineId: this.line.id });
     this.dialog = false;
   }
 }

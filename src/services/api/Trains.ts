@@ -63,4 +63,34 @@ export default class TrainsAPI {
       .get(`${TrainsAPI.END_POINT}/runs`)
       .then(response => response.data);
   }
+
+  static addStation(id: string, data: any) {
+    return axios
+      .post(`${TrainsAPI.END_POINT}/${id}/stations`, data)
+      .then(response => response.data);
+  }
+
+  static updateStation(id: string, lineStationId: string, data: any) {
+    return axios
+      .patch(`${TrainsAPI.END_POINT}/${id}/stations/${lineStationId}`, data)
+      .then(response => response.data);
+  }
+
+  static deleteStation(id: string, lineStationId: string) {
+    return axios
+      .delete(`${TrainsAPI.END_POINT}/${id}/stations/${lineStationId}`)
+      .then(response => response.data);
+  }
+
+  static getStations(id: string) {
+    return axios
+      .get(`${TrainsAPI.END_POINT}/${id}/stations`)
+      .then(response => response.data);
+  }
+
+  static deleteLine(id: string, lineId: string) {
+    return axios
+      .delete(`${TrainsAPI.END_POINT}/${id}/lines/${lineId}`)
+      .then(response => response.data);
+  }
 }

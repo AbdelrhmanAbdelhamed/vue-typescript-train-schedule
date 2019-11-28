@@ -17,13 +17,18 @@ import {
   IRank
 } from "../models";
 
+import LinesModule from "@/store/modules/Lines";
+
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
 class TrainsModule extends VuexModule implements ITrainState {
   trains: ITrain[] = [];
   newTrain: ITrain = this.createEmptyTrain();
   currentTrain: ITrain = {
     number: "",
-    trainRuns: []
+    trainRuns: [],
+    stations: LinesModule.currentLine.stations
+      ? [...LinesModule.currentLine.stations]
+      : []
   };
   newTrainRun: ITrainRun = {
     day: new Date().toLocaleDateString(),
@@ -115,9 +120,29 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Mutation
   updateNewTrain(data: any) {
     if (data.number) this.newTrain.number = data.number;
-    if (data.line) {
-      this.newTrain.lineId = data.line.id;
-      this.newTrain.line = data.line;
+    if (data.stations) this.newTrain.stations = data.stations;
+  }
+
+  @Mutation
+  updateNewTrainStation({ index, data }: { index?: any; data?: any }) {
+    if (
+      this.newTrain.stations &&
+      this.newTrain.stations.length >= 0 &&
+      index >= 0
+    ) {
+      if (data.departureTime === null || data.departureTime) {
+        this.newTrain.stations[index].LineStationTrain!.departureTime =
+          data.departureTime;
+        this.newTrain.stations[index].LineStationTrain!.isDeprature =
+          data.departureTime !== null;
+      }
+
+      if (data.arrivalTime === null || data.arrivalTime) {
+        this.newTrain.stations[index].LineStationTrain!.arrivalTime =
+          data.arrivalTime;
+        this.newTrain.stations[index].LineStationTrain!.isArrival =
+          data.arrivalTime !== null;
+      }
     }
   }
 
@@ -127,7 +152,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  createTrain(train: ITrain) {
+  pushTrain(train: ITrain) {
     this.trains.push(train);
   }
 
@@ -258,14 +283,10 @@ class TrainsModule extends VuexModule implements ITrainState {
 
     if (this.newTrain.number && Number(this.newTrain.number) > 0) {
       const train: ITrain = await TrainsAPI.create({
-        number: this.newTrain.number,
-        lineId: this.newTrain.lineId
+        ...this.newTrain
       });
-
-      this.newTrain.id = train.id;
-      this.newTrain.createdAt = train.createdAt;
-      this.newTrain.UpdatedAt = train.UpdatedAt;
-      this.createTrain({ ...this.newTrain });
+      this.pushTrain({ ...this.newTrain, ...train });
+      LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
     }
     this.toggleLoading();
   }
@@ -285,6 +306,14 @@ class TrainsModule extends VuexModule implements ITrainState {
     this.toggleLoading();
     await TrainsAPI.delete(id);
     this.removeTrain(id);
+    this.toggleLoading();
+  }
+
+  @Action
+  async deleteLine({ id, lineId }: { id: string; lineId: string }) {
+    this.toggleLoading();
+    await TrainsAPI.deleteLine(id, lineId);
+    LinesModule.removeTrainFromCurrentLine(id);
     this.toggleLoading();
   }
 

@@ -45,6 +45,7 @@ class LinesModule extends VuexModule implements ILineState {
   @Mutation
   updateNewLine(data: any) {
     if (data.name) this.newLine.name = data.name;
+    if (data.stations) this.newLine.stations = data.stations;
   }
 
   @Mutation
@@ -65,6 +66,20 @@ class LinesModule extends VuexModule implements ILineState {
   @Mutation
   createLine(line: ILine) {
     this.lines.push(line);
+  }
+
+  @Mutation
+  pushTrainToCurrentLine(train: ITrain) {
+    if (!this.currentLine.trains) this.currentLine.trains = [];
+    this.currentLine.trains.push(train);
+  }
+
+  @Mutation
+  removeTrainFromCurrentLine(trainId: string) {
+    const index = this.currentLine.trains!.findIndex(
+      train => train.id === trainId
+    );
+    if (index > -1) this.currentLine.trains!.splice(index, 1);
   }
 
   @Mutation
@@ -123,6 +138,7 @@ class LinesModule extends VuexModule implements ILineState {
     const line: ILine = await LinesAPI.getById(id);
     this.setCurrentLine(line);
     this.toggleLoading();
+    return line;
   }
 
   @Action

@@ -45,7 +45,7 @@ const routes: RouteConfig[] = [
     meta: {
       nameArabic: "استعلام",
       visible: true,
-      icon: "mdi-search",
+      icon: "mdi-magnify",
       requiresAuth: true
     },
     // route level code-splitting

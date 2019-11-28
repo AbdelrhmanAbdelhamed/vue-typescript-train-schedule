@@ -2,9 +2,7 @@
   <div id="line-actions">
     <v-dialog v-model="dialog" persistent max-width="290" v-if="isAdmin">
       <template v-slot:activator="{ on }">
-        <v-icon class="mr-10" color="error" v-on="on">
-          mdi-delete
-        </v-icon>
+        <v-icon class="mr-10" color="error" v-on="on">mdi-delete</v-icon>
       </template>
       <v-card>
         <v-card-title class="headline"
@@ -42,8 +40,10 @@ export default class LineActions extends Vue {
   }
 
   onDeleteClicked() {
-    const preStations = [...StationsModule.stations];
-    if (preStations.filter(s => s.id === this.station.id).length > 1) {
+    const count = StationsModule.stations.filter(
+      station => station.id === this.station.id
+    ).length;
+    if (count > 1) {
       StationsModule.deleteLine({
         id: this.station.id,
         lineId: this.station.line.id

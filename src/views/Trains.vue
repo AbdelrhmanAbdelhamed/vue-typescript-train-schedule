@@ -2,7 +2,7 @@
   <div class="trains">
     <v-card>
       <v-card-title>
-        قطارات كل خط
+        جميع القطارات
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -16,84 +16,22 @@
       <v-data-table
         :headers="headers"
         :items="trains"
+        item-key="number+lineName"
         group-by="lineName"
         class="elevation-1"
         :search="search"
       >
-        <template v-slot:top v-if="isAdmin">
-          <div class="mx-4">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on"
-                  >اضافة قطار جديد</v-btn
-                >
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">اضافة قطار جديد</span>
-                </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-form v-model="isNewTrainValid">
-                      <v-row justify="center" align="center">
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            :rules="[v => !!v || 'برجاء ادخال الرقم']"
-                            required
-                            @input="onNumberChange"
-                            label="رقم القطار"
-                            prepend-icon="mdi-train"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col>
-                          <v-autocomplete
-                            @input="onLineNameChange"
-                            :rules="[v => !!v || 'برجاء اختيار الخط']"
-                            :loading="loading"
-                            label="الخط التابع له"
-                            :items="lines"
-                            return-object
-                            item-value="name"
-                            item-text="name"
-                            prepend-icon="mdi-arrow-expand-horizontal"
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions right>
-                  <v-btn
-                    :disabled="!isNewTrainValid"
-                    color="success darken-1"
-                    text
-                    @click="save"
-                    >حفظ</v-btn
-                  >
-                  <v-btn color="blue darken-1" text @click="close">الغاء</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </div>
-        </template>
-
         <template
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
         >
           <thead>
             <th class="pointer" @click="toggleGroup(lineGroup.line, toggle)">
               <span>
-                <v-icon>
-                  {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
-                </v-icon>
+                <v-icon>{{
+                  lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
+                }}</v-icon>
               </span>
-              <v-chip color="info">
-                {{ lineGroup.line.name }}
-              </v-chip>
+              <v-chip color="info">{{ lineGroup.line.name }}</v-chip>
             </th>
           </thead>
         </template>
@@ -116,7 +54,7 @@
 
         <template v-slot:item.action="{ item }">
           <TrainActions
-            :actions="{ delete: true, details: true }"
+            :actions="{ delete: false, details: true }"
             :train="item"
           />
         </template>
@@ -172,19 +110,30 @@ export default class Trains extends Vue {
   lineId!: string;
 
   get trains() {
-    return TrainsModule.trains.map(train => {
-      return {
-        ...train,
-        lineName:
-          train.line && train.line.name
-            ? train.line.name
-            : "قطارات بدون خطوط بعد",
-        line:
-          train.line && train.line.name
-            ? { ...train.line, hide: false }
-            : { name: "قطارات بدون خطوط بعد", hide: false }
-      };
+    const trains: any = [];
+    TrainsModule.trains.forEach(train => {
+      if (train.lines && train.lines.length > 0) {
+        train.lines.forEach((line: any) => {
+          let trainItem = {
+            ...train,
+            lineName: line.name,
+            line: { ...line, hide: false }
+          };
+          trains.push(trainItem);
+        });
+      } else {
+        let trainItem = {
+          ...train,
+          lineName: "قطارات بدون خطوط بعد",
+          line: {
+            name: "قطارات بدون خطوط بعد",
+            hide: false
+          }
+        };
+        trains.push(trainItem);
+      }
     });
+    return trains;
   }
 
   get lines() {
