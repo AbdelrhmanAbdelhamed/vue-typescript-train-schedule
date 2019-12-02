@@ -43,11 +43,20 @@
                       <v-row justify="center" align="center">
                         <v-col cols="12">
                           <v-text-field
-                            :rules="[v => !!v || 'برجاء ادخال الاسم']"
+                            :rules="[v => !!v || 'برجاء ادخال الاسم كامل']"
+                            required
+                            @input="onFullNameChange"
+                            label="الاسم كامل"
+                            prepend-icon="mdi-account-outline"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            :rules="[v => !!v || 'برجاء ادخال اسم المسخدم']"
                             required
                             @input="onUsernameChange"
                             label="اسم المستخدم"
-                            prepend-icon="mdi-arrow-expand-horizontal"
+                            prepend-icon="mdi-account"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
@@ -61,6 +70,18 @@
                             type="password"
                             @input="onPasswordChange"
                           />
+                        </v-col>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            :return-object="true"
+                            :loading="loading"
+                            label="وظيفة المستخدم"
+                            :items="roles"
+                            item-value="name"
+                            item-text="nameArabic"
+                            prepend-icon="mdi-account-question"
+                            @change="onUserRoleChange"
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
                     </v-form>
@@ -82,6 +103,23 @@
           </div>
         </template>
 
+        <template v-slot:item.fullName="props">
+          <v-edit-dialog
+            :return-value.sync="props.item.fullName"
+            @save="onEditFullNameSubmit(props.item.id, props.item.fullName)"
+          >
+            {{ props.item.fullName }}
+            <template v-slot:input>
+              <v-text-field
+                v-model="props.item.fullName"
+                label="تعديل الاسم الرباعي"
+                single-line
+                v-if="$can('update', 'User')"
+              ></v-text-field>
+            </template>
+          </v-edit-dialog>
+        </template>
+
         <template v-slot:item.username="props">
           <v-edit-dialog
             :return-value.sync="props.item.username"
@@ -98,6 +136,34 @@
             </template>
           </v-edit-dialog>
         </template>
+
+        <template v-slot:item.role="props">
+          <v-tooltip right>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">
+                <v-edit-dialog
+                  :return-value.sync="props.item.role.nameArabic"
+                  @save="onRoleEditSubmit(props.item.id, props.item.role.id)"
+                >
+                  {{ props.item.role.nameArabic }}
+                  <template v-slot:input>
+                    <v-autocomplete
+                      v-model="props.item.role"
+                      :return-object="true"
+                      :loading="loading"
+                      label="تعديل وظيفة المستخدم"
+                      :items="roles"
+                      item-value="name"
+                      item-text="nameArabic"
+                    ></v-autocomplete>
+                  </template>
+                </v-edit-dialog>
+              </span>
+            </template>
+            <span>{{ props.item.role.description }}</span>
+          </v-tooltip>
+        </template>
+
         <template v-slot:item.action="{ item }">
           <UserActions :user="item" />
         </template>
@@ -114,14 +180,17 @@ import { Prop } from "vue-property-decorator";
 import UserActions from "@/components/UsersActions.vue";
 
 import UsersModule from "@/store/modules/Users";
-import { IUser } from "@/store/models";
+import RolesModule from "@/store/modules/Roles";
+import { IUser, IRole } from "@/store/models";
 
 @Component({
   components: { UserActions }
 })
 export default class Users extends Vue {
   headers = [
+    { text: "الاسم رباعي", value: "fullName", sortable: true },
     { text: "اسم المستخدم", value: "username", sortable: true },
+    { text: "وظيفة المستخدم", value: "role", sortable: false },
     { text: "", value: "action", sortable: false }
   ];
   search = "";
@@ -129,7 +198,7 @@ export default class Users extends Vue {
   isNewUserValid = false;
 
   get loading() {
-    return UsersModule.loading;
+    return UsersModule.loading || RolesModule.loading;
   }
 
   get newUser(): IUser {
@@ -140,25 +209,36 @@ export default class Users extends Vue {
     return UsersModule.users;
   }
 
+  get roles(): IRole[] {
+    return RolesModule.roles;
+  }
+
   onUsernameChange(value: any) {
     UsersModule.updateNewUserData({ username: value });
+  }
+
+  onFullNameChange(value: any) {
+    UsersModule.updateNewUserData({ fullName: value });
   }
 
   onPasswordChange(value: any) {
     UsersModule.updateNewUserData({ password: value });
   }
 
+  onUserRoleChange(value: any) {
+    UsersModule.updateNewUserData({ role: value });
+  }
+
+  onEditFullNameSubmit(id: any, fullName: any) {
+    if (fullName) UsersModule.update({ id, data: { fullName } });
+  }
+
   onEditUsernameSubmit(id: any, username: any) {
     if (username) UsersModule.update({ id, data: { username } });
   }
 
-  onEditUserIsAdminChange(id: any, isAdmin: any) {
-    if (typeof isAdmin !== "undefined")
-      UsersModule.update({ id, data: { isAdmin } });
-  }
-
-  onIsAdminChange(value: any) {
-    UsersModule.updateNewUserData({ isAdmin: value });
+  onRoleEditSubmit(id: any, roleId: any) {
+    if (roleId) UsersModule.update({ id, data: { roleId } });
   }
 
   close() {
@@ -174,6 +254,7 @@ export default class Users extends Vue {
 
   created() {
     UsersModule.getAll();
+    RolesModule.getAll();
   }
 }
 </script>

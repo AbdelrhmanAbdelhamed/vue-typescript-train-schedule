@@ -38,6 +38,12 @@ export default class UsersAPI {
       .then(response => response.data);
   }
 
+  static setTrains(id: string, trains: any) {
+    return axios
+      .put(`${UsersAPI.END_POINT}/${id}/trains`, trains)
+      .then(response => response.data);
+  }
+
   static delete(id: string) {
     return axios
       .delete(`${UsersAPI.END_POINT}/${id}`)

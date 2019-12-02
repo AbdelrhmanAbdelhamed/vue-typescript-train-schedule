@@ -61,7 +61,7 @@ const routes: RouteConfig[] = [
     path: "/users",
     meta: {
       nameArabic: "الحسابات",
-      visible: AbilitiesModule.ability.can("read", "User"),
+      visible: false,
       icon: "mdi-account",
       resource: "User",
       requiresAuth: true
@@ -77,7 +77,7 @@ const routes: RouteConfig[] = [
     component: EmptyRouterView,
     meta: {
       nameArabic: "الخطوط",
-      visible: AbilitiesModule.ability.can("read", "Line"),
+      visible: false,
       icon: "mdi-arrow-expand-horizontal",
       resource: "Line",
       requiresAuth: true
@@ -123,7 +123,7 @@ const routes: RouteConfig[] = [
     path: "/stations",
     meta: {
       nameArabic: "المحطات",
-      visible: AbilitiesModule.ability.can("read", "Station"),
+      visible: false,
       icon: "mdi-city",
       resource: "Station",
       requiresAuth: true
@@ -139,7 +139,7 @@ const routes: RouteConfig[] = [
     component: EmptyRouterView,
     meta: {
       nameArabic: "القطارات",
-      visible: AbilitiesModule.ability.can("read", "Train"),
+      visible: false,
       icon: "mdi-train",
       resource: "Train",
       requiresAuth: true
@@ -186,7 +186,7 @@ const routes: RouteConfig[] = [
     path: "/runs",
     meta: {
       nameArabic: "الرحلات",
-      visible: AbilitiesModule.ability.can("read", "TrainRun"),
+      visible: false,
       icon: "mdi-car-estate",
       resource: "TrainRun",
       requiresAuth: true

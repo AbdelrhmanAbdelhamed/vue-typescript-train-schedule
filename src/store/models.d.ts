@@ -134,6 +134,11 @@ export interface IRole {
   updatedAt?: Date;
 }
 
+export interface IRoleState {
+  roles: IRole[];
+  loading: boolean;
+}
+
 export interface IUser {
   id?: string;
   token?: string;
@@ -141,6 +146,8 @@ export interface IUser {
   username: string;
   password?: string;
   role?: IRole;
+  roleId?: string;
+  trains?: ITrain[];
 }
 
 export interface IUserState {
