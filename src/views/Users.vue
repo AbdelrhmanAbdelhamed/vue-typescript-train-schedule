@@ -60,16 +60,19 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
-                          <v-autocomplete
-                            :return-object="true"
+                          <v-combobox
+                            :rules="[v => !!v || 'برجاء ادخال الجهة']"
+                            required
                             :loading="loading"
+                            :return-object="false"
                             label="جهة المستخدم"
                             :items="policeDepartments"
                             item-value="name"
                             item-text="name"
+                            hide-no-data
                             @input="onDepartmentChange"
                             prepend-icon="mdi-city"
-                          ></v-autocomplete>
+                          ></v-combobox>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
@@ -245,7 +248,7 @@ export default class Users extends Vue {
 
   onDepartmentChange(value: any) {
     UsersModule.updateNewUserData({
-      policeDepartment: value,
+      policeDepartmentName: value,
       policeDepartmentId: value.id
     });
   }

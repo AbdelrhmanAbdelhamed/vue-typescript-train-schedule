@@ -70,8 +70,8 @@ class UsersModule extends VuexModule implements IUserState {
     if (data.token) {
       this.currentUser.token = data.token;
     }
-    if (data.policeDepartment)
-      this.newUser.policeDepartment = data.policeDepartment;
+    if (data.policeDepartmentName)
+      this.newUser.policeDepartment!.name = data.policeDepartmentName;
     if (data.policeDepartmentId)
       this.newUser.policeDepartmentId = data.policeDepartmentId;
   }
@@ -82,8 +82,8 @@ class UsersModule extends VuexModule implements IUserState {
     if (data.fullName) this.newUser.fullName = data.fullName;
     if (data.password) this.newUser.password = data.password;
     if (data.role) this.newUser.role = data.role;
-    if (data.policeDepartment)
-      this.newUser.policeDepartment = data.policeDepartment;
+    if (data.policeDepartmentName)
+      this.newUser.policeDepartment!.name = data.policeDepartmentName;
     if (data.policeDepartmentId)
       this.newUser.policeDepartmentId = data.policeDepartmentId;
   }
@@ -99,8 +99,9 @@ class UsersModule extends VuexModule implements IUserState {
     if (userIndex > -1) {
       if (data.username) this.users[userIndex].username = data.username;
       if (data.fullName) this.users[userIndex].fullName = data.fullName;
-      if (data.policeDepartment)
-        this.users[userIndex].policeDepartment = data.policeDepartment;
+      if (data.policeDepartmentName)
+        this.users[userIndex].policeDepartment!.name =
+          data.policeDepartmentName;
       if (data.policeDepartmentId)
         this.users[userIndex].policeDepartmentId = data.policeDepartmentId;
       if (data.trains) {
