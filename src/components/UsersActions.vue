@@ -1,6 +1,10 @@
 <template>
   <div id="user-actions">
-    <v-dialog v-model="newPasswordDialog" max-width="500px" v-if="isAdmin">
+    <v-dialog
+      v-model="newPasswordDialog"
+      max-width="500px"
+      v-if="$can('update', user)"
+    >
       <template v-slot:activator="{ on }">
         <v-btn small color="primary" dark v-on="on">تغيير كلمة المرور</v-btn>
       </template>
@@ -48,7 +52,7 @@
       v-model="deleteUserDialog"
       persistent
       max-width="290"
-      v-if="isAdmin"
+      v-if="$can('delete', user)"
     >
       <template v-slot:activator="{ on }">
         <v-icon class="mr-10" color="error" v-on="on">
@@ -87,10 +91,6 @@ export default class UserActions extends Vue {
   newPasswordDialog = false;
   isNewPasswordValid = false;
   newPassword = null;
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
 
   onPasswordChangeClick() {
     UsersModule.update({

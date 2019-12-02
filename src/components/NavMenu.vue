@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer v-if="loggedIn" v-model="drawer" app right>
+  <v-navigation-drawer
+    v-if="loggedIn"
+    v-model="drawer"
+    app
+    right
+    class="d-print-none"
+  >
     <v-list dense>
       <MenuItem
         v-for="(route, index) in routes"
@@ -17,6 +23,7 @@ import { Prop, Watch } from "vue-property-decorator";
 
 import MenuItem from "@/components/MenuItem.vue";
 
+import AbilitiesModule from "@/store/modules/Abilities";
 import UsersModule from "@/store/modules/Users";
 
 @Component({
@@ -44,18 +51,30 @@ export default class NavMenu extends Vue {
     return UsersModule.loggedIn;
   }
 
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
-
   get routes() {
     const routes = (this.$router as any).options.routes;
-    if (this.isAdmin) {
-      let usersRoute = routes.find((route: any) => route.name == "users");
-      if (usersRoute) {
-        usersRoute.meta.visible = true;
-      }
-    }
+    routes.forEach((route: any) => {
+      if (route.path == "/users" && AbilitiesModule.ability.can("read", "User"))
+        route.meta.visible = true;
+      if (route.path == "/lines" && AbilitiesModule.ability.can("read", "Line"))
+        route.meta.visible = true;
+      if (
+        route.path == "/stations" &&
+        AbilitiesModule.ability.can("read", "Station")
+      )
+        route.meta.visible = true;
+      if (
+        route.path == "/trains" &&
+        AbilitiesModule.ability.can("read", "Train")
+      )
+        route.meta.visible = true;
+      if (
+        route.path == "/runs" &&
+        AbilitiesModule.ability.can("read", "TrainRun")
+      )
+        route.meta.visible = true;
+    });
+
     return routes;
   }
 }

@@ -19,8 +19,10 @@
         :items="lines"
         class="elevation-1"
         :search="search"
+        disable-pagination
+        hide-default-footer
       >
-        <template v-slot:top v-if="isAdmin">
+        <template v-slot:top v-if="$can('create', 'Line')">
           <div class="mx-4">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
@@ -68,7 +70,7 @@
           </div>
         </template>
 
-        <template v-slot:item.name="props" v-if="isAdmin">
+        <template v-slot:item.name="props">
           <v-edit-dialog
             :return-value.sync="props.item.name"
             @save="onEditSubmit(props.item.id, props.item.name)"
@@ -79,6 +81,7 @@
                 v-model="props.item.name"
                 label="تعديل اسم الخط"
                 single-line
+                v-if="$can('update', 'Line')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -135,10 +138,6 @@ export default class Lines extends Vue {
 
   get lines(): ILine[] {
     return LinesModule.lines;
-  }
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
   }
 
   onNameChange(value: any) {

@@ -5,7 +5,8 @@ import {
   ILineState,
   ITrainState,
   IPolicePersonState,
-  IUserState
+  IUserState,
+  IAbilityState
 } from "./models";
 
 Vue.use(Vuex);
@@ -16,6 +17,7 @@ export interface IRootState {
   trains: ITrainState;
   policePeople: IPolicePersonState;
   users: IUserState;
+  abilities: IAbilityState;
 }
 
 export default new Vuex.Store<IRootState>({});

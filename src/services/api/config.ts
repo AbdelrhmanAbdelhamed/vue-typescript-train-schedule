@@ -4,12 +4,15 @@ import nprogress from "nprogress";
 import router from "@/router";
 
 import UsersModule from "@/store/modules/Users";
+import AbilitiesModule from "@/store/modules/Abilities";
 import UsersAPI from "./Users";
 
 axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
 
 const token = localStorage.getItem("token");
 if (token) {
+  AbilitiesModule.getRulesFromToken(token);
+  AbilitiesModule.updateAbility();
   UsersAPI.setAuthorizationHeader(token);
 }
 

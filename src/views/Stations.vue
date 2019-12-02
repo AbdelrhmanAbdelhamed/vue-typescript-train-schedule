@@ -11,18 +11,22 @@
           single-line
           hide-details
           clearable
+          class="d-print-none"
         ></v-text-field>
       </v-card-title>
       <v-data-table
+        :loading="loading"
         :headers="headers"
         :items="stations"
         item-key="id+line.name"
         group-by="lineName"
         class="elevation-1"
         :search="search"
+        disable-pagination
+        hide-default-footer
       >
-        <template v-slot:top v-if="isAdmin">
-          <div class="mx-4">
+        <template v-slot:top v-if="$can('create', 'Station')">
+          <div class="mx-4 d-print-none">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
@@ -41,13 +45,18 @@
                     <v-form v-model="isNewStationValid">
                       <v-row justify="center" align="center">
                         <v-col cols="12">
-                          <v-text-field
-                            :rules="[v => !!v || 'برجاء ادخال الاسم']"
+                          <v-combobox
+                            :rules="[v => !!v || 'برجاء ادخال أو اختيار الاسم']"
                             required
+                            :loading="loading"
                             @input="onNameChange"
                             label="اسم المحطة"
+                            :items="stations"
+                            item-value="name"
+                            item-text="name"
                             prepend-icon="mdi-city"
-                          ></v-text-field>
+                            :return-object="false"
+                          ></v-combobox>
                         </v-col>
                         <v-col cols="12">
                           <v-autocomplete
@@ -65,7 +74,9 @@
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            :rules="[v => !!v || 'برجاء ادخال ترتيب المحطة']"
+                            :rules="[
+                              v => (!!v && v > 0) || 'برجاء ادخال ترتيب المحطة'
+                            ]"
                             required
                             @input="onLineStationOrderChange"
                             v-on:keypress="checkIfNotNumber($event)"
@@ -103,16 +114,18 @@
               @click="toggleGroup(lineGroup.line, toggle)"
             >
               <span>
-                <v-icon>{{
-                  lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
-                }}</v-icon>
+                <v-icon>
+                  {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
+                </v-icon>
               </span>
-              <v-chip color="info">{{ lineGroup.line.name }}</v-chip>
+              <v-chip class="pointer" color="info">{{
+                lineGroup.line.name
+              }}</v-chip>
             </th>
           </thead>
         </template>
 
-        <template v-slot:item.name="props" v-if="isAdmin">
+        <template v-slot:item.name="props">
           <v-edit-dialog
             :return-value.sync="props.item.name"
             @save="onEditSubmit(props.item.id, props.item.name)"
@@ -123,14 +136,16 @@
                 v-model="props.item.name"
                 label="تعديل اسم المحطة"
                 single-line
-              ></v-text-field>
+                v-if="$can('update', 'Station')"
+              >
+              </v-text-field>
             </template>
           </v-edit-dialog>
         </template>
 
-        <template v-slot:item.line.LineStation.stationOrder="{ item }">{{
-          item.line.LineStation.stationOrder | convertToArabic
-        }}</template>
+        <template v-slot:item.line.LineStation.stationOrder="{ item }">
+          {{ item.line.LineStation.stationOrder | convertToArabic }}
+        </template>
 
         <template v-slot:item.action="{ item }">
           <StationActions :station="item" />
@@ -189,10 +204,6 @@ export default class Stations extends Vue {
 
   get loading() {
     return StationsModule.loading || LinesModule.loading;
-  }
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
   }
 
   get lines() {

@@ -14,10 +14,12 @@ import {
   ITrainRun,
   IPolicePerson,
   IPoliceDepartment,
-  IRank
+  IRank,
+  ILineStation
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
+import Vue from "vue";
 
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
 class TrainsModule extends VuexModule implements ITrainState {
@@ -30,6 +32,7 @@ class TrainsModule extends VuexModule implements ITrainState {
       ? [...LinesModule.currentLine.stations]
       : []
   };
+
   newTrainRun: ITrainRun = {
     day: new Date().toLocaleDateString(),
     policePeople: [
@@ -43,6 +46,7 @@ class TrainsModule extends VuexModule implements ITrainState {
     train: this.currentTrain,
     trainId: this.currentTrain ? this.currentTrain.id : ""
   };
+
   trainRuns: ITrainRun[] = [];
   loading: boolean = false;
 
@@ -149,6 +153,37 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Mutation
   setCurrentTrain(train: ITrain) {
     this.currentTrain = train;
+  }
+
+  @Mutation
+  updateCurrentTrain({ data }: { data: any }) {
+    if (data.number) this.currentTrain.number = data.number;
+    if (data.stations) {
+      Vue.set(TrainsModule.state.currentTrain, "stations", data.stations);
+    }
+  }
+
+  @Mutation
+  updateCurrentTrainStation({ index, data }: { index?: any; data?: any }) {
+    if (
+      this.currentTrain.stations &&
+      this.currentTrain.stations.length >= 0 &&
+      index >= 0
+    ) {
+      if (data.departureTime === null || data.departureTime) {
+        this.currentTrain.stations[index].LineStationTrain!.departureTime =
+          data.departureTime;
+        this.currentTrain.stations[index].LineStationTrain!.isDeprature =
+          data.departureTime !== null;
+      }
+
+      if (data.arrivalTime === null || data.arrivalTime) {
+        this.currentTrain.stations[index].LineStationTrain!.arrivalTime =
+          data.arrivalTime;
+        this.currentTrain.stations[index].LineStationTrain!.isArrival =
+          data.arrivalTime !== null;
+      }
+    }
   }
 
   @Mutation
@@ -281,6 +316,16 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
+  async getTrainLineStations({ id, lineId }: { id: string; lineId: string }) {
+    const stations = await TrainsAPI.getTrainLineStation(id, lineId);
+    this.updateCurrentTrain({
+      data: {
+        stations
+      }
+    });
+  }
+
+  @Action
   async create() {
     this.toggleLoading();
 
@@ -290,6 +335,27 @@ class TrainsModule extends VuexModule implements ITrainState {
       });
       this.pushTrain({ ...this.newTrain, ...train });
       LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
+
+      if (LinesModule.currentLine.stations) {
+        const stations = [...LinesModule.currentLine.stations].map(station => {
+          return {
+            ...station,
+            lineStationId: station.LineStation!.id,
+            LineStationTrain: {
+              ...station.LineStationTrain,
+              arrivalTime: null,
+              departureTime: null,
+              isArrival: false,
+              isDeprature: false,
+              createdAt: null,
+              updatedAt: null
+            }
+          };
+        });
+        this.updateNewTrain({
+          stations
+        });
+      }
     }
     this.toggleLoading();
   }
@@ -305,6 +371,22 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
+  async updateCurrentTrainLineStations({
+    id,
+    editedStations
+  }: {
+    id: string;
+    editedStations: any;
+  }) {
+    this.toggleLoading();
+    await TrainsAPI.updateLineStations(id, editedStations);
+    this.updateCurrentTrain({
+      data: { stations: editedStations }
+    });
+    this.toggleLoading();
+  }
+
+  @Action
   async delete(id: string) {
     this.toggleLoading();
     await TrainsAPI.delete(id);
@@ -313,9 +395,9 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
-  async deleteLine({ id, lineId }: { id: string; lineId: string }) {
+  async deleteTrainLine({ id, lineId }: { id: string; lineId: string }) {
     this.toggleLoading();
-    await TrainsAPI.deleteLine(id, lineId);
+    await TrainsAPI.deleteTrainLine(id, lineId);
     LinesModule.removeTrainFromCurrentLine(id);
     this.toggleLoading();
   }

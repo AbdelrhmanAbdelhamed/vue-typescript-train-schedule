@@ -74,6 +74,10 @@ class StationsModule extends VuexModule implements IStationState {
 
   @Mutation
   createStation(station: any) {
+    const index = this.stations.findIndex(
+      stationItem => stationItem.id === station.id
+    );
+    if (index > -1) this.stations.splice(index, 1);
     this.stations.push(station);
   }
 

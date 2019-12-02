@@ -12,6 +12,7 @@
           offset-y
           max-width="290px"
           min-width="290px"
+          class="d-print-none"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
@@ -23,6 +24,7 @@
               append-icon="mdi-calendar-search"
               v-on="on"
               @click:clear="search = ''"
+              class="d-print-none"
             ></v-text-field>
           </template>
           <v-date-picker
@@ -30,6 +32,7 @@
             v-model="searchDate"
             no-title
             @input="onDaySearchInput"
+            class="d-print-none"
           ></v-date-picker>
         </v-menu>
         <v-spacer></v-spacer>
@@ -41,6 +44,7 @@
           hide-details
           clearable
           @click:clear="searchDate = ''"
+          class="d-print-none"
         ></v-text-field>
       </v-card-title>
       <v-card-subtitle v-if="train.line">
@@ -57,9 +61,11 @@
         class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"
+        disable-pagination
+        hide-default-footer
       >
-        <template v-slot:top v-if="isAdmin">
-          <div class="mx-4">
+        <template v-slot:top v-if="$can('create', 'TrainRun')">
+          <div class="mx-4 d-print-none">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="1000px">
@@ -331,10 +337,6 @@ export default class TrainDetails extends Vue {
 
   get train() {
     return (this.$route.params.train || TrainsModule.currentTrain) as ITrain;
-  }
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
   }
 
   get searchDateFormatted() {

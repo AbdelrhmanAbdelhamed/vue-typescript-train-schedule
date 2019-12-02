@@ -14,12 +14,15 @@
         ></v-text-field>
       </v-card-title>
       <v-data-table
+        :loading="loading"
         :headers="headers"
         :items="trains"
         item-key="number+lineName"
         group-by="lineName"
         class="elevation-1"
         :search="search"
+        disable-pagination
+        hide-default-footer
       >
         <template
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
@@ -31,12 +34,14 @@
                   lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
                 }}</v-icon>
               </span>
-              <v-chip color="info">{{ lineGroup.line.name }}</v-chip>
+              <v-chip class="pointer" color="info">{{
+                lineGroup.line.name
+              }}</v-chip>
             </th>
           </thead>
         </template>
 
-        <template v-slot:item.number="props" v-if="isAdmin">
+        <template v-slot:item.number="props">
           <v-edit-dialog
             :return-value.sync="props.item.number"
             @save="onEditSubmit(props.item.id, props.item.number)"
@@ -47,6 +52,7 @@
                 v-model="props.item.number"
                 label="تعديل رقم القطار"
                 single-line
+                v-if="$can('update', 'Train')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -54,8 +60,9 @@
 
         <template v-slot:item.action="{ item }">
           <TrainActions
-            :actions="{ delete: false, details: true }"
+            :actions="{ delete: true, details: true }"
             :train="item"
+            :line="item.line"
           />
         </template>
       </v-data-table>
@@ -138,10 +145,6 @@ export default class Trains extends Vue {
 
   get lines() {
     return LinesModule.lines;
-  }
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
   }
 
   onNumberChange(value: any) {

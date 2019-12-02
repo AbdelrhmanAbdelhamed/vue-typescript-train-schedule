@@ -19,8 +19,10 @@
         :items="users"
         class="elevation-1"
         :search="search"
+        disable-pagination
+        hide-default-footer
       >
-        <template v-slot:top v-if="isAdmin">
+        <template v-slot:top v-if="$can('create', 'User')">
           <div class="mx-4">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
@@ -60,15 +62,6 @@
                             @input="onPasswordChange"
                           />
                         </v-col>
-                        <v-col cols="12">
-                          <v-checkbox
-                            id="isAdmin"
-                            label="امكانية الإضافة و التعديل"
-                            name="isAdmin"
-                            prepend-icon="mdi-circle-edit-outline"
-                            @change="onIsAdminChange"
-                          />
-                        </v-col>
                       </v-row>
                     </v-form>
                   </v-container>
@@ -89,7 +82,7 @@
           </div>
         </template>
 
-        <template v-slot:item.username="props" v-if="isAdmin">
+        <template v-slot:item.username="props">
           <v-edit-dialog
             :return-value.sync="props.item.username"
             @save="onEditUsernameSubmit(props.item.id, props.item.username)"
@@ -100,21 +93,11 @@
                 v-model="props.item.username"
                 label="تعديل اسم المستخدم"
                 single-line
+                v-if="$can('update', 'User')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
         </template>
-
-        <template v-slot:item.isAdmin="{ item }">
-          <v-checkbox
-            @change="onEditUserIsAdminChange(item.id, $event)"
-            :input-value="item.isAdmin"
-            :disabled="!isAdmin"
-            :label="item.isAdmin ? 'نعم' : 'لا'"
-          >
-          </v-checkbox>
-        </template>
-
         <template v-slot:item.action="{ item }">
           <UserActions :user="item" />
         </template>
@@ -139,7 +122,6 @@ import { IUser } from "@/store/models";
 export default class Users extends Vue {
   headers = [
     { text: "اسم المستخدم", value: "username", sortable: true },
-    { text: "امكانية الإضافة و التعديل", value: "isAdmin", sortable: true },
     { text: "", value: "action", sortable: false }
   ];
   search = "";
@@ -156,10 +138,6 @@ export default class Users extends Vue {
 
   get users(): IUser[] {
     return UsersModule.users;
-  }
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
   }
 
   onUsernameChange(value: any) {

@@ -1,6 +1,11 @@
 <template>
-  <div id="line-actions">
-    <v-dialog v-model="dialog" persistent max-width="290" v-if="isAdmin">
+  <div id="line-actions" class="d-print-none">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="290"
+      v-if="$can('delete', 'Station')"
+    >
       <template v-slot:activator="{ on }">
         <v-icon class="mr-10" color="error" v-on="on">mdi-delete</v-icon>
       </template>
@@ -34,10 +39,6 @@ export default class LineActions extends Vue {
   @Prop()
   station: any;
   dialog = false;
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
 
   onDeleteClicked() {
     const count = StationsModule.stations.filter(

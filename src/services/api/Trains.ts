@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ITrain } from "@/store/models";
+import { ITrain, IStation } from "@/store/models";
 
 export default class TrainsAPI {
   static readonly END_POINT = "trains";
@@ -16,9 +16,12 @@ export default class TrainsAPI {
 
   static getByStations(departureStation: string, arrivalStation: string) {
     return axios
-      .get(
-        `${TrainsAPI.END_POINT}?departureStation=${departureStation}&arrivalStation=${arrivalStation}`
-      )
+      .get(TrainsAPI.END_POINT, {
+        params: {
+          departureStation,
+          arrivalStation
+        }
+      })
       .then(Response => Response.data);
   }
 
@@ -88,7 +91,19 @@ export default class TrainsAPI {
       .then(response => response.data);
   }
 
-  static deleteLine(id: string, lineId: string) {
+  static updateLineStations(id: string, stations: any) {
+    return axios
+      .put(`${TrainsAPI.END_POINT}/${id}/stations`, stations)
+      .then(response => response.data);
+  }
+
+  static getTrainLineStation(id: string, lineId: string) {
+    return axios
+      .get(`${TrainsAPI.END_POINT}/${id}/stations/lines/${lineId}`)
+      .then(response => response.data);
+  }
+
+  static deleteTrainLine(id: string, lineId: string) {
     return axios
       .delete(`${TrainsAPI.END_POINT}/${id}/lines/${lineId}`)
       .then(response => response.data);

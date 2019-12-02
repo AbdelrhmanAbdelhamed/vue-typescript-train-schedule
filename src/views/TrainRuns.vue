@@ -11,6 +11,8 @@
         :items="trainRuns"
         group-by="trainNumber"
         class="elevation-1"
+        disable-pagination
+        hide-default-footer
       >
         <template
           v-slot:group.header="{ items: [trainGroup], headers, group, toggle }"
@@ -22,7 +24,7 @@
                   {{ trainGroup.train.hide ? "mdi-plus" : "mdi-minus" }}
                 </v-icon>
               </span>
-              <v-chip color="info">
+              <v-chip class="pointer" color="info">
                 قطار رقم: {{ trainGroup.train.number | convertToArabic }}
               </v-chip>
             </th>

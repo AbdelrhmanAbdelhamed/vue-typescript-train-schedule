@@ -11,6 +11,7 @@
           single-line
           hide-details
           clearable
+          class="d-print-none"
         ></v-text-field>
       </v-card-title>
       <v-data-table
@@ -19,8 +20,10 @@
         :items="trains"
         class="elevation-1"
         :search="search"
+        disable-pagination
+        hide-default-footer
       >
-        <template v-slot:top v-if="isAdmin">
+        <template v-slot:top v-if="$can('create', 'Train')">
           <NewTrainForm :line="line" />
         </template>
 
@@ -45,17 +48,18 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
-import UsersModule from "@/store/modules/Users";
+import EditLineStationsForm from "@/components/EditLineStationsForm.vue";
 import TrainActions from "@/components/TrainActions.vue";
 import NewTrainForm from "@/components/NewTrainForm.vue";
 
+import UsersModule from "@/store/modules/Users";
 import LinesModule from "@/store/modules/Lines";
 import TrainsModule from "@/store/modules/Trains";
 
 import { ILine } from "@/store/models";
 
 @Component({
-  components: { TrainActions, NewTrainForm }
+  components: { TrainActions, NewTrainForm, EditLineStationsForm }
 })
 export default class Trains extends Vue {
   headers = [
@@ -70,10 +74,6 @@ export default class Trains extends Vue {
 
   @Prop()
   lineId!: string;
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
 
   get line() {
     return (this.$route.params.line || LinesModule.currentLine) as ILine;

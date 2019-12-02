@@ -1,5 +1,7 @@
 import moment from "moment";
 
+moment.locale("");
+
 export const getDayOfWeek = (date: Date | string) => {
   let dayOfWeek = new Date(date).getDay();
   return isNaN(dayOfWeek)
@@ -13,6 +15,14 @@ export const formatDayDate = (value: Date | string) => {
   if (value) {
     let date = moment(String(value)).format("YYYY/MM/DD");
     return `${getDayOfWeek(date)} ${date}`;
+  }
+};
+
+export const formatTime = (value: Date | string) => {
+  moment.locale("ar");
+  if (value) {
+    let date = moment(value, "HH:mm:ss").format("hh:mm A");
+    return date;
   }
 };
 

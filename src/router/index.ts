@@ -6,6 +6,7 @@ import nprogress from "nprogress";
 import EmptyRouterView from "@/views/EmptyRouterView.vue";
 
 import UsersModule from "@/store/modules/Users";
+import AbilitiesModule from "@/store/modules/Abilities";
 
 nprogress.configure({
   showSpinner: false
@@ -46,7 +47,8 @@ const routes: RouteConfig[] = [
       nameArabic: "استعلام",
       visible: true,
       icon: "mdi-magnify",
-      requiresAuth: true
+      requiresAuth: true,
+      resource: "Train"
     },
     // route level code-splitting
     // this generates a separate chunk (home.[hash].js) for this route
@@ -59,10 +61,10 @@ const routes: RouteConfig[] = [
     path: "/users",
     meta: {
       nameArabic: "الحسابات",
-      visible: UsersModule.isAdmin,
+      visible: AbilitiesModule.ability.can("read", "User"),
       icon: "mdi-account",
-      requiresAuth: true,
-      requiresAdmin: true
+      resource: "User",
+      requiresAuth: true
     },
     // route level code-splitting
     // this generates a separate chunk (users.[hash].js) for this route
@@ -75,8 +77,9 @@ const routes: RouteConfig[] = [
     component: EmptyRouterView,
     meta: {
       nameArabic: "الخطوط",
-      visible: true,
+      visible: AbilitiesModule.ability.can("read", "Line"),
       icon: "mdi-arrow-expand-horizontal",
+      resource: "Line",
       requiresAuth: true
     },
     children: [
@@ -120,8 +123,9 @@ const routes: RouteConfig[] = [
     path: "/stations",
     meta: {
       nameArabic: "المحطات",
-      visible: true,
+      visible: AbilitiesModule.ability.can("read", "Station"),
       icon: "mdi-city",
+      resource: "Station",
       requiresAuth: true
     },
     // route level code-splitting
@@ -135,8 +139,9 @@ const routes: RouteConfig[] = [
     component: EmptyRouterView,
     meta: {
       nameArabic: "القطارات",
-      visible: true,
+      visible: AbilitiesModule.ability.can("read", "Train"),
       icon: "mdi-train",
+      resource: "Train",
       requiresAuth: true
     },
     children: [
@@ -151,14 +156,26 @@ const routes: RouteConfig[] = [
       },
       {
         props: true,
-        name: "trains.details",
-        path: "trains/:id",
+        name: "trains.run.details",
+        path: ":id/runs",
         // route level code-splitting
-        // this generates a separate chunk (trains.details.[hash].js) for this route
+        // this generates a separate chunk (trains.run.details.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () =>
           import(
-            /* webpackChunkName: "trains.details" */ "../views/TrainDetails.vue"
+            /* webpackChunkName: "trains.run.details" */ "../views/TrainRunDetails.vue"
+          )
+      },
+      {
+        props: true,
+        name: "trains.line.stations",
+        path: ":id/stations/line/:lineId",
+        // route level code-splitting
+        // this generates a separate chunk (trains.line.stations.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "trains.line.stations" */ "../views/TrainLineStations.vue"
           )
       }
     ]
@@ -169,8 +186,9 @@ const routes: RouteConfig[] = [
     path: "/runs",
     meta: {
       nameArabic: "الرحلات",
-      visible: true,
+      visible: AbilitiesModule.ability.can("read", "TrainRun"),
       icon: "mdi-car-estate",
+      resource: "TrainRun",
       requiresAuth: true
     },
     // route level code-splitting
@@ -202,20 +220,20 @@ router.beforeResolve((to, from, next) => {
 });
 
 router.beforeEach((to: Route, from: Route, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
-  if (requiresAuth && !requiresAdmin) {
-    if (UsersModule.loggedIn) {
-      return next();
+  const canNavigate = to.matched.some(route => {
+    if (route.meta.requiresAuth) {
+      return AbilitiesModule.ability.can(
+        route.meta.action || "read",
+        route.meta.resource
+      );
     }
-    if (from.path !== "/login") next("/login");
+    return true;
+  });
+
+  if (!canNavigate) {
+    return next("/login");
   }
-  if (requiresAuth && requiresAdmin) {
-    if (UsersModule.loggedIn && UsersModule.isAdmin) {
-      return next();
-    }
-    next("/");
-  }
+
   next();
 });
 

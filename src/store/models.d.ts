@@ -1,8 +1,10 @@
+import { Ability, Rule } from "@casl/ability";
+
 export interface IStation {
   id?: string;
   name: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   lines?: ILine[];
   line?: ILine;
   LineStation?: ILineStation;
@@ -22,7 +24,7 @@ export interface LineStationTrain {
 export interface ILineStation {
   id?: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   lineId?: string;
   stationId?: string;
   stationOrder: number;
@@ -39,7 +41,7 @@ export interface ILine {
   id?: string;
   name: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   stations?: IStation[];
   trains?: ITrain[];
   LineStation?: ILineStation;
@@ -59,7 +61,7 @@ export interface IRank {
   name: string;
   policePeople?: IPolicePerson[];
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface IPolicePersonState {
@@ -79,7 +81,7 @@ export interface IPolicePerson {
   name: string;
   phoneNumber: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   train?: ITrain;
   rankId?: string;
   policeDepartmentId?: string;
@@ -93,14 +95,14 @@ export interface IPoliceDepartment {
   name: string;
   policePeople?: IPolicePerson[];
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ITrainRun {
   id?: string;
   day: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   train?: ITrain;
   trainId?: string;
   policePeople: IPolicePerson[];
@@ -110,7 +112,7 @@ export interface ITrain {
   id?: string;
   number: string;
   createdAt?: Date;
-  UpdatedAt?: Date;
+  updatedAt?: Date;
   lines?: ILine[];
   trainRuns?: ITrainRun[];
   stations?: IStation[];
@@ -123,12 +125,22 @@ export interface ITrainState {
   loading: boolean;
 }
 
+export interface IRole {
+  id?: string;
+  name: string;
+  nameArabic: string;
+  description: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface IUser {
   id?: string;
   token?: string;
+  fullName?: string;
   username: string;
   password?: string;
-  isAdmin?: boolean;
+  role?: IRole;
 }
 
 export interface IUserState {
@@ -136,4 +148,9 @@ export interface IUserState {
   users: IUser[];
   usernameErrorMessage: string | null;
   passwordErrorMessage: string | null;
+}
+
+export interface IAbilityState {
+  ability: Ability;
+  rules: Rule[];
 }

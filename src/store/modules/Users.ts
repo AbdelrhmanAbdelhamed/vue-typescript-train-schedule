@@ -10,6 +10,7 @@ import {
 import store from "..";
 import { IUserState, IUser } from "../models";
 import UsersAPI from "@/services/api/Users";
+import AbilitiesModule from "../modules/Abilities";
 
 @Module({
   dynamic: true,
@@ -19,15 +20,14 @@ import UsersAPI from "@/services/api/Users";
 })
 class UsersModule extends VuexModule implements IUserState {
   currentUser: IUser = {
+    fullName: localStorage.getItem("fullName") || "",
     username: "",
     password: "",
-    token: localStorage.getItem("token") || "",
-    isAdmin: localStorage.getItem("isAdmin") === "true"
+    token: localStorage.getItem("token") || ""
   };
   newUser: IUser = {
     username: "",
-    password: "",
-    isAdmin: false
+    password: ""
   };
   users: IUser[] = [];
 
@@ -35,10 +35,6 @@ class UsersModule extends VuexModule implements IUserState {
   passwordErrorMessage = null;
 
   loading: boolean = false;
-
-  get isAdmin() {
-    return this.currentUser.isAdmin;
-  }
 
   get loggedIn() {
     return !!this.currentUser.token;
@@ -60,18 +56,20 @@ class UsersModule extends VuexModule implements IUserState {
   @Mutation
   updateCurrentUserData(data: any) {
     if (data.username) this.currentUser.username = data.username;
+    if (data.fullName) this.currentUser.fullName = data.fullName;
     if (data.password) this.currentUser.password = data.password;
-    if (data.token) this.currentUser.token = data.token;
-    if (typeof data.isAdmin !== "undefined")
-      this.currentUser.isAdmin = data.isAdmin;
+    if (data.token) {
+      this.currentUser.token = data.token;
+      AbilitiesModule.getRulesFromToken(this.currentUser.token);
+      AbilitiesModule.updateAbility();
+    }
   }
 
   @Mutation
   updateNewUserData(data: any) {
     if (data.username) this.newUser.username = data.username;
+    if (data.fullName) this.newUser.fullName = data.fullName;
     if (data.password) this.newUser.password = data.password;
-    if (typeof data.isAdmin !== "undefined")
-      this.newUser.isAdmin = data.isAdmin;
   }
 
   @Mutation
@@ -84,11 +82,7 @@ class UsersModule extends VuexModule implements IUserState {
     let user = this.users.find(user => user.id == id);
     if (user) {
       if (data.username) user.username = data.username;
-      if (
-        typeof data.isAdmin !== "undefined" &&
-        user.id !== this.currentUser.id
-      )
-        user.isAdmin = data.isAdmin;
+      if (data.fullName) user.fullName = data.fullName;
     }
   }
 
@@ -114,7 +108,7 @@ class UsersModule extends VuexModule implements IUserState {
     try {
       const { user, token } = await UsersAPI.login({ username, password });
       localStorage.setItem("token", token);
-      localStorage.setItem("isAdmin", user.isAdmin);
+      localStorage.setItem("fullName", user.fullName);
       UsersAPI.setAuthorizationHeader(token);
       user.token = token;
       this.updateCurrentUserData({ ...user });
@@ -134,11 +128,13 @@ class UsersModule extends VuexModule implements IUserState {
   @MutationAction
   async logout() {
     localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("fullName");
     UsersAPI.clearAuthorizationHeader();
     const currentUser: IUser = {
       username: "",
+      fullName: "",
       password: "",
+      role: { name: "", nameArabic: "", description: "" },
       token: ""
     };
     const usernameErrorMessage = null;
@@ -164,7 +160,7 @@ class UsersModule extends VuexModule implements IUserState {
       this.newUser &&
       this.newUser.username !== "" &&
       this.newUser.password !== "" &&
-      typeof this.newUser.isAdmin !== "undefined"
+      this.newUser.fullName !== ""
     ) {
       const user: IUser = await UsersAPI.create(this.newUser);
       this.createUser(user);
@@ -174,13 +170,7 @@ class UsersModule extends VuexModule implements IUserState {
 
   @Action
   async update({ id, data }: { id: string; data: any }) {
-    if (
-      id &&
-      data &&
-      (data.username !== "" ||
-        (typeof data.isAdmin !== "undefined" &&
-          data.id !== this.currentUser.id))
-    ) {
+    if (id && data && (data.username !== "" || data.fullName !== "")) {
       this.setLoading(true);
       await UsersAPI.update(id, data);
       this.updateUser({ id, data });

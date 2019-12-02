@@ -2,13 +2,14 @@
   <v-app>
     <NavMenu v-model="drawer"></NavMenu>
 
-    <v-app-bar app color="cyan" dark>
+    <v-app-bar app color="cyan" dark class="d-print-none">
       <v-app-bar-nav-icon v-if="loggedIn" @click.stop="drawer = !drawer" />
       <v-toolbar-title>شرطة النقل والمواصلات</v-toolbar-title>
       <v-spacer />
-      <v-btn @click="onLogOutClick" v-if="loggedIn" color="secondary"
-        >تسجيل خروج</v-btn
-      >
+      <div v-if="loggedIn">
+        <span class="ma-3">{{ fullName }}</span>
+        <v-btn @click="onLogOutClick" color="secondary">تسجيل خروج</v-btn>
+      </div>
     </v-app-bar>
 
     <v-content>
@@ -17,9 +18,9 @@
       </v-container>
     </v-content>
 
-    <v-footer color="primary" app dark>
-      جميع الحقوق محفوظة {{ new Date().getFullYear() }} &copy;
-    </v-footer>
+    <v-footer color="primary" app dark class="d-print-none"
+      >جميع الحقوق محفوظة {{ new Date().getFullYear() }} &copy;</v-footer
+    >
   </v-app>
 </template>
 
@@ -38,6 +39,10 @@ export default class App extends Vue {
   drawer = true;
   get loggedIn() {
     return UsersModule.loggedIn;
+  }
+
+  get fullName() {
+    return UsersModule.currentUser.fullName;
   }
 
   async onLogOutClick() {

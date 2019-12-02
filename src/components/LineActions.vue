@@ -2,9 +2,10 @@
   <div id="line-actions">
     <v-btn
       class="ml-2"
-      color="primary"
+      color="info"
       small
       link
+      outlined
       :to="{ name: `lines.stations`, params: { line, lineId: line.id } }"
       >المحطات</v-btn
     >
@@ -16,7 +17,12 @@
       >القطارات</v-btn
     >
 
-    <v-dialog v-model="dialog" persistent max-width="290" v-if="isAdmin">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="290"
+      v-if="$can('delete', 'Line')"
+    >
       <template v-slot:activator="{ on }">
         <v-icon class="mr-10" color="error" v-on="on">
           mdi-delete
@@ -51,10 +57,6 @@ export default class LineActions extends Vue {
   line: any;
 
   dialog = false;
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
 
   onDeleteClicked() {
     LinesModule.delete(this.line.id);

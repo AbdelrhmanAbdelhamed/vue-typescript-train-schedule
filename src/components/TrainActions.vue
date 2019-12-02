@@ -1,15 +1,29 @@
 <template>
-  <div id="train-actions">
+  <div id="train-actions" class="d-print-none">
     <v-btn
-      color="primary"
+      color="info"
       small
       link
-      :to="{ name: `trains.details`, params: { train, id: train.id } }"
+      outlined
+      :to="{ name: `trains.run.details`, params: { train, id: train.id } }"
       >الرحلات</v-btn
     >
 
+    <v-btn
+      class="mx-2"
+      color="primary"
+      small
+      link
+      v-if="line"
+      :to="{
+        name: `trains.line.stations`,
+        params: { train, line, lineId: line.id, id: train.id }
+      }"
+      >المواعيد</v-btn
+    >
+
     <v-dialog
-      v-if="actions.delete && isAdmin"
+      v-if="actions.delete && $can('delete', train)"
       v-model="dialog"
       persistent
       max-width="290"
@@ -59,13 +73,22 @@ export default class TrainActions extends Vue {
 
   dialog = false;
 
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
+  async onDeleteClicked() {
+    await TrainsModule.deleteTrainLine({
+      id: this.train.id,
+      lineId: this.line.id
+    });
+    this.dialog = false;
   }
 
-  async onDeleteClicked() {
-    await TrainsModule.deleteLine({ id: this.train.id, lineId: this.line.id });
-    this.dialog = false;
+  beforeCreated() {
+    if (this.train && this.line) {
+      TrainsModule.setCurrentTrain(this.train);
+      TrainsModule.getTrainLineStations({
+        id: this.train.id!,
+        lineId: this.line.id!
+      });
+    }
   }
 }
 </script>

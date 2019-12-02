@@ -1,5 +1,9 @@
 <template>
-  <div id="train-run-actions" v-if="isAdmin">
+  <div
+    id="train-run-actions"
+    v-if="$can('delete', 'TrainRun')"
+    class="d-print-none"
+  >
     <v-dialog v-model="dialog" persistent max-width="500">
       <template v-slot:activator="{ on }">
         <v-icon class="mr-10" color="error" v-on="on">
@@ -47,10 +51,6 @@ export default class TrainActions extends Vue {
   trainRun: any;
 
   dialog = false;
-
-  get isAdmin() {
-    return UsersModule.currentUser.isAdmin;
-  }
 
   onDeleteClicked() {
     TrainsModule.deleteTrainRun({

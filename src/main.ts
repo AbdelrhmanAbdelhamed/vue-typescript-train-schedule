@@ -11,6 +11,8 @@ import "nprogress/nprogress.css";
 
 import "./filters";
 import "./services/api/config"; // init config
+
+import "./plugins/abilities";
 Vue.config.productionTip = false;
 
 new Vue({

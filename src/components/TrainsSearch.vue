@@ -67,11 +67,14 @@
           </v-card-title>
           <v-data-table
             v-if="showTable"
+            :loading="loading"
             item-key="number+line.name"
             class="elevation-1"
             :headers="headers"
             :items="trains"
             :search="search"
+            disable-pagination
+            hide-default-footer
           >
             <template v-slot:item.number="{ item }">{{
               item.number | convertToArabic
@@ -111,7 +114,6 @@ export default class TrainsSearch extends Vue {
 
   headers = [
     { text: "رقم القطار", value: "number", sortable: true },
-    { text: "الخط التابع له", value: "line.name", sortable: true },
     { text: "", value: "action", sortable: false }
   ];
   search = "";

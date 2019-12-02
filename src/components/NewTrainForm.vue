@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-4">
+  <div class="mx-4 d-print-none" v-if="$can('create', 'Train')">
     <v-divider class="mx-4" inset vertical></v-divider>
     <v-spacer></v-spacer>
     <v-dialog v-model="dialog" max-width="1000px">
@@ -153,26 +153,21 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
 import TrainsModule from "@/store/modules/Trains";
-import LinesModule from "@/store/modules/Lines";
 
 @Component({
   components: {}
 })
-export default class Trains extends Vue {
+export default class NewTrainForm extends Vue {
   dialog = false;
   isNewTrainValid = false;
   newTrainNumber = "";
 
   get loading() {
-    return LinesModule.loading || TrainsModule.loading;
+    return TrainsModule.loading;
   }
 
   get newTrain() {
     return TrainsModule.newTrain;
-  }
-
-  get lines() {
-    return LinesModule.lines;
   }
 
   @Prop()
