@@ -88,6 +88,18 @@ export interface IPolicePerson {
   rank: IRank;
   trainRuns?: ITrainRun[];
   policeDepartment: IPoliceDepartment;
+  fromStationId?: string;
+  toStationId?: string;
+  TrainRunPolicePerson?: {
+    fromStation?: {
+      name?: string;
+      id?: string;
+    };
+    toStation?: {
+      name?: string;
+      id?: string;
+    };
+  };
 }
 
 export interface IPoliceDepartment {
@@ -148,6 +160,8 @@ export interface IUser {
   role?: IRole;
   roleId?: string;
   trains?: ITrain[];
+  policeDepartmentId?: string;
+  policeDepartment?: IPoliceDepartment;
 }
 
 export interface IUserState {

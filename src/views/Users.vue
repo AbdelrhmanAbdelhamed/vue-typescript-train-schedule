@@ -60,6 +60,18 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12">
+                          <v-autocomplete
+                            :return-object="true"
+                            :loading="loading"
+                            label="جهة المستخدم"
+                            :items="policeDepartments"
+                            item-value="name"
+                            item-text="name"
+                            @input="onDepartmentChange"
+                            prepend-icon="mdi-city"
+                          ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="12">
                           <v-text-field
                             :rules="[v => !!v || 'برجاء ادخال كلمة المرور']"
                             required
@@ -179,6 +191,7 @@ import { Prop } from "vue-property-decorator";
 
 import UserActions from "@/components/UsersActions.vue";
 
+import PoliceDepartmentsModule from "@/store/modules/PoliceDepartments";
 import UsersModule from "@/store/modules/Users";
 import RolesModule from "@/store/modules/Roles";
 import { IUser, IRole } from "@/store/models";
@@ -190,7 +203,8 @@ export default class Users extends Vue {
   headers = [
     { text: "الاسم رباعي", value: "fullName", sortable: true },
     { text: "اسم المستخدم", value: "username", sortable: true },
-    { text: "وظيفة المستخدم", value: "role", sortable: false },
+    { text: "جهة المستخدم", value: "policeDepartment.name", sortable: true },
+    { text: "وظيفة المستخدم", value: "role", sortable: true },
     { text: "", value: "action", sortable: false }
   ];
   search = "";
@@ -198,7 +212,11 @@ export default class Users extends Vue {
   isNewUserValid = false;
 
   get loading() {
-    return UsersModule.loading || RolesModule.loading;
+    return (
+      UsersModule.loading ||
+      RolesModule.loading ||
+      PoliceDepartmentsModule.loading
+    );
   }
 
   get newUser(): IUser {
@@ -213,12 +231,23 @@ export default class Users extends Vue {
     return RolesModule.roles;
   }
 
+  get policeDepartments() {
+    return PoliceDepartmentsModule.policeDepartments;
+  }
+
   onUsernameChange(value: any) {
     UsersModule.updateNewUserData({ username: value });
   }
 
   onFullNameChange(value: any) {
     UsersModule.updateNewUserData({ fullName: value });
+  }
+
+  onDepartmentChange(value: any) {
+    UsersModule.updateNewUserData({
+      policeDepartment: value,
+      policeDepartmentId: value.id
+    });
   }
 
   onPasswordChange(value: any) {
@@ -255,6 +284,7 @@ export default class Users extends Vue {
   created() {
     UsersModule.getAll();
     RolesModule.getAll();
+    PoliceDepartmentsModule.getAll();
   }
 }
 </script>

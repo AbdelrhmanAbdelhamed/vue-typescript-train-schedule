@@ -25,12 +25,18 @@ class UsersModule extends VuexModule implements IUserState {
     username: "",
     password: "",
     token: localStorage.getItem("token") || "",
-    trains: []
+    trains: [],
+    policeDepartment: {
+      name: ""
+    }
   };
   newUser: IUser = {
     username: "",
     password: "",
-    trains: []
+    trains: [],
+    policeDepartment: {
+      name: ""
+    }
   };
   users: IUser[] = [];
 
@@ -63,9 +69,11 @@ class UsersModule extends VuexModule implements IUserState {
     if (data.password) this.currentUser.password = data.password;
     if (data.token) {
       this.currentUser.token = data.token;
-      AbilitiesModule.getRulesFromToken(this.currentUser.token);
-      AbilitiesModule.updateAbility();
     }
+    if (data.policeDepartment)
+      this.newUser.policeDepartment = data.policeDepartment;
+    if (data.policeDepartmentId)
+      this.newUser.policeDepartmentId = data.policeDepartmentId;
   }
 
   @Mutation
@@ -74,6 +82,10 @@ class UsersModule extends VuexModule implements IUserState {
     if (data.fullName) this.newUser.fullName = data.fullName;
     if (data.password) this.newUser.password = data.password;
     if (data.role) this.newUser.role = data.role;
+    if (data.policeDepartment)
+      this.newUser.policeDepartment = data.policeDepartment;
+    if (data.policeDepartmentId)
+      this.newUser.policeDepartmentId = data.policeDepartmentId;
   }
 
   @Mutation
@@ -87,6 +99,10 @@ class UsersModule extends VuexModule implements IUserState {
     if (userIndex > -1) {
       if (data.username) this.users[userIndex].username = data.username;
       if (data.fullName) this.users[userIndex].fullName = data.fullName;
+      if (data.policeDepartment)
+        this.users[userIndex].policeDepartment = data.policeDepartment;
+      if (data.policeDepartmentId)
+        this.users[userIndex].policeDepartmentId = data.policeDepartmentId;
       if (data.trains) {
         Vue.set(UsersModule.state.users[userIndex], "trains", data.trains);
       }
@@ -118,6 +134,8 @@ class UsersModule extends VuexModule implements IUserState {
       localStorage.setItem("fullName", user.fullName);
       UsersAPI.setAuthorizationHeader(token);
       user.token = token;
+      AbilitiesModule.getRulesFromToken(token);
+      AbilitiesModule.updateAbility();
       this.updateCurrentUserData({ ...user });
     } catch (err) {
       if (err.response && err.response.status === 404)
@@ -145,6 +163,8 @@ class UsersModule extends VuexModule implements IUserState {
       token: "",
       trains: []
     };
+    AbilitiesModule.setRules([]);
+    AbilitiesModule.updateAbility();
     const usernameErrorMessage = null;
     const passwordErrorMessage = null;
     return { currentUser, usernameErrorMessage, passwordErrorMessage };

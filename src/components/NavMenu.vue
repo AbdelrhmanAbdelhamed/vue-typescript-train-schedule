@@ -51,30 +51,24 @@ export default class NavMenu extends Vue {
     return UsersModule.loggedIn;
   }
 
+  get ability() {
+    return AbilitiesModule.ability;
+  }
+
   get routes() {
     const routes = (this.$router as any).options.routes;
     routes.forEach((route: any) => {
-      if (route.path == "/users" && AbilitiesModule.ability.can("read", "User"))
+      if (route.path == "/users" && this.ability.can("read", "User"))
         route.meta.visible = true;
-      if (route.path == "/lines" && AbilitiesModule.ability.can("read", "Line"))
+      if (route.path == "/lines" && this.ability.can("read", "Line"))
         route.meta.visible = true;
-      if (
-        route.path == "/stations" &&
-        AbilitiesModule.ability.can("read", "Station")
-      )
+      if (route.path == "/stations" && this.ability.can("read", "Station"))
         route.meta.visible = true;
-      if (
-        route.path == "/trains" &&
-        AbilitiesModule.ability.can("read", "Train")
-      )
+      if (route.path == "/trains" && this.ability.can("read", "Train"))
         route.meta.visible = true;
-      if (
-        route.path == "/runs" &&
-        AbilitiesModule.ability.can("read", "TrainRun")
-      )
+      if (route.path == "/runs" && this.ability.can("read", "TrainRun"))
         route.meta.visible = true;
     });
-
     return routes;
   }
 }

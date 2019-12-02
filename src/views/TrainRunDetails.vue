@@ -49,7 +49,7 @@
       </v-card-title>
       <v-card-subtitle v-if="train.line">
         <v-chip color="success">
-          <strong> خط: {{ train.line.name }} </strong>
+          <strong>خط: {{ train.line.name }}</strong>
         </v-chip>
       </v-card-subtitle>
       <v-data-table
@@ -114,9 +114,7 @@
                           </v-menu>
                         </v-col>
 
-                        <v-card-title>
-                          أفراد التأمين
-                        </v-card-title>
+                        <v-card-title>أفراد التأمين</v-card-title>
                         <v-container
                           v-for="(policePerson,
                           policePersonIndex) in newTrainRun.policePeople"
@@ -131,9 +129,7 @@
                                 color="error"
                                 @click="removePolicePerson(policePersonIndex)"
                               >
-                                <v-icon>
-                                  mdi-minus
-                                </v-icon>
+                                <v-icon>mdi-minus</v-icon>
                               </v-btn>
                             </v-col>
                             <v-col cols="12" sm="1" md="1">
@@ -217,6 +213,54 @@
                               ></v-combobox>
                             </v-col>
                           </v-row>
+                          <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-autocomplete
+                                :rules="[v => !!v || 'برجاء اختيار المحطة']"
+                                required
+                                :loading="loading"
+                                v-model="fromStation"
+                                :return-object="true"
+                                label="من محطة"
+                                :items="stations"
+                                item-value="name"
+                                item-text="name"
+                                prepend-icon="mdi-city"
+                                @input="
+                                  onPolicePersonChange({
+                                    policePersonIndex,
+                                    data: {
+                                      fromStationId: $event.id,
+                                      fromStation: $event
+                                    }
+                                  })
+                                "
+                              ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-autocomplete
+                                :rules="[v => !!v || 'برجاء اختيار المحطة']"
+                                required
+                                :loading="loading"
+                                v-model="toStation"
+                                label="الى محطة"
+                                :items="stations"
+                                item-value="name"
+                                item-text="name"
+                                prepend-icon="mdi-city"
+                                :return-object="true"
+                                @input="
+                                  onPolicePersonChange({
+                                    policePersonIndex,
+                                    data: {
+                                      toStationId: $event.id,
+                                      toStation: $event
+                                    }
+                                  })
+                                "
+                              ></v-autocomplete>
+                            </v-col>
+                          </v-row>
                         </v-container>
                         <v-col>
                           <v-row>
@@ -228,9 +272,7 @@
                                 color="primary"
                                 @click="addPolicePerson"
                               >
-                                <v-icon>
-                                  mdi-plus
-                                </v-icon>
+                                <v-icon>mdi-plus</v-icon>
                               </v-btn>
                             </v-col>
                           </v-row>
@@ -255,23 +297,22 @@
           </div>
         </template>
 
-        <template v-slot:item.id="{ item }">
-          {{ item.id | convertToArabic }}
-        </template>
+        <template v-slot:item.id="{ item }">{{
+          item.id | convertToArabic
+        }}</template>
 
-        <template v-slot:item.day="{ item }">
-          {{ item.day | formatDayDate | convertToArabic }}
-        </template>
+        <template v-slot:item.day="{ item }">{{
+          item.day | formatDayDate | convertToArabic
+        }}</template>
 
         <template v-slot:item.policePeople="{ item }">
           <div v-for="policePerson in item.policePeople" :key="policePerson.id">
             {{ policePerson.rank.name }}
-
-            / {{ policePerson.name }}
-
-            - {{ policePerson.policeDepartment.name }}
-
-            - {{ policePerson.phoneNumber }}
+            / {{ policePerson.name }} -
+            {{ policePerson.policeDepartment.name }} -
+            {{ policePerson.phoneNumber | convertToArabic }} من محطة:
+            {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
+            {{ policePerson.TrainRunPolicePerson.toStation.name }}
           </div>
         </template>
 
@@ -293,6 +334,7 @@ import moment from "moment";
 import TrainActions from "@/components/TrainActions.vue";
 import TrainRunsActions from "@/components/TrainRunsActions.vue";
 
+import StationsModule from "@/store/modules/Stations";
 import UsersModule from "@/store/modules/Users";
 import TrainsModule from "@/store/modules/Trains";
 import PolicePeopleModule from "@/store/modules/PolicePeople";
@@ -319,12 +361,25 @@ export default class TrainDetails extends Vue {
   newTrainRunDate = moment().format("YYYY-MM-DD");
   isNewTrainRunValid = false;
   dialog = false;
+  fromStation: string = "";
+  toStation: string = "";
 
   @Prop()
   id!: string;
 
   get loading() {
-    return TrainsModule.loading || PolicePeopleModule.loading;
+    return (
+      TrainsModule.loading ||
+      PolicePeopleModule.loading ||
+      RanksModule.loading ||
+      PoliceDepartmentsModule.loading ||
+      UsersModule.loading ||
+      StationsModule.loading
+    );
+  }
+
+  get stations() {
+    return StationsModule.stations;
   }
 
   get newTrainRun() {
@@ -434,6 +489,10 @@ export default class TrainDetails extends Vue {
     PolicePeopleModule.getAll();
     RanksModule.getAll();
     PoliceDepartmentsModule.getAll();
+  }
+
+  beforeCreate() {
+    StationsModule.getAll();
   }
 }
 </script>

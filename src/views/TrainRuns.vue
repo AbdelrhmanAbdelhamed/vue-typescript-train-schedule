@@ -20,30 +20,30 @@
           <thead>
             <th class="pointer" @click="toggleGroup(trainGroup.train, toggle)">
               <span>
-                <v-icon>
-                  {{ trainGroup.train.hide ? "mdi-plus" : "mdi-minus" }}
-                </v-icon>
+                <v-icon>{{
+                  trainGroup.train.hide ? "mdi-plus" : "mdi-minus"
+                }}</v-icon>
               </span>
-              <v-chip class="pointer" color="info">
-                قطار رقم: {{ trainGroup.train.number | convertToArabic }}
-              </v-chip>
+              <v-chip class="pointer" color="info"
+                >قطار رقم:
+                {{ trainGroup.train.number | convertToArabic }}</v-chip
+              >
             </th>
           </thead>
         </template>
 
-        <template v-slot:item.day="{ item }">
-          {{ item.day | formatDayDate | convertToArabic }}
-        </template>
+        <template v-slot:item.day="{ item }">{{
+          item.day | formatDayDate | convertToArabic
+        }}</template>
 
         <template v-slot:item.policePeople="{ item }">
           <div v-for="policePerson in item.policePeople" :key="policePerson.id">
             {{ policePerson.rank.name }}
-
-            / {{ policePerson.name }}
-
-            - {{ policePerson.policeDepartment.name }}
-
-            - {{ policePerson.phoneNumber }}
+            / {{ policePerson.name }} -
+            {{ policePerson.policeDepartment.name }} -
+            {{ policePerson.phoneNumber | convertToArabic }} من محطة:
+            {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
+            {{ policePerson.TrainRunPolicePerson.toStation.name }}
           </div>
         </template>
       </v-data-table>

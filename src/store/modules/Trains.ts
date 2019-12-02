@@ -14,8 +14,7 @@ import {
   ITrainRun,
   IPolicePerson,
   IPoliceDepartment,
-  IRank,
-  ILineStation
+  IRank
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
@@ -37,6 +36,16 @@ class TrainsModule extends VuexModule implements ITrainState {
     day: new Date().toLocaleDateString(),
     policePeople: [
       {
+        TrainRunPolicePerson: {
+          fromStation: {
+            name: ""
+          },
+          toStation: {
+            name: ""
+          }
+        },
+        fromStationId: "",
+        toStationId: "",
         name: "",
         phoneNumber: "",
         rank: { name: "" },
@@ -260,6 +269,13 @@ class TrainsModule extends VuexModule implements ITrainState {
       if (data.policeDepartment)
         policePerson.policeDepartment.name = data.policeDepartment.name;
       if (data.rank) policePerson.rank.name = data.rank.name;
+      if (data.fromStationId) policePerson.fromStationId = data.fromStationId;
+      if (data.toStationId) policePerson.toStationId = data.toStationId;
+
+      if (data.fromStation)
+        policePerson.TrainRunPolicePerson!.fromStation = data.fromStation;
+      if (data.toStation)
+        policePerson.TrainRunPolicePerson!.toStation = data.toStation;
     }
   }
 
@@ -267,6 +283,16 @@ class TrainsModule extends VuexModule implements ITrainState {
   addPolicePerson() {
     if (!this.newTrainRun.policePeople) this.newTrainRun.policePeople = [];
     this.newTrainRun.policePeople.push({
+      TrainRunPolicePerson: {
+        fromStation: {
+          name: ""
+        },
+        toStation: {
+          name: ""
+        }
+      },
+      fromStationId: "",
+      toStationId: "",
       name: "",
       phoneNumber: "",
       policeDepartment: {
