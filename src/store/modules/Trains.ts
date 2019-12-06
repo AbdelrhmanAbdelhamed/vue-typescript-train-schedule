@@ -171,11 +171,18 @@ class TrainsModule extends VuexModule implements ITrainState {
       Vue.set(TrainsModule.state.currentTrain, "stations", data.stations);
     }
     if (data.trainRuns) {
-      this.currentTrain = {
-        ...this.currentTrain,
-        ...data.trainRuns[0].train
-      };
-      Vue.set(TrainsModule.state.currentTrain, "trainRuns", data.trainRuns);
+      if (data.trainRuns instanceof Array && data.trainRuns.length > 0) {
+        this.currentTrain = {
+          ...this.currentTrain,
+          ...data.trainRuns[0].train
+        };
+        Vue.set(TrainsModule.state.currentTrain, "trainRuns", data.trainRuns);
+      } else if (data.trainRuns.train) {
+        this.currentTrain = {
+          ...this.currentTrain,
+          ...data.trainRuns.train
+        };
+      }
     }
   }
 
