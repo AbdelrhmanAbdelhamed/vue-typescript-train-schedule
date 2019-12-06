@@ -14,13 +14,11 @@
         ></v-text-field>
       </v-card-title>
       <v-data-table
-        :loading="loading"
+        :loading="usersLoading"
         :headers="headers"
         :items="users"
         class="elevation-1"
         :search="search"
-        disable-pagination
-        hide-default-footer
       >
         <template v-slot:top v-if="$can('create', 'User')">
           <div class="mx-4">
@@ -63,7 +61,7 @@
                           <v-combobox
                             :rules="[v => !!v || 'برجاء ادخال الجهة']"
                             required
-                            :loading="loading"
+                            :loading="policeDepartmentsLoading"
                             :return-object="false"
                             label="جهة المستخدم"
                             :items="policeDepartments"
@@ -89,7 +87,7 @@
                         <v-col cols="12">
                           <v-autocomplete
                             :return-object="true"
-                            :loading="loading"
+                            :loading="rolesLoading"
                             label="وظيفة المستخدم"
                             :items="roles"
                             item-value="name"
@@ -152,6 +150,31 @@
           </v-edit-dialog>
         </template>
 
+        <template v-slot:item.policeDepartment.name="props">
+          <v-edit-dialog
+            :return-value.sync="props.item.policeDepartment.name"
+            @save="
+              onPoliceDepartmentEditSubmit(
+                props.item.id,
+                props.item.policeDepartment.name
+              )
+            "
+          >
+            {{ props.item.policeDepartment.name }}
+            <template v-slot:input>
+              <v-combobox
+                v-model="props.item.policeDepartment.name"
+                :return-object="false"
+                :loading="policeDepartmentsLoading"
+                label="تعديل جهة المستخدم"
+                :items="policeDepartments"
+                item-value="name"
+                item-text="name"
+              ></v-combobox>
+            </template>
+          </v-edit-dialog>
+        </template>
+
         <template v-slot:item.role="props">
           <v-tooltip right>
             <template v-slot:activator="{ on }">
@@ -165,7 +188,7 @@
                     <v-autocomplete
                       v-model="props.item.role"
                       :return-object="true"
-                      :loading="loading"
+                      :loading="rolesLoading"
                       label="تعديل وظيفة المستخدم"
                       :items="roles"
                       item-value="name"
@@ -197,7 +220,7 @@ import UserActions from "@/components/UsersActions.vue";
 import PoliceDepartmentsModule from "@/store/modules/PoliceDepartments";
 import UsersModule from "@/store/modules/Users";
 import RolesModule from "@/store/modules/Roles";
-import { IUser, IRole } from "@/store/models";
+import { IUser, IRole, IPoliceDepartment } from "@/store/models";
 
 @Component({
   components: { UserActions }
@@ -214,12 +237,16 @@ export default class Users extends Vue {
   dialog = false;
   isNewUserValid = false;
 
-  get loading() {
-    return (
-      UsersModule.loading ||
-      RolesModule.loading ||
-      PoliceDepartmentsModule.loading
-    );
+  get usersLoading() {
+    return UsersModule.loading;
+  }
+
+  get rolesLoading() {
+    return RolesModule.loading;
+  }
+
+  get policeDepartmentsLoading() {
+    return PoliceDepartmentsModule.loading;
   }
 
   get newUser(): IUser {
@@ -234,7 +261,7 @@ export default class Users extends Vue {
     return RolesModule.roles;
   }
 
-  get policeDepartments() {
+  get policeDepartments(): IPoliceDepartment[] {
     return PoliceDepartmentsModule.policeDepartments;
   }
 
@@ -271,6 +298,11 @@ export default class Users extends Vue {
 
   onRoleEditSubmit(id: any, roleId: any) {
     if (roleId) UsersModule.update({ id, data: { roleId } });
+  }
+
+  onPoliceDepartmentEditSubmit(id: any, policeDepartmentName: any) {
+    if (policeDepartmentName)
+      UsersModule.update({ id, data: { policeDepartmentName } });
   }
 
   close() {

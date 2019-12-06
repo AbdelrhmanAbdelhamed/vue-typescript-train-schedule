@@ -5,7 +5,7 @@
       small
       link
       outlined
-      :to="{ name: `trains.run.details`, params: { train, id: train.id } }"
+      :to="{ name: `trains.run.details`, params: { id: train.id } }"
       >الرحلات</v-btn
     >
 
@@ -17,13 +17,13 @@
       v-if="line"
       :to="{
         name: `trains.line.stations`,
-        params: { train, line, lineId: line.id, id: train.id }
+        params: { lineId: line.id, id: train.id }
       }"
       >المواعيد</v-btn
     >
 
     <v-dialog
-      v-if="actions.delete && $can('delete', train)"
+      v-if="actions.delete && $can('delete', 'Train')"
       v-model="dialog"
       persistent
       max-width="290"

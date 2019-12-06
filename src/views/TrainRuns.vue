@@ -4,6 +4,48 @@
       <v-card-title>
         جميع الرحلات
         <v-spacer></v-spacer>
+        <v-menu
+          ref="searchDateMenu"
+          v-model="searchDateMenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+          class="d-print-none"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              :value="searchDateFormatted"
+              hide-details
+              clearable
+              readonly
+              label="استعلام بتاريخ الرحلة"
+              append-icon="mdi-calendar-search"
+              v-on="on"
+              @click:clear="search = ''"
+              class="d-print-none"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            scrollable
+            v-model="searchDate"
+            no-title
+            @input="onDaySearchInput"
+            class="d-print-none"
+          ></v-date-picker>
+        </v-menu>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-table-search"
+          label="استعلام بأفراد التأمين"
+          single-line
+          hide-details
+          clearable
+          @click:clear="searchDate = ''"
+          class="d-print-none"
+        ></v-text-field>
       </v-card-title>
       <v-data-table
         :loading="loading"
@@ -11,8 +53,8 @@
         :items="trainRuns"
         group-by="trainNumber"
         class="elevation-1"
-        disable-pagination
-        hide-default-footer
+        :search="search"
+        :custom-filter="filterTrainRuns"
       >
         <template
           v-slot:group.header="{ items: [trainGroup], headers, group, toggle }"
@@ -20,21 +62,21 @@
           <thead>
             <th class="pointer" @click="toggleGroup(trainGroup.train, toggle)">
               <span>
-                <v-icon>{{
-                  trainGroup.train.hide ? "mdi-plus" : "mdi-minus"
-                }}</v-icon>
+                <v-icon>
+                  {{ trainGroup.train.hide ? "mdi-plus" : "mdi-minus" }}
+                </v-icon>
               </span>
-              <v-chip class="pointer" color="info"
-                >قطار رقم:
-                {{ trainGroup.train.number | convertToArabic }}</v-chip
-              >
+              <v-chip class="pointer" color="info">
+                قطار رقم:
+                {{ trainGroup.train.number | convertToArabic }}
+              </v-chip>
             </th>
           </thead>
         </template>
 
-        <template v-slot:item.day="{ item }">{{
-          item.day | formatDayDate | convertToArabic
-        }}</template>
+        <template v-slot:item.day="{ item }">
+          {{ item.day | formatDayDate | convertToArabic }}
+        </template>
 
         <template v-slot:item.policePeople="{ item }">
           <div v-for="policePerson in item.policePeople" :key="policePerson.id">
@@ -57,6 +99,7 @@ import Component from "vue-class-component";
 
 import TrainsModule from "@/store/modules/Trains";
 import { ITrainRun } from "@/store/models";
+import { convertToArabic, formatDayDate } from "@/utils";
 
 @Component({
   components: {}
@@ -68,6 +111,9 @@ export default class TrainRuns extends Vue {
   ];
   dialog: boolean = false;
   isNewLineValid = false;
+  searchDate = "";
+  search = "";
+  searchDateMenu: boolean = false;
 
   get trainRuns() {
     return TrainsModule.trainRuns.map(trainRun => {
@@ -82,6 +128,44 @@ export default class TrainRuns extends Vue {
   toggleGroup(train: any, toggle: () => void) {
     train.hide = !train.hide;
     toggle();
+  }
+
+  onDaySearchInput(value: any) {
+    this.searchDateMenu = false;
+    this.search = this.searchDate;
+  }
+
+  filterTrainRuns(value: any, search: any, item: any) {
+    if (value != null && search != null) {
+      if (typeof value === "string" || typeof value === "number") {
+        return value.toString().indexOf(search) > -1;
+      } else {
+        let policePeople = value;
+        let indices = [];
+        for (let policePerson of policePeople) {
+          indices.push(policePerson.name.indexOf(search));
+          indices.push(policePerson.phoneNumber.indexOf(search));
+          indices.push(policePerson.policeDepartment.name.indexOf(search));
+          indices.push(policePerson.rank.name.indexOf(search));
+          indices.push(
+            policePerson.TrainRunPolicePerson.fromStation.name.indexOf(search)
+          );
+          indices.push(
+            policePerson.TrainRunPolicePerson.toStation.name.indexOf(search)
+          );
+        }
+        indices.push(item.trainNumber.toString().indexOf(search));
+        return indices.some(index => index > -1);
+      }
+    } else {
+      return false;
+    }
+  }
+
+  get searchDateFormatted() {
+    return this.searchDate
+      ? convertToArabic(formatDayDate(this.searchDate))
+      : "";
   }
 
   get loading() {

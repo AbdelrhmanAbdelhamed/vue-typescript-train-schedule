@@ -21,8 +21,6 @@
         group-by="lineName"
         class="elevation-1"
         :search="search"
-        disable-pagination
-        hide-default-footer
       >
         <template
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
@@ -43,6 +41,7 @@
 
         <template v-slot:item.number="props">
           <v-edit-dialog
+            lazy
             :return-value.sync="props.item.number"
             @save="onEditSubmit(props.item.id, props.item.number)"
           >
@@ -60,7 +59,7 @@
 
         <template v-slot:item.action="{ item }">
           <TrainActions
-            :actions="{ delete: true, details: true }"
+            :actions="{ delete: false, details: true }"
             :train="item"
             :line="item.line"
           />
@@ -79,7 +78,6 @@ import TrainActions from "@/components/TrainActions.vue";
 
 import TrainsModule from "@/store/modules/Trains";
 import UsersModule from "@/store/modules/Users";
-import LinesModule from "@/store/modules/Lines";
 
 import { ILine } from "@/store/models";
 
@@ -110,7 +108,7 @@ export default class Trains extends Vue {
   }
 
   get loading() {
-    return TrainsModule.loading || LinesModule.loading;
+    return TrainsModule.loading;
   }
 
   @Prop()
@@ -143,10 +141,6 @@ export default class Trains extends Vue {
     return trains;
   }
 
-  get lines() {
-    return LinesModule.lines;
-  }
-
   onNumberChange(value: any) {
     TrainsModule.updateNewTrain({ number: value });
   }
@@ -170,7 +164,6 @@ export default class Trains extends Vue {
 
   async beforeCreate() {
     TrainsModule.get();
-    LinesModule.getAll();
   }
 }
 </script>

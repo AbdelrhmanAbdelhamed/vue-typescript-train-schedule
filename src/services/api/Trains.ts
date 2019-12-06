@@ -67,6 +67,12 @@ export default class TrainsAPI {
       .then(response => response.data);
   }
 
+  static getRunsByTrainId(trainId: string) {
+    return axios
+      .get(`${TrainsAPI.END_POINT}/${trainId}/runs`)
+      .then(response => response.data);
+  }
+
   static addStation(id: string, data: any) {
     return axios
       .post(`${TrainsAPI.END_POINT}/${id}/stations`, data)

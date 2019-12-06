@@ -84,7 +84,30 @@ class StationsModule extends VuexModule implements IStationState {
   @Mutation
   updateStation({ id, data }: { id?: string; data?: any } = {}) {
     let station = this.stations.find(station => station.id == id);
-    if (station) station.name = data.name;
+    if (station) {
+      if (data.name) station.name = data.name;
+    }
+  }
+
+  @Mutation
+  updateLineStationOrder({
+    id,
+    lineId,
+    data
+  }: {
+    id: string;
+    lineId: string;
+    data: any;
+  }) {
+    if (data.stationOrder > 0) {
+      let station = this.stations.find(station => station.id == id);
+      if (station && station.lines && station.lines.length > 0) {
+        let line = station.lines.find(line => line.id == lineId);
+        if (line && line.LineStation) {
+          line.LineStation.stationOrder = data.stationOrder;
+        }
+      }
+    }
   }
 
   @Mutation
@@ -96,7 +119,7 @@ class StationsModule extends VuexModule implements IStationState {
   @Mutation
   removeLineStation({ id, lineId }: { id: string; lineId: string }) {
     const stationIndex = this.stations.findIndex(station => {
-      return station.id === id && station.line && station.line.id === lineId;
+      return station.id === id;
     });
     if (stationIndex > -1) {
       const station: IStation = this.stations[stationIndex];
@@ -105,6 +128,9 @@ class StationsModule extends VuexModule implements IStationState {
         if (lineIndex > -1) {
           station.lines.splice(lineIndex, 1);
         }
+      }
+      if (!station.lines || station.lines.length < 1) {
+        this.stations.splice(stationIndex, 1);
       }
     }
   }
@@ -157,6 +183,25 @@ class StationsModule extends VuexModule implements IStationState {
       this.toggleLoading();
       await StationsAPI.update(id, data);
       this.updateStation({ id, data });
+      this.toggleLoading();
+    }
+  }
+
+  @Action
+  async updateStationOrder({
+    id,
+    lineId,
+    data
+  }: {
+    id: string;
+    lineId: string;
+    data: any;
+  }) {
+    if (id && data && data.stationOrder > 0) {
+      this.toggleLoading();
+      await StationsAPI.updateStationOrder(id, lineId, data);
+      this.updateStation({ id, data });
+      this.updateLineStationOrder({ id, lineId, data });
       this.toggleLoading();
     }
   }

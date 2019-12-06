@@ -26,8 +26,8 @@
                         :value="station.LineStationTrain.arrivalTime"
                         @click:clear="onArrivalTimeChange(index, null)"
                         label="وقت الوصول"
+                        @input="onArrivalTimeChange(index, $event)"
                         prepend-icon="mdi-clock"
-                        readonly
                         clearable
                         v-on="on"
                       ></v-text-field>
@@ -58,8 +58,8 @@
                         :value="station.LineStationTrain.departureTime"
                         @click:clear="onDepartureTimeChange(index, null)"
                         label="وقت القيام"
+                        @input="onDepartureTimeChange(index, $event)"
                         prepend-icon="mdi-clock"
-                        readonly
                         v-on="on"
                         clearable
                       ></v-text-field>

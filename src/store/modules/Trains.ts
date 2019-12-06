@@ -170,6 +170,13 @@ class TrainsModule extends VuexModule implements ITrainState {
     if (data.stations) {
       Vue.set(TrainsModule.state.currentTrain, "stations", data.stations);
     }
+    if (data.trainRuns) {
+      this.currentTrain = {
+        ...this.currentTrain,
+        ...data.trainRuns[0].train
+      };
+      Vue.set(TrainsModule.state.currentTrain, "trainRuns", data.trainRuns);
+    }
   }
 
   @Mutation
@@ -352,6 +359,16 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
+  async getRunsByTrainId({ trainId }: { trainId: string }) {
+    const trainRuns = await TrainsAPI.getRunsByTrainId(trainId);
+    this.updateCurrentTrain({
+      data: {
+        trainRuns
+      }
+    });
+  }
+
+  @Action
   async create() {
     this.toggleLoading();
 
@@ -373,8 +390,7 @@ class TrainsModule extends VuexModule implements ITrainState {
               departureTime: null,
               isArrival: false,
               isDeprature: false,
-              createdAt: null,
-              updatedAt: null
+              lineStationId: station.LineStation!.id
             }
           };
         });
@@ -433,6 +449,7 @@ class TrainsModule extends VuexModule implements ITrainState {
     this.toggleLoading();
 
     if (this.currentTrain.id) {
+      this.newTrainRun.trainId = this.currentTrain.id;
       const trainRun: ITrainRun = await TrainsAPI.addRun(trainId, data);
       this.addTrainRun({ ...this.newTrainRun, ...trainRun });
     }

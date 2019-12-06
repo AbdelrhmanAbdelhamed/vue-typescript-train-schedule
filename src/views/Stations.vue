@@ -22,8 +22,6 @@
         group-by="lineName"
         class="elevation-1"
         :search="search"
-        disable-pagination
-        hide-default-footer
       >
         <template v-slot:top v-if="$can('create', 'Station')">
           <div class="mx-4 d-print-none">
@@ -114,13 +112,13 @@
               @click="toggleGroup(lineGroup.line, toggle)"
             >
               <span>
-                <v-icon>
-                  {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
-                </v-icon>
+                <v-icon>{{
+                  lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
+                }}</v-icon>
               </span>
-              <v-chip class="pointer" color="info">{{
-                lineGroup.line.name
-              }}</v-chip>
+              <v-chip class="pointer" color="info">
+                {{ lineGroup.line.name }}
+              </v-chip>
             </th>
           </thead>
         </template>
@@ -128,7 +126,7 @@
         <template v-slot:item.name="props">
           <v-edit-dialog
             :return-value.sync="props.item.name"
-            @save="onEditSubmit(props.item.id, props.item.name)"
+            @save="onEditNameSubmit(props.item.id, props.item.name)"
           >
             {{ props.item.name }}
             <template v-slot:input>
@@ -137,14 +135,32 @@
                 label="تعديل اسم المحطة"
                 single-line
                 v-if="$can('update', 'Station')"
-              >
-              </v-text-field>
+              ></v-text-field>
             </template>
           </v-edit-dialog>
         </template>
 
         <template v-slot:item.line.LineStation.stationOrder="{ item }">
-          {{ item.line.LineStation.stationOrder | convertToArabic }}
+          <v-edit-dialog
+            :return-value.sync="item.line.LineStation.stationOrder"
+            @save="
+              onEditOrderSubmit(
+                item.id,
+                item.line.id,
+                item.line.LineStation.stationOrder
+              )
+            "
+          >
+            {{ item.line.LineStation.stationOrder | convertToArabic }}
+            <template v-slot:input>
+              <v-text-field
+                v-model="item.line.LineStation.stationOrder"
+                label="تعديل ترتيب المحطة بالخط"
+                single-line
+                v-if="$can('update', 'Station')"
+              ></v-text-field>
+            </template>
+          </v-edit-dialog>
         </template>
 
         <template v-slot:item.action="{ item }">
@@ -203,7 +219,7 @@ export default class Stations extends Vue {
   }
 
   get loading() {
-    return StationsModule.loading || LinesModule.loading;
+    return StationsModule.loading;
   }
 
   get lines() {
@@ -259,13 +275,17 @@ export default class Stations extends Vue {
     this.close();
   }
 
-  onEditSubmit(id: any, name: any) {
+  onEditNameSubmit(id: any, name: any) {
     if (name) StationsModule.update({ id, data: { name } });
+  }
+
+  onEditOrderSubmit(id: any, lineId: any, stationOrder: any) {
+    if (stationOrder)
+      StationsModule.updateStationOrder({ id, lineId, data: { stationOrder } });
   }
 
   async beforeCreate() {
     await StationsModule.getAll();
-    await LinesModule.getAll();
   }
 }
 </script>

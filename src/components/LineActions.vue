@@ -6,14 +6,14 @@
       small
       link
       outlined
-      :to="{ name: `lines.stations`, params: { line, lineId: line.id } }"
+      :to="{ name: `lines.stations`, params: { lineId: line.id } }"
       >المحطات</v-btn
     >
     <v-btn
       color="primary"
       small
       link
-      :to="{ name: `lines.trains`, params: { line, lineId: line.id } }"
+      :to="{ name: `lines.trains`, params: { lineId: line.id } }"
       >القطارات</v-btn
     >
 

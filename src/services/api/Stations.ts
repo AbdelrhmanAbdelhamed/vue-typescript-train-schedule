@@ -26,6 +26,12 @@ export default class StationsAPI {
       .then(response => response.data);
   }
 
+  static updateStationOrder(id: string, lineId: string, data: any) {
+    return axios
+      .patch(`${StationsAPI.END_POINT}/${id}/lines/${lineId}`, data)
+      .then(response => response.data);
+  }
+
   static delete(id: string) {
     return axios
       .delete(`${StationsAPI.END_POINT}/${id}`)

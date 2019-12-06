@@ -47,11 +47,6 @@
           class="d-print-none"
         ></v-text-field>
       </v-card-title>
-      <v-card-subtitle v-if="train.line">
-        <v-chip color="success">
-          <strong>خط: {{ train.line.name }}</strong>
-        </v-chip>
-      </v-card-subtitle>
       <v-data-table
         fixed-header
         :loading="loading"
@@ -61,8 +56,6 @@
         class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"
-        disable-pagination
-        hide-default-footer
       >
         <template v-slot:top v-if="$can('create', 'TrainRun')">
           <div class="mx-4 d-print-none">
@@ -98,7 +91,6 @@
                                 :rules="[v => !!v || 'برجاء اختيار التاريخ']"
                                 required
                                 :value="newTrainRunDateFormatted"
-                                hide-details
                                 readonly
                                 label="تاريخ الرحلة"
                                 append-icon="mdi-calendar-search"
@@ -310,7 +302,7 @@
             {{ policePerson.rank.name }}
             / {{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
-            {{ policePerson.phoneNumber | convertToArabic }} من محطة:
+            {{ policePerson.phoneNumber | convertToArabic }} - من محطة:
             {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
             {{ policePerson.TrainRunPolicePerson.toStation.name }}
           </div>
@@ -343,12 +335,14 @@ import RanksModule from "@/store/modules/Ranks";
 
 import { ITrain, IPolicePerson } from "@/store/models";
 
-import { formatDayDate, convertToArabic } from "@/utils";
+import { formatDayDate, convertToArabic, convertToEnglish } from "@/utils";
 
 @Component({
   components: { TrainActions, TrainRunsActions }
 })
 export default class TrainDetails extends Vue {
+  convertToEnglish = convertToEnglish;
+
   headers = [
     { text: "تاريخ الرحلة", value: "day", sortable: true },
     { text: "أفراد التأمين", value: "policePeople", sortable: true },
@@ -358,7 +352,7 @@ export default class TrainDetails extends Vue {
   searchDateMenu: boolean = false;
   newTrainRunDateMenu: boolean = false;
   searchDate = "";
-  newTrainRunDate = moment().format("YYYY-MM-DD");
+  newTrainRunDate = "";
   isNewTrainRunValid = false;
   dialog = false;
   fromStation: string = "";
@@ -425,6 +419,12 @@ export default class TrainDetails extends Vue {
           indices.push(policePerson.phoneNumber.indexOf(search));
           indices.push(policePerson.policeDepartment.name.indexOf(search));
           indices.push(policePerson.rank.name.indexOf(search));
+          indices.push(
+            policePerson.TrainRunPolicePerson.fromStation.name.indexOf(search)
+          );
+          indices.push(
+            policePerson.TrainRunPolicePerson.toStation.name.indexOf(search)
+          );
         }
         return indices.some(index => index > -1);
       }
@@ -448,10 +448,6 @@ export default class TrainDetails extends Vue {
     this.search = this.searchDate;
   }
 
-  onDayNewTrainRunInput(value: any) {
-    this.newTrainRunDateMenu = false;
-  }
-
   onNewTrainRunDayChange(value: any) {
     TrainsModule.updateNewTrainRun({ day: value });
   }
@@ -471,27 +467,12 @@ export default class TrainDetails extends Vue {
   }
 
   async created() {
-    if (!this.$route.params.train && this.id) {
-      const train = await TrainsModule.getById(this.id);
-      if (train) {
-        TrainsModule.updateNewTrainRun({
-          trainId: train.id
-        });
-      }
-    } else if (this.$route.params.train) {
-      const train: any = this.$route.params.train;
-      TrainsModule.setCurrentTrain(train);
-      TrainsModule.updateNewTrainRun({
-        trainId: train.id,
-        train
-      });
+    if (this.id) {
+      await TrainsModule.getRunsByTrainId({ trainId: this.id });
     }
     PolicePeopleModule.getAll();
     RanksModule.getAll();
     PoliceDepartmentsModule.getAll();
-  }
-
-  beforeCreate() {
     StationsModule.getAll();
   }
 }

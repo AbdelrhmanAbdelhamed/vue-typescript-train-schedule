@@ -22,8 +22,8 @@
                   name="username"
                   prepend-icon="mdi-account"
                   type="text"
+                  @input="onUsernameChange"
                   :error-messages="usernameErrorMessage"
-                  @change="onUsernameChange"
                 />
 
                 <v-text-field
@@ -34,7 +34,7 @@
                   name="password"
                   prepend-icon="mdi-lock"
                   type="password"
-                  @change="onPasswordChange"
+                  @input="onPasswordChange"
                   :error-messages="passwordErrorMessage"
                 />
               </v-form>

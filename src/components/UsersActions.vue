@@ -29,7 +29,7 @@
                           :rules="[v => !!v || 'برجاء ادخال كلمة المرور']"
                           required
                           id="password"
-                          label="كلمة المرور"
+                          label="كلمة المرور الجديدة"
                           name="password"
                           prepend-icon="mdi-lock"
                           type="password"
@@ -64,7 +64,7 @@
             v-model="deleteUserDialog"
             persistent
             max-width="290"
-            v-if="$can('delete', user)"
+            v-if="$can('delete', 'User')"
           >
             <template v-slot:activator="{ on }">
               <v-icon color="error" v-on="on">mdi-delete</v-icon>

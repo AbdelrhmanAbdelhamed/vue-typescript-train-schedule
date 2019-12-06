@@ -2,19 +2,22 @@
   <div class="LineTrainTimeLine">
     <v-skeleton-loader
       class="mx-auto"
-      max-width="800"
-      type="card@3, article@3"
-      v-if="
-        loading || !trainTimelineStations || trainTimelineStations.length <= 0
-      "
+      max-width="600"
+      type="card@3"
+      v-if="trainsLoading || !trainTimelineStations"
     ></v-skeleton-loader>
-    <v-container>
+    <v-container v-if="!trainsLoading && !!trainTimelineStations">
       <v-row no-gutters justify="center">
-        <v-card class="elevation-2" color="info" dark>
-          <v-card-title class="title">
+        <v-card
+          :loading="linesLoading ? 'secondary' : false"
+          class="elevation-2"
+          color="info"
+          dark
+        >
+          <v-card-title v-if="!linesLoading && line" class="title">
             <div>خط {{ line.name }}</div>
           </v-card-title>
-          <v-card-subtitle v-if="line" class="pt-1">
+          <v-card-subtitle class="pt-1">
             <div class="text-center">
               <strong
                 >مسار قطار رقم {{ train.number | convertToArabic }}</strong
@@ -32,9 +35,10 @@
               </template>
               <v-card>
                 <v-card-title class="pa-10">
-                  <span class="headline"
-                    >تعديل مسار قطار رقم {{ train.number }}</span
-                  >
+                  <span class="headline">
+                    تعديل مسار قطار رقم
+                    <span class="ma-2">{{ train.number }}</span>
+                  </span>
                   <span class="headline">بخط {{ line.name }}</span>
                 </v-card-title>
 
@@ -64,7 +68,11 @@
     </v-container>
 
     <v-timeline
-      v-if="trainTimelineStations && trainTimelineStations.length > 0"
+      v-if="
+        !trainsLoading &&
+          !!trainTimelineStations &&
+          trainTimelineStations.length > 0
+      "
     >
       <v-timeline-item
         v-for="(station, index) in trainTimelineStations"
@@ -75,8 +83,19 @@
         <v-card class="elevation-2" color="primary" dark>
           <v-card-title class="headline">
             {{ station.name }}
-            <div v-if="index === 0" class="mx-2">(محطة القيام بالخط)</div>
-            <div v-if="index === trainTimelineStations.length - 1" class="mx-2">
+            <div
+              v-if="station.LineStationTrain.departureTime && index === 0"
+              class="mx-2"
+            >
+              (محطة القيام بالخط)
+            </div>
+            <div
+              v-if="
+                station.LineStationTrain.arrivalTime &&
+                  index === trainTimelineStations.length - 1
+              "
+              class="mx-2"
+            >
               (محطة الوصول بالخط)
             </div>
           </v-card-title>
@@ -84,14 +103,14 @@
             <v-container>
               <v-row no-gutters>
                 <v-col cols="12" v-if="station.LineStationTrain.arrivalTime">
-                  <strong
-                    >وصول :
+                  <strong>
+                    وصول :
                     {{
                       station.LineStationTrain.arrivalTime
                         | formatTime
                         | convertToArabic
-                    }}</strong
-                  >
+                    }}
+                  </strong>
                 </v-col>
                 <v-col cols="12" v-if="station.LineStationTrain.departureTime">
                   <v-icon
@@ -101,14 +120,14 @@
                     "
                     >mdi-arrow-left</v-icon
                   >
-                  <strong
-                    >قيام :
+                  <strong>
+                    قيام :
                     {{
                       station.LineStationTrain.departureTime
                         | formatTime
                         | convertToArabic
-                    }}</strong
-                  >
+                    }}
+                  </strong>
                 </v-col>
               </v-row>
             </v-container>
@@ -120,6 +139,19 @@
         </v-card>
       </v-timeline-item>
     </v-timeline>
+    <v-row
+      v-if="
+        !trainsLoading &&
+          (!trainTimelineStations ||
+            (!!trainTimelineStations && trainTimelineStations.length <= 0))
+      "
+      align="center"
+      justify="center"
+    >
+      <v-card color="info" dark>
+        <v-card-title class="title dark">لا توجد بيانات متاحة</v-card-title>
+      </v-card>
+    </v-row>
   </div>
 </template>
 
@@ -132,7 +164,7 @@ import EditLineStationsForm from "@/components/EditLineStationsForm.vue";
 
 import LinesModule from "@/store/modules/Lines";
 import TrainsModule from "@/store/modules/Trains";
-import { ITrain, ILine } from "@/store/models";
+import { ITrain, ILine, IStation } from "@/store/models";
 
 @Component({
   components: { EditLineStationsForm }
@@ -140,8 +172,12 @@ import { ITrain, ILine } from "@/store/models";
 export default class LineTrainTimeLine extends Vue {
   dialog = false;
 
-  get loading() {
-    return LinesModule.loading || TrainsModule.loading;
+  get trainsLoading() {
+    return TrainsModule.loading;
+  }
+
+  get linesLoading() {
+    return LinesModule.loading;
   }
 
   @Prop()
@@ -159,28 +195,60 @@ export default class LineTrainTimeLine extends Vue {
   }
 
   get editedLineStations() {
-    if (TrainsModule.currentTrain.stations) {
-      return TrainsModule.currentTrain.stations!.map(station => ({
-        LineStation: { ...station.LineStation },
-        LineStationTrain: { ...station.LineStationTrain },
-        createdAt: station.createdAt,
-        id: station.id,
-        lineStationId: station.lineStationId,
-        name: station.name,
-        updatedAt: station.updatedAt
-      }));
+    if (LinesModule.currentLine.stations) {
+      const stations: any = [...LinesModule.currentLine.stations].map(
+        station => {
+          if (TrainsModule.currentTrain.stations) {
+            const trainStation: any = TrainsModule.currentTrain.stations.find(
+              trainStation => trainStation.id === station.id
+            );
+            if (trainStation) {
+              return {
+                LineStation: { ...trainStation.LineStation },
+                LineStationTrain: { ...trainStation.LineStationTrain },
+                createdAt: trainStation.createdAt,
+                id: trainStation.id,
+                lineStationId: trainStation.lineStationId,
+                name: trainStation.name,
+                updatedAt: trainStation.updatedAt
+              };
+            } else {
+              return {
+                ...station,
+                lineStationId: station.LineStation!.id,
+                LineStationTrain: {
+                  lineId: this.line.id || this.lineId,
+                  arrivalTime: null,
+                  departureTime: null,
+                  isArrival: false,
+                  isDeprature: false,
+                  lineStationId: station.LineStation!.id
+                }
+              };
+            }
+          }
+        }
+      );
+      return stations;
     }
     return [];
   }
 
   get trainTimelineStations() {
     if (TrainsModule.currentTrain.stations) {
-      return TrainsModule.currentTrain.stations.filter(station => {
-        return (
-          station.LineStationTrain!.arrivalTime !== null ||
-          station.LineStationTrain!.departureTime !== null
-        );
-      });
+      return TrainsModule.currentTrain.stations
+        .filter(station => {
+          return (
+            station.LineStationTrain!.arrivalTime !== null ||
+            station.LineStationTrain!.departureTime !== null
+          );
+        })
+        .sort((stationA: IStation, stationB: IStation) => {
+          return (
+            stationA.LineStation!.stationOrder -
+            stationB.LineStation!.stationOrder
+          );
+        });
     }
     return [];
   }
@@ -198,22 +266,14 @@ export default class LineTrainTimeLine extends Vue {
   }
 
   async created() {
-    if (!this.$route.params.line && this.lineId) {
-      const line = await LinesModule.getById(this.lineId);
-    } else if (this.$route.params.line) {
-      const line: any = this.$route.params.line;
-      LinesModule.setCurrentLine(line);
+    if (this.id && this.lineId) {
+      await TrainsModule.getById(this.id);
+      await TrainsModule.getTrainLineStations({
+        id: this.id!,
+        lineId: this.lineId!
+      });
+      await LinesModule.getById(this.lineId);
     }
-    if (!this.$route.params.train && this.id) {
-      const train = await TrainsModule.getById(this.id);
-    } else if (this.$route.params.train) {
-      const train: any = this.$route.params.train;
-      TrainsModule.setCurrentTrain(train);
-    }
-    await TrainsModule.getTrainLineStations({
-      id: this.train.id!,
-      lineId: this.line.id!
-    });
   }
 }
 </script>

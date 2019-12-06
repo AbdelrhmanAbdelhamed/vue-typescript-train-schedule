@@ -23,15 +23,15 @@
         disable-pagination
         hide-default-footer
       >
-        <template v-slot:top v-if="$can('create', 'Train')">
+        <template v-slot:top v-if="line && $can('create', 'Train')">
           <NewTrainForm :line="line" />
         </template>
 
-        <template v-slot:item.number="{ item }">{{
-          item.number | convertToArabic
-        }}</template>
+        <template v-slot:item.number="{ item }">
+          {{ item.number | convertToArabic }}
+        </template>
 
-        <template v-slot:item.action="{ item }">
+        <template v-if="line" v-slot:item.action="{ item }">
           <TrainActions
             :actions="{ delete: true, details: true }"
             :train="item"
@@ -76,7 +76,7 @@ export default class Trains extends Vue {
   lineId!: string;
 
   get line() {
-    return (this.$route.params.line || LinesModule.currentLine) as ILine;
+    return LinesModule.currentLine;
   }
 
   get trains() {
@@ -84,11 +84,8 @@ export default class Trains extends Vue {
   }
 
   async created() {
-    if (!this.$route.params.line && this.lineId) {
-      const line = await LinesModule.getById(this.lineId);
-    } else if (this.$route.params.line) {
-      const line: any = this.$route.params.line;
-      LinesModule.setCurrentLine(line);
+    if (this.lineId) {
+      await LinesModule.getById(this.lineId);
     }
     if (LinesModule.currentLine.stations) {
       const stations = [...LinesModule.currentLine.stations].map(station => {
@@ -101,8 +98,7 @@ export default class Trains extends Vue {
             departureTime: null,
             isArrival: false,
             isDeprature: false,
-            createdAt: null,
-            updatedAt: null
+            lineStationId: station.LineStation!.id
           }
         };
       });

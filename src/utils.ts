@@ -3,7 +3,7 @@ import moment from "moment";
 moment.locale("");
 
 export const getDayOfWeek = (date: Date | string) => {
-  let dayOfWeek = new Date(date).getDay();
+  let dayOfWeek = new Date(convertToEnglish(date)).getDay();
   return isNaN(dayOfWeek)
     ? null
     : ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"][
@@ -13,7 +13,7 @@ export const getDayOfWeek = (date: Date | string) => {
 
 export const formatDayDate = (value: Date | string) => {
   if (value) {
-    let date = moment(String(value)).format("YYYY/MM/DD");
+    let date = moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
     return `${getDayOfWeek(date)} ${date}`;
   }
 };
@@ -21,7 +21,7 @@ export const formatDayDate = (value: Date | string) => {
 export const formatTime = (value: Date | string) => {
   moment.locale("ar");
   if (value) {
-    let date = moment(value, "HH:mm:ss").format("hh:mm A");
+    let date = moment(convertToEnglish(value), "HH:mm:ss").format("hh:mm A");
     return date;
   }
 };
@@ -39,6 +39,12 @@ export function convertToArabic(value: any): any {
     }
   }
   return chars.join("");
+}
+
+export function convertToEnglish(value: any): any {
+  return value.replace(/[٠١٢٣٤٥٦٧٨٩]/g, (d: any) => {
+    return d.charCodeAt(0) - 1632;
+  });
 }
 
 export function observerClean(obj: any) {

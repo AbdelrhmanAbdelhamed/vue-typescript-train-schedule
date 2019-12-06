@@ -87,13 +87,9 @@
           </v-edit-dialog>
         </template>
 
-        <template v-slot:item.stations.length="{ item }">
-          {{ item.stations.length | convertToArabic }}
-        </template>
-
-        <template v-slot:item.trains.length="{ item }">
-          {{ item.trains.length | convertToArabic }}
-        </template>
+        <template v-slot:item.stationCount="{ item }">{{
+          convertToArabic(item.stationCount | 0)
+        }}</template>
 
         <template v-slot:item.action="{ item }">
           <LineActions :line="item" />
@@ -114,19 +110,24 @@ import LinesModule from "@/store/modules/Lines";
 
 import { ILine } from "@/store/models";
 
+import { convertToArabic } from "@/utils";
+
 @Component({
   components: { LineActions }
 })
 export default class Lines extends Vue {
   headers = [
     { text: "اسم الخط", value: "name", sortable: true },
-    { text: "عدد المحطات", value: "stations.length", sortable: true },
-    { text: "عدد القطارات", value: "trains.length", sortable: true },
+    { text: "عدد المحطات", value: "stationCount", sortable: true },
     { text: "", value: "action", sortable: false }
   ];
   search = "";
   dialog: boolean = false;
   isNewLineValid = false;
+
+  convertToArabic(value: any) {
+    return convertToArabic(value);
+  }
 
   get newLine() {
     return LinesModule.newLine;

@@ -32,9 +32,10 @@ axios.interceptors.response.use(
   },
   async error => {
     if (error.response.status === 401 || error.response.status === 403) {
-      await UsersModule.logout();
-      if (router.currentRoute.name !== "login")
+      if (router.currentRoute.name !== "login") {
+        await UsersModule.logout();
         router.replace({ name: "login" });
+      }
     }
     nprogress.done();
     throw error;

@@ -10,9 +10,10 @@
         <v-icon class="mr-10" color="error" v-on="on">mdi-delete</v-icon>
       </template>
       <v-card>
-        <v-card-title class="headline"
-          >مسح محطة {{ station.name }}</v-card-title
-        >
+        <v-card-title class="headline">
+          <span>مسح محطة {{ station.name }}</span>
+          <span>الخاصة بخط {{ station.lineName }}</span>
+        </v-card-title>
         <v-card-text>هل أنت متأكد انك تريد مسح المحطة؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -41,17 +42,10 @@ export default class LineActions extends Vue {
   dialog = false;
 
   onDeleteClicked() {
-    const count = StationsModule.stations.filter(
-      station => station.id === this.station.id
-    ).length;
-    if (count > 1) {
-      StationsModule.deleteLine({
-        id: this.station.id,
-        lineId: this.station.line.id
-      });
-    } else {
-      StationsModule.delete(this.station.id);
-    }
+    StationsModule.deleteLine({
+      id: this.station.id,
+      lineId: this.station.line.id
+    });
     this.dialog = false;
   }
 }

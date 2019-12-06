@@ -68,12 +68,12 @@
                               <template v-slot:activator="{ on }">
                                 <v-text-field
                                   :value="station.LineStationTrain.arrivalTime"
+                                  @input="onArrivalTimeChange(index, $event)"
                                   @click:clear="
                                     onArrivalTimeChange(index, null)
                                   "
                                   label="وقت الوصول"
                                   prepend-icon="mdi-clock"
-                                  readonly
                                   clearable
                                   v-on="on"
                                 ></v-text-field>
@@ -104,12 +104,12 @@
                                   :value="
                                     station.LineStationTrain.departureTime
                                   "
+                                  @input="onDepartureTimeChange(index, $event)"
                                   @click:clear="
                                     onDepartureTimeChange(index, null)
                                   "
                                   label="وقت القيام"
                                   prepend-icon="mdi-clock"
-                                  readonly
                                   v-on="on"
                                   clearable
                                 ></v-text-field>
