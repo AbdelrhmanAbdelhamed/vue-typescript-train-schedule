@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import { cloneDeep } from "lodash";
 import {
   getModule,
   Module,
@@ -462,7 +462,7 @@ class TrainsModule extends VuexModule implements ITrainState {
         trainId,
         this.newTrainRun
       );
-      this.addTrainRun({ ..._.cloneDeep(this.newTrainRun), ...trainRun });
+      this.addTrainRun({ ...cloneDeep(this.newTrainRun), ...trainRun });
     }
     this.toggleLoading();
   }
