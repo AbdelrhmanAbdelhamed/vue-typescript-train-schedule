@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {
   getModule,
   Module,
@@ -73,7 +74,7 @@ class TrainsModule extends VuexModule implements ITrainState {
 
   createEmptyTrainRun(): ITrainRun {
     return {
-      day: new Date().toLocaleDateString(),
+      day: "",
       policePeople: [],
       train: this.currentTrain,
       trainId: this.currentTrain ? this.currentTrain.id : ""
@@ -106,7 +107,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Mutation
   resetNewTrainRun() {
     this.newTrainRun = {
-      day: new Date().toLocaleDateString(),
+      day: "",
       policePeople: [
         {
           name: "",
@@ -452,13 +453,16 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Action
-  async createTrainRun({ trainId, data }: { trainId: string; data: any }) {
+  async createTrainRun({ trainId }: { trainId: string }) {
     this.toggleLoading();
 
     if (this.currentTrain.id) {
       this.newTrainRun.trainId = this.currentTrain.id;
-      const trainRun: ITrainRun = await TrainsAPI.addRun(trainId, data);
-      this.addTrainRun({ ...this.newTrainRun, ...trainRun });
+      const trainRun: ITrainRun = await TrainsAPI.addRun(
+        trainId,
+        this.newTrainRun
+      );
+      this.addTrainRun({ ..._.cloneDeep(this.newTrainRun), ...trainRun });
     }
     this.toggleLoading();
   }

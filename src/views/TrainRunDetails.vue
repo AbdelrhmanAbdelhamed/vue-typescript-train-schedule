@@ -385,7 +385,7 @@ export default class TrainDetails extends Vue {
   }
 
   get train() {
-    return (this.$route.params.train || TrainsModule.currentTrain) as ITrain;
+    return TrainsModule.currentTrain;
   }
 
   get searchDateFormatted() {
@@ -459,8 +459,7 @@ export default class TrainDetails extends Vue {
   save() {
     if (this.train.id) {
       TrainsModule.createTrainRun({
-        trainId: this.train.id,
-        data: this.newTrainRun
+        trainId: this.train.id
       });
     }
     this.close();

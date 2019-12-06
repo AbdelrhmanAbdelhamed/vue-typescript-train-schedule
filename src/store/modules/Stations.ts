@@ -9,7 +9,6 @@ import {
 import store from "..";
 import StationsAPI from "@/services/api/Stations";
 import { IStation, IStationState, ILine } from "../models";
-import Trains from "./Trains";
 
 @Module({ dynamic: true, namespaced: true, store, name: StationsAPI.END_POINT })
 class StationsModule extends VuexModule implements IStationState {
