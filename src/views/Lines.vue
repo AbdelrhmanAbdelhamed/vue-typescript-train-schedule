@@ -19,8 +19,6 @@
         :items="lines"
         class="elevation-1"
         :search="search"
-        disable-pagination
-        hide-default-footer
       >
         <template v-slot:top v-if="$can('create', 'Line')">
           <div class="mx-4">

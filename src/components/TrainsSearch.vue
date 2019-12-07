@@ -73,8 +73,6 @@
             :headers="headers"
             :items="trains"
             :search="search"
-            disable-pagination
-            hide-default-footer
           >
             <template v-slot:item.number="{ item }">{{
               item.number | convertToArabic
