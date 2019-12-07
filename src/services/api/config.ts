@@ -9,7 +9,7 @@ import UsersAPI from "./Users";
 
 axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
 
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 if (token) {
   AbilitiesModule.getRulesFromToken(token);
   AbilitiesModule.updateAbility();

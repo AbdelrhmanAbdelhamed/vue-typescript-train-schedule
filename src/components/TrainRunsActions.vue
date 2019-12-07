@@ -13,13 +13,13 @@
       <v-card>
         <v-card-title class="headline">
           <span>
-            مسح رحلة {{ trainRun.day | formatDayDate | convertToArabic }}
+            مسح خدمة {{ trainRun.day | formatDayDate | convertToArabic }}
           </span>
           <v-chip color="error" class="ma-2">
             {{ ` الخاصة بقطار رقم:   ${train.number}` }}
           </v-chip>
         </v-card-title>
-        <v-card-text>هل أنت متأكد انك تريد مسح الرحلة؟!</v-card-text>
+        <v-card-text>هل أنت متأكد انك تريد مسح الخدمة؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>

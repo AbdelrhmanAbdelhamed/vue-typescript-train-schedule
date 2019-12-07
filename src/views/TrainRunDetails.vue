@@ -20,7 +20,7 @@
               hide-details
               clearable
               readonly
-              label="استعلام بتاريخ الرحلة"
+              label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
               v-on="on"
               @click:clear="search = ''"
@@ -64,12 +64,12 @@
             <v-dialog v-model="dialog" max-width="1000px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on"
-                  >اضافة رحلة جديد</v-btn
+                  >اضافة خدمة جديد</v-btn
                 >
               </template>
               <v-card>
                 <v-card-title>
-                  <span class="headline">اضافة رحلة جديد</span>
+                  <span class="headline">اضافة خدمة جديد</span>
                 </v-card-title>
 
                 <v-card-text>
@@ -93,7 +93,7 @@
                                 :value="newTrainRunDateFormatted"
                                 readonly
                                 :error-messages="newTrainRunDateErrorMessage"
-                                label="تاريخ الرحلة"
+                                label="تاريخ الخدمة"
                                 append-icon="mdi-calendar-search"
                                 v-on="on"
                               ></v-text-field>
@@ -345,7 +345,7 @@ export default class TrainDetails extends Vue {
   convertToEnglish = convertToEnglish;
 
   headers = [
-    { text: "تاريخ الرحلة", value: "day", sortable: true },
+    { text: "تاريخ الخدمة", value: "day", sortable: true },
     { text: "أفراد التأمين", value: "policePeople", sortable: true },
     { text: "", value: "action", sortable: false }
   ];

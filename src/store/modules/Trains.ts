@@ -192,13 +192,11 @@ class TrainsModule extends VuexModule implements ITrainState {
     if (data.trainRuns) {
       if (data.trainRuns instanceof Array && data.trainRuns.length > 0) {
         this.currentTrain = {
-          ...this.currentTrain,
           ...data.trainRuns[0].train
         };
         Vue.set(TrainsModule.state.currentTrain, "trainRuns", data.trainRuns);
       } else if (data.trainRuns.train) {
         this.currentTrain = {
-          ...this.currentTrain,
           ...data.trainRuns.train
         };
       }
@@ -402,6 +400,9 @@ class TrainsModule extends VuexModule implements ITrainState {
         const train: ITrain = await TrainsAPI.create({
           ...this.newTrain
         });
+        if (train.id) {
+          this.removeTrain(train.id);
+        }
         this.pushTrain({ ...this.newTrain, ...train });
         LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
 
@@ -495,7 +496,7 @@ class TrainsModule extends VuexModule implements ITrainState {
       if (err.response && err.response.status === 409) {
         this.updateErrorMessage({
           newTrainRunDateErrorMessage:
-            "يوجد رحلة بنفس التاريخ لهذا القطار بالفعل"
+            "يوجد خدمة بنفس التاريخ لهذا القطار بالفعل"
         });
       }
     }

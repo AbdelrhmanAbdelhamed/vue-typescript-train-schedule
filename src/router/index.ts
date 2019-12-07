@@ -185,7 +185,7 @@ const routes: RouteConfig[] = [
     name: "trainRuns",
     path: "/runs",
     meta: {
-      nameArabic: "الرحلات",
+      nameArabic: "خدمات التأمين",
       visible: false,
       icon: "mdi-car-estate",
       resource: "TrainRun",

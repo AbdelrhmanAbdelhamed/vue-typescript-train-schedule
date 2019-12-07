@@ -2,7 +2,7 @@
   <div class="trainRuns">
     <v-card>
       <v-card-title>
-        جميع الرحلات
+        جميع الخدمات
         <v-spacer></v-spacer>
         <v-menu
           ref="searchDateMenu"
@@ -20,7 +20,7 @@
               hide-details
               clearable
               readonly
-              label="استعلام بتاريخ الرحلة"
+              label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
               v-on="on"
               @click:clear="search = ''"
@@ -106,7 +106,7 @@ import { convertToArabic, formatDayDate } from "@/utils";
 })
 export default class TrainRuns extends Vue {
   headers = [
-    { text: "تاريخ الرحلة", value: "day", sortable: true },
+    { text: "تاريخ الخدمة", value: "day", sortable: true },
     { text: "أفراد التأمين", value: "policePeople", sortable: true }
   ];
   dialog: boolean = false;

@@ -6,7 +6,7 @@
       link
       outlined
       :to="{ name: `trains.run.details`, params: { id: train.id } }"
-      >الرحلات</v-btn
+      >الخدمات</v-btn
     >
 
     <v-btn

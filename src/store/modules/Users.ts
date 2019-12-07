@@ -21,10 +21,10 @@ import Vue from "vue";
 })
 class UsersModule extends VuexModule implements IUserState {
   currentUser: IUser = {
-    fullName: localStorage.getItem("fullName") || "",
+    fullName: sessionStorage.getItem("fullName") || "",
     username: "",
     password: "",
-    token: localStorage.getItem("token") || "",
+    token: sessionStorage.getItem("token") || "",
     trains: [],
     policeDepartment: {
       name: ""
@@ -131,8 +131,8 @@ class UsersModule extends VuexModule implements IUserState {
     this.setLoading(true);
     try {
       const { user, token } = await UsersAPI.login({ username, password });
-      localStorage.setItem("token", token);
-      localStorage.setItem("fullName", user.fullName);
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("fullName", user.fullName);
       UsersAPI.setAuthorizationHeader(token);
       user.token = token;
       AbilitiesModule.getRulesFromToken(token);
@@ -153,8 +153,8 @@ class UsersModule extends VuexModule implements IUserState {
 
   @MutationAction
   async logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("fullName");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("fullName");
     UsersAPI.clearAuthorizationHeader();
     const currentUser: IUser = {
       username: "",
@@ -191,8 +191,8 @@ class UsersModule extends VuexModule implements IUserState {
       this.newUser.password !== "" &&
       this.newUser.fullName !== ""
     ) {
-      await UsersAPI.create(this.newUser);
-      this.createUser({ ...this.newUser });
+      const user = await UsersAPI.create(this.newUser);
+      this.createUser({ ...this.newUser, ...user });
     }
     this.setLoading(false);
   }
