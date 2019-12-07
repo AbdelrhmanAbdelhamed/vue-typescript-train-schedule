@@ -418,7 +418,7 @@ export default class TrainDetails extends Vue {
         return value.toString().indexOf(search) > -1;
       } else {
         let policePeople = value;
-        let indices = [];
+        let indices: any[] = [];
         for (let policePerson of policePeople) {
           indices.push(policePerson.name.indexOf(search));
           indices.push(policePerson.phoneNumber.indexOf(search));

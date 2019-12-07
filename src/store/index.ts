@@ -18,6 +18,9 @@ export interface IRootState {
   policePeople: IPolicePersonState;
   users: IUserState;
   abilities: IAbilityState;
+  idleVue: {
+    isIdle: boolean;
+  };
 }
 
 export default new Vuex.Store<IRootState>({});

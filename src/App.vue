@@ -37,6 +37,7 @@ import UsersModule from "@/store/modules/Users";
 })
 export default class App extends Vue {
   drawer = true;
+
   get loggedIn() {
     return UsersModule.loggedIn;
   }
@@ -45,14 +46,31 @@ export default class App extends Vue {
     return UsersModule.currentUser.fullName;
   }
 
+  private async logout() {
+    if (this.$router.currentRoute.name !== "login") {
+      await UsersModule.logout();
+      this.$router.replace({ name: "login" });
+    }
+  }
+
   async onLogOutClick() {
-    await UsersModule.logout();
-    this.$router.replace({ name: "login" });
+    await this.logout();
+  }
+
+  created() {
+    this.$store.watch(
+      () => this.$store.state.idleVue.isIdle,
+      async isIdle => {
+        if (isIdle) {
+          await this.logout();
+        }
+      }
+    );
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 #nprogress .bar {
   background: var(--v-primary-base) !important;
 }

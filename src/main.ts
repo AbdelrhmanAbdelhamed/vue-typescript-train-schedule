@@ -13,6 +13,8 @@ import "./filters";
 import "./services/api/config"; // init config
 
 import "./plugins/abilities";
+import "./plugins/IdleVue";
+
 Vue.config.productionTip = false;
 
 new Vue({
