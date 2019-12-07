@@ -92,6 +92,7 @@
                                 required
                                 :value="newTrainRunDateFormatted"
                                 readonly
+                                :error-messages="newTrainRunDateErrorMessage"
                                 label="تاريخ الرحلة"
                                 append-icon="mdi-calendar-search"
                                 v-on="on"
@@ -289,13 +290,13 @@
           </div>
         </template>
 
-        <template v-slot:item.id="{ item }">{{
-          item.id | convertToArabic
-        }}</template>
+        <template v-slot:item.id="{ item }">
+          {{ item.id | convertToArabic }}
+        </template>
 
-        <template v-slot:item.day="{ item }">{{
-          item.day | formatDayDate | convertToArabic
-        }}</template>
+        <template v-slot:item.day="{ item }">
+          {{ item.day | formatDayDate | convertToArabic }}
+        </template>
 
         <template v-slot:item.policePeople="{ item }">
           <div v-for="policePerson in item.policePeople" :key="policePerson.id">
@@ -400,6 +401,10 @@ export default class TrainDetails extends Vue {
       : "";
   }
 
+  get newTrainRunDateErrorMessage() {
+    return TrainsModule.newTrainRunDateErrorMessage;
+  }
+
   addPolicePerson() {
     TrainsModule.addPolicePerson();
   }
@@ -449,6 +454,9 @@ export default class TrainDetails extends Vue {
   }
 
   onNewTrainRunDayChange(value: any) {
+    TrainsModule.updateErrorMessage({
+      newTrainRunDateErrorMessage: null
+    });
     TrainsModule.updateNewTrainRun({ day: value });
   }
 
@@ -456,13 +464,15 @@ export default class TrainDetails extends Vue {
     this.dialog = false;
   }
 
-  save() {
+  async save() {
     if (this.train.id) {
-      TrainsModule.createTrainRun({
+      await TrainsModule.createTrainRun({
         trainId: this.train.id
       });
     }
-    this.close();
+    if (this.newTrainRunDateErrorMessage === null) {
+      this.close();
+    }
   }
 
   async created() {

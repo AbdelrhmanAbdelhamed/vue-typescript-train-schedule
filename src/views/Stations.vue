@@ -15,7 +15,7 @@
         ></v-text-field>
       </v-card-title>
       <v-data-table
-        :loading="loading"
+        :loading="stationsLoading"
         :headers="headers"
         :items="stations"
         item-key="id+line.name"
@@ -46,7 +46,7 @@
                           <v-combobox
                             :rules="[v => !!v || 'برجاء ادخال أو اختيار الاسم']"
                             required
-                            :loading="loading"
+                            :loading="stationsLoading"
                             @input="onNameChange"
                             label="اسم المحطة"
                             :items="stations"
@@ -61,7 +61,7 @@
                             @input="onLineNameChange"
                             :rules="[v => !!v || 'برجاء اختيار الخط']"
                             required
-                            :loading="loading"
+                            :loading="linesLoading"
                             label="الخط التابعة له المحطة"
                             :items="lines"
                             return-object
@@ -79,6 +79,7 @@
                             @input="onLineStationOrderChange"
                             v-on:keypress="checkIfNotNumber($event)"
                             label="ترتيب المحطة"
+                            :error-messages="newStationOrderErrorMessage"
                             prepend-icon="mdi-reorder-horizontal"
                           ></v-text-field>
                         </v-col>
@@ -112,13 +113,13 @@
               @click="toggleGroup(lineGroup.line, toggle)"
             >
               <span>
-                <v-icon>{{
-                  lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
-                }}</v-icon>
+                <v-icon>
+                  {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
+                </v-icon>
               </span>
-              <v-chip class="pointer" color="info">
-                {{ lineGroup.line.name }}
-              </v-chip>
+              <v-chip class="pointer" color="info">{{
+                lineGroup.line.name
+              }}</v-chip>
             </th>
           </thead>
         </template>
@@ -218,8 +219,16 @@ export default class Stations extends Vue {
     return StationsModule.newStation;
   }
 
-  get loading() {
+  get stationsLoading() {
     return StationsModule.loading;
+  }
+
+  get linesLoading() {
+    return LinesModule.loading;
+  }
+
+  get newStationOrderErrorMessage() {
+    return StationsModule.newStationOrderErrorMessage;
   }
 
   get lines() {
@@ -259,6 +268,9 @@ export default class Stations extends Vue {
   }
 
   onLineStationOrderChange(value: any) {
+    StationsModule.updateErrorMessage({
+      newStationOrderErrorMessage: null
+    });
     StationsModule.updateNewStation({ stationOrder: value });
   }
 
@@ -270,9 +282,11 @@ export default class Stations extends Vue {
     this.dialog = false;
   }
 
-  save() {
-    StationsModule.create();
-    this.close();
+  async save() {
+    await StationsModule.create();
+    if (this.newStationOrderErrorMessage === null) {
+      this.close();
+    }
   }
 
   onEditNameSubmit(id: any, name: any) {
@@ -286,6 +300,7 @@ export default class Stations extends Vue {
 
   async beforeCreate() {
     await StationsModule.getAll();
+    await LinesModule.getAll();
   }
 }
 </script>

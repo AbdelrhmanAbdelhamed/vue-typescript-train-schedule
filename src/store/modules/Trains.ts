@@ -60,6 +60,24 @@ class TrainsModule extends VuexModule implements ITrainState {
   trainRuns: ITrainRun[] = [];
   loading: boolean = false;
 
+  newTrainRunDateErrorMessage = null;
+  newTrainNumberErrorMessage = null;
+
+  @Mutation
+  updateErrorMessage(data: any) {
+    if (
+      data.newTrainRunDateErrorMessage ||
+      data.newTrainRunDateErrorMessage === null
+    )
+      this.newTrainRunDateErrorMessage = data.newTrainRunDateErrorMessage;
+    if (
+      data.newTrainNumberErrorMessage ||
+      data.newTrainNumberErrorMessage === null
+    ) {
+      this.newTrainNumberErrorMessage = data.newTrainNumberErrorMessage;
+    }
+  }
+
   @Mutation
   toggleLoading() {
     this.loading = !this.loading;
@@ -379,31 +397,40 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Action
   async create() {
     this.toggleLoading();
-
-    if (this.newTrain.number && Number(this.newTrain.number) > 0) {
-      const train: ITrain = await TrainsAPI.create({
-        ...this.newTrain
-      });
-      this.pushTrain({ ...this.newTrain, ...train });
-      LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
-
-      if (LinesModule.currentLine.stations) {
-        const stations = [...LinesModule.currentLine.stations].map(station => {
-          return {
-            ...station,
-            lineStationId: station.LineStation!.id,
-            LineStationTrain: {
-              ...station.LineStationTrain,
-              arrivalTime: null,
-              departureTime: null,
-              isArrival: false,
-              isDeprature: false,
-              lineStationId: station.LineStation!.id
-            }
-          };
+    try {
+      if (this.newTrain.number && Number(this.newTrain.number) > 0) {
+        const train: ITrain = await TrainsAPI.create({
+          ...this.newTrain
         });
-        this.updateNewTrain({
-          stations
+        this.pushTrain({ ...this.newTrain, ...train });
+        LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
+
+        if (LinesModule.currentLine.stations) {
+          const stations = [...LinesModule.currentLine.stations].map(
+            station => {
+              return {
+                ...station,
+                lineStationId: station.LineStation!.id,
+                LineStationTrain: {
+                  ...station.LineStationTrain,
+                  arrivalTime: null,
+                  departureTime: null,
+                  isArrival: false,
+                  isDeprature: false,
+                  lineStationId: station.LineStation!.id
+                }
+              };
+            }
+          );
+          this.updateNewTrain({
+            stations
+          });
+        }
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        this.updateErrorMessage({
+          newTrainNumberErrorMessage: "رقم القطار موجود بالفعل في هذا الخط"
         });
       }
     }
@@ -455,14 +482,22 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Action
   async createTrainRun({ trainId }: { trainId: string }) {
     this.toggleLoading();
-
-    if (this.currentTrain.id) {
-      this.newTrainRun.trainId = this.currentTrain.id;
-      const trainRun: ITrainRun = await TrainsAPI.addRun(
-        trainId,
-        this.newTrainRun
-      );
-      this.addTrainRun({ ...cloneDeep(this.newTrainRun), ...trainRun });
+    try {
+      if (this.currentTrain.id) {
+        this.newTrainRun.trainId = this.currentTrain.id;
+        const trainRun: ITrainRun = await TrainsAPI.addRun(
+          trainId,
+          this.newTrainRun
+        );
+        this.addTrainRun({ ...cloneDeep(this.newTrainRun), ...trainRun });
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        this.updateErrorMessage({
+          newTrainRunDateErrorMessage:
+            "يوجد رحلة بنفس التاريخ لهذا القطار بالفعل"
+        });
+      }
     }
     this.toggleLoading();
   }

@@ -17,31 +17,34 @@
           <v-container>
             <v-form v-model="isNewTrainValid">
               <v-row no-gutters>
-                <v-col cols="12" class="title"
-                  >- أدخل رقم القطار ثم قم بتحديد وقت قيام ووقت وصول القطار
+                <v-col cols="12" class="title">
+                  - أدخل رقم القطار ثم قم بتحديد وقت قيام ووقت وصول القطار
                   بمحطات خط
-                  <span class="indigo--text"> {{ line.name }} </span></v-col
-                >
-                <v-col cols="12" class="subtitle-1"
-                  >- اترك خانة وقت القيام فارغة اذا كان القطار لا يقوم من
-                  المحطة</v-col
-                >
-                <v-col cols="12" class="mb-2 subtitle-1"
-                  >- اترك خانة وقت الوصول فارغة اذا كان القطار لا يصل الى
-                  المحطة</v-col
-                >
+                  <span class="indigo--text">{{ line.name }}</span>
+                </v-col>
+                <v-col cols="12" class="subtitle-1">
+                  - اترك خانة وقت القيام فارغة اذا كان القطار لا يقوم من المحطة
+                </v-col>
+                <v-col cols="12" class="mb-2 subtitle-1">
+                  - اترك خانة وقت الوصول فارغة اذا كان القطار لا يصل الى المحطة
+                </v-col>
               </v-row>
               <v-row justify="center" align="center">
                 <v-col cols="12" sm="6" md="4">
-                  <v-text-field
+                  <v-combobox
                     :rules="[v => !!v || 'برجاء ادخال الرقم']"
                     required
                     @input="onNumberChange"
                     label="رقم القطار"
+                    :error-messages="newTrainNumberErrorMessage"
+                    :items="trains"
+                    :return-object="false"
+                    item-value="number"
+                    item-text="number"
                     placeholder="قم بإدخال رقم القطار المراد اضافته"
                     outlined
                     prepend-icon="mdi-train"
-                  ></v-text-field>
+                  ></v-combobox>
                 </v-col>
               </v-row>
               <v-row justify="center" align="center">
@@ -170,6 +173,14 @@ export default class NewTrainForm extends Vue {
     return TrainsModule.newTrain;
   }
 
+  get trains() {
+    return TrainsModule.trains;
+  }
+
+  get newTrainNumberErrorMessage() {
+    return TrainsModule.newTrainNumberErrorMessage;
+  }
+
   @Prop()
   line!: string;
 
@@ -188,6 +199,9 @@ export default class NewTrainForm extends Vue {
   }
 
   onNumberChange(value: any) {
+    TrainsModule.updateErrorMessage({
+      newTrainNumberErrorMessage: null
+    });
     TrainsModule.updateNewTrain({ number: value });
   }
 
@@ -199,9 +213,15 @@ export default class NewTrainForm extends Vue {
     this.dialog = false;
   }
 
-  save() {
-    TrainsModule.create();
-    this.close();
+  async save() {
+    await TrainsModule.create();
+    if (this.newTrainNumberErrorMessage === null) {
+      this.close();
+    }
+  }
+
+  beforeCreate() {
+    TrainsModule.get();
   }
 }
 </script>

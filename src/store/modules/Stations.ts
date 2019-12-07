@@ -17,6 +17,17 @@ class StationsModule extends VuexModule implements IStationState {
   currentStation = this.createEmptyStation();
   loading: boolean = false;
 
+  newStationOrderErrorMessage = null;
+
+  @Mutation
+  updateErrorMessage(data: any) {
+    if (
+      data.newStationOrderErrorMessage ||
+      data.newStationOrderErrorMessage === null
+    )
+      this.newStationOrderErrorMessage = data.newStationOrderErrorMessage;
+  }
+
   @Mutation
   toggleLoading() {
     this.loading = !this.loading;
@@ -163,15 +174,22 @@ class StationsModule extends VuexModule implements IStationState {
   @Action
   async create() {
     this.toggleLoading();
-
-    if (this.newStation.name !== "") {
-      const { station } = await StationsAPI.create(this.newStation);
-      const createdStation: IStation = { ...this.newStation, ...station };
-      if (!this.newStation.lines) this.newStation.lines = [];
-      createdStation.lines = [...this.newStation.lines];
-      if (createdStation.line)
-        createdStation.lines.push({ ...createdStation.line });
-      this.createStation({ ...createdStation });
+    try {
+      if (this.newStation.name !== "") {
+        const { station } = await StationsAPI.create(this.newStation);
+        const createdStation: IStation = { ...this.newStation, ...station };
+        if (!this.newStation.lines) this.newStation.lines = [];
+        createdStation.lines = [...this.newStation.lines];
+        if (createdStation.line)
+          createdStation.lines.push({ ...createdStation.line });
+        this.createStation({ ...createdStation });
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        this.updateErrorMessage({
+          newStationOrderErrorMessage: "يوجد محطة أخرى بنفس الترتيب لهذا الخط"
+        });
+      }
     }
     this.toggleLoading();
   }
