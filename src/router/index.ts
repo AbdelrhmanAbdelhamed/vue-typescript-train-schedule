@@ -187,7 +187,7 @@ const routes: RouteConfig[] = [
     meta: {
       nameArabic: "خدمات التأمين",
       visible: false,
-      icon: "mdi-car-estate",
+      icon: "mdi-shield-car",
       resource: "TrainRun",
       requiresAuth: true
     },

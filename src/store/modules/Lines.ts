@@ -55,12 +55,30 @@ class LinesModule extends VuexModule implements ILineState {
 
   @Mutation
   setCurrentLineStations(stations: IStation[]) {
-    this.currentLine.stations = stations;
+    if (stations) {
+      if (
+        stations.length > 0 &&
+        stations[0].lines &&
+        stations[0].lines.length > 0
+      ) {
+        this.currentLine = { ...stations[0].lines[0] };
+      } else if ((stations as any).line) {
+        this.currentLine = (stations as any).line;
+      }
+      this.currentLine.stations = stations.length > 0 ? stations : [];
+    }
   }
 
   @Mutation
   setCurrentLineTrains(trains: ITrain[]) {
-    this.currentLine.trains = trains;
+    if (trains) {
+      if (trains.length > 0 && trains[0].lines && trains[0].lines.length > 0) {
+        this.currentLine = { ...trains[0].lines[0] };
+      } else if ((trains as any).line) {
+        this.currentLine = (trains as any).line;
+      }
+      this.currentLine.trains = trains.length > 0 ? trains : [];
+    }
   }
 
   @Mutation

@@ -83,7 +83,7 @@ export default class Trains extends Vue {
 
   async created() {
     if (this.lineId) {
-      await LinesModule.getById(this.lineId);
+      await LinesModule.getTrains(this.lineId);
     }
     if (LinesModule.currentLine.stations) {
       const stations = [...LinesModule.currentLine.stations].map(station => {

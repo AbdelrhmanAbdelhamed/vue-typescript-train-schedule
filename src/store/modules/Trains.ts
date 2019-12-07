@@ -24,6 +24,7 @@ import Vue from "vue";
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
 class TrainsModule extends VuexModule implements ITrainState {
   trains: ITrain[] = [];
+  searchedTrains: ITrain[] = [];
   newTrain: ITrain = this.createEmptyTrain();
   currentTrain: ITrain = {
     number: "",
@@ -249,6 +250,11 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
+  setSearchedTrains(trains: ITrain[]) {
+    this.searchedTrains = trains;
+  }
+
+  @Mutation
   restTrains() {
     this.trains = [];
   }
@@ -359,7 +365,11 @@ class TrainsModule extends VuexModule implements ITrainState {
       departureStation,
       arrivalStation
     );
-    this.setTrains(trains);
+    if (departureStation && arrivalStation) {
+      this.setSearchedTrains(trains);
+    } else {
+      this.setTrains(trains);
+    }
     this.toggleLoading();
   }
 

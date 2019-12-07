@@ -137,7 +137,7 @@ export default class TrainsSearch extends Vue {
   }
 
   get trains() {
-    return TrainsModule.trains;
+    return TrainsModule.searchedTrains;
   }
 
   get stations() {

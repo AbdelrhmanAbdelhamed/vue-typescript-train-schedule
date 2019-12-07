@@ -29,10 +29,20 @@
       >
         <v-card class="elevation-2" color="primary" dark>
           <v-card-title class="headline">{{ station.name }}</v-card-title>
-          <v-card-subtitle v-if="line" class="pt-1"> </v-card-subtitle>
-          <v-card-subtitle v-if="station.LineStation">
+          <v-card-subtitle
+            v-if="station.lines && station.lines.length > 0"
+            class="pt-1"
+          >
+          </v-card-subtitle>
+          <v-card-subtitle
+            v-if="
+              station.lines &&
+                station.lines.length > 0 &&
+                station.lines[0].LineStation
+            "
+          >
             ترتيب المحطة:
-            {{ station.LineStation.stationOrder | convertToArabic }}
+            {{ station.lines[0].LineStation.stationOrder | convertToArabic }}
           </v-card-subtitle>
         </v-card>
       </v-timeline-item>
@@ -76,7 +86,7 @@ export default class LineStations extends Vue {
 
   created() {
     if (this.lineId) {
-      LinesModule.getById(this.lineId);
+      LinesModule.getStations(this.lineId);
     }
   }
 }
