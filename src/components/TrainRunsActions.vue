@@ -43,7 +43,7 @@ import { ILine, ITrain } from "@/store/models";
 @Component({
   components: {}
 })
-export default class TrainActions extends Vue {
+export default class TrainRunsActions extends Vue {
   @Prop()
   train: any;
 

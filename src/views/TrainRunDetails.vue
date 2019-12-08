@@ -465,7 +465,7 @@ export default class TrainDetails extends Vue {
   }
 
   async save() {
-    if (this.train.id) {
+    if (this.train.id && this.newTrainRunDateErrorMessage === null) {
       await TrainsModule.createTrainRun({
         trainId: this.train.id
       });

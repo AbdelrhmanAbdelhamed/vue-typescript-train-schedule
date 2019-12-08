@@ -16,7 +16,11 @@ class LinesModule extends VuexModule implements ILineState {
   stations: IStation[] = [];
   trains: ITrain[] = [];
   newLine = this.createEmptyLine();
-  currentLine = this.createEmptyLine();
+  currentLine: ILine = {
+    name: "",
+    stations: [],
+    trains: []
+  };
   loading: boolean = false;
 
   @Mutation
@@ -61,9 +65,15 @@ class LinesModule extends VuexModule implements ILineState {
         stations[0].lines &&
         stations[0].lines.length > 0
       ) {
-        this.currentLine = { ...stations[0].lines[0] };
+        this.currentLine = {
+          trains: [...this.currentLine.trains!],
+          ...stations[0].lines[0]
+        };
       } else if ((stations as any).line) {
-        this.currentLine = (stations as any).line;
+        this.currentLine = {
+          trains: [...this.currentLine.trains!],
+          ...(stations as any).line
+        };
       }
       this.currentLine.stations = stations.length > 0 ? stations : [];
     }
@@ -94,10 +104,14 @@ class LinesModule extends VuexModule implements ILineState {
 
   @Mutation
   removeTrainFromCurrentLine(trainId: string) {
-    const index = this.currentLine.trains!.findIndex(
-      train => train.id === trainId
-    );
-    if (index > -1) this.currentLine.trains!.splice(index, 1);
+    if (this.currentLine.trains) {
+      const index = this.currentLine.trains!.findIndex(
+        train => train.id === trainId
+      );
+      if (index > -1) {
+        this.currentLine.trains.splice(index, 1);
+      }
+    }
   }
 
   @Mutation

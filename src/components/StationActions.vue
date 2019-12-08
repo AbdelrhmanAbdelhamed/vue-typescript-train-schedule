@@ -22,6 +22,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+      {{ deleteStationErrorMessage }}
+      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -36,10 +41,28 @@ import UsersModule from "@/store/modules/Users";
 @Component({
   components: {}
 })
-export default class LineActions extends Vue {
+export default class StationActions extends Vue {
   @Prop()
   station: any;
   dialog = false;
+
+  get snackbar() {
+    return StationsModule.deleteStationErrorMessage !== null;
+  }
+
+  set snackbar(value: any) {
+    this.snackbar = value;
+  }
+
+  get deleteStationErrorMessage() {
+    return StationsModule.deleteStationErrorMessage;
+  }
+
+  closeSnackbar() {
+    StationsModule.updateErrorMessage({
+      deleteStationErrorMessage: null
+    });
+  }
 
   onDeleteClicked() {
     StationsModule.deleteLine({

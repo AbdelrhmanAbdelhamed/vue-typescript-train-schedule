@@ -132,7 +132,7 @@
               </v-row>
             </v-container>
           </v-card-subtitle>
-          <v-card-text>
+          <v-card-text v-if="station.LineStation">
             ترتيب المحطة بالخط:
             {{ station.LineStation.stationOrder | convertToArabic }}
           </v-card-text>
@@ -215,14 +215,15 @@ export default class LineTrainTimeLine extends Vue {
             } else {
               return {
                 ...station,
-                lineStationId: station.LineStation!.id,
+                LineStation: station.lines![0].LineStation,
+                lineStationId: station.lines![0].LineStation!.id,
                 LineStationTrain: {
                   lineId: this.line.id || this.lineId,
                   arrivalTime: null,
                   departureTime: null,
                   isArrival: false,
                   isDeprature: false,
-                  lineStationId: station.LineStation!.id
+                  lineStationId: station.lines![0].LineStation!.id
                 }
               };
             }
@@ -272,7 +273,7 @@ export default class LineTrainTimeLine extends Vue {
         id: this.id!,
         lineId: this.lineId!
       });
-      await LinesModule.getById(this.lineId);
+      await LinesModule.getStations(this.lineId);
     }
   }
 }

@@ -18,6 +18,7 @@
         :loading="loading"
         :headers="headers"
         :items="trains"
+        item-key="id"
         class="elevation-1"
         :search="search"
       >
@@ -25,9 +26,9 @@
           <NewTrainForm :line="line" />
         </template>
 
-        <template v-slot:item.number="{ item }">
-          {{ item.number | convertToArabic }}
-        </template>
+        <template v-slot:item.number="{ item }">{{
+          item.number | convertToArabic
+        }}</template>
 
         <template v-if="line" v-slot:item.action="{ item }">
           <TrainActions
@@ -59,7 +60,7 @@ import { ILine } from "@/store/models";
 @Component({
   components: { TrainActions, NewTrainForm, EditLineStationsForm }
 })
-export default class Trains extends Vue {
+export default class LineTrains extends Vue {
   headers = [
     { text: "رقم القطار", value: "number", sortable: true },
     { text: "", value: "action", sortable: false }
@@ -78,27 +79,32 @@ export default class Trains extends Vue {
   }
 
   get trains() {
-    return this.line.trains || [];
+    return LinesModule.currentLine.trains;
   }
 
   async created() {
     if (this.lineId) {
       await LinesModule.getTrains(this.lineId);
     }
+    if (!LinesModule.currentLine.stations) {
+      await LinesModule.getStations(this.lineId);
+    }
     if (LinesModule.currentLine.stations) {
       const stations = [...LinesModule.currentLine.stations].map(station => {
-        return {
-          ...station,
-          lineStationId: station.LineStation!.id,
-          LineStationTrain: {
-            lineId: this.line.id || this.lineId,
-            arrivalTime: null,
-            departureTime: null,
-            isArrival: false,
-            isDeprature: false,
-            lineStationId: station.LineStation!.id
-          }
-        };
+        if (station && station.lines) {
+          return {
+            ...station,
+            lineStationId: station.lines[0].LineStation!.id,
+            LineStationTrain: {
+              lineId: this.line.id || this.lineId,
+              arrivalTime: null,
+              departureTime: null,
+              isArrival: false,
+              isDeprature: false,
+              lineStationId: station.lines[0].LineStation!.id
+            }
+          };
+        }
       });
       TrainsModule.updateNewTrain({
         stations

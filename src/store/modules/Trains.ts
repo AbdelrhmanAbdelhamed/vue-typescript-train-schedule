@@ -153,7 +153,9 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Mutation
   updateNewTrain(data: any) {
     if (data.number) this.newTrain.number = data.number;
-    if (data.stations) this.newTrain.stations = data.stations;
+    if (data.stations) {
+      Vue.set(TrainsModule.state.newTrain, "stations", data.stations);
+    }
   }
 
   @Mutation
@@ -200,6 +202,7 @@ class TrainsModule extends VuexModule implements ITrainState {
         this.currentTrain = {
           ...data.trainRuns.train
         };
+        Vue.set(TrainsModule.state.currentTrain, "trainRuns", []);
       }
     }
   }
@@ -500,7 +503,9 @@ class TrainsModule extends VuexModule implements ITrainState {
           trainId,
           this.newTrainRun
         );
-        this.addTrainRun({ ...cloneDeep(this.newTrainRun), ...trainRun });
+        if (trainRun) {
+          this.addTrainRun({ ...cloneDeep(this.newTrainRun), ...trainRun });
+        }
       }
     } catch (err) {
       if (err.response && err.response.status === 409) {

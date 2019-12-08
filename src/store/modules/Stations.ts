@@ -18,6 +18,7 @@ class StationsModule extends VuexModule implements IStationState {
   loading: boolean = false;
 
   newStationOrderErrorMessage = null;
+  deleteStationErrorMessage = null;
 
   @Mutation
   updateErrorMessage(data: any) {
@@ -26,6 +27,12 @@ class StationsModule extends VuexModule implements IStationState {
       data.newStationOrderErrorMessage === null
     )
       this.newStationOrderErrorMessage = data.newStationOrderErrorMessage;
+    if (
+      data.deleteStationErrorMessage ||
+      data.deleteStationErrorMessage === null
+    ) {
+      this.deleteStationErrorMessage = data.deleteStationErrorMessage;
+    }
   }
 
   @Mutation
@@ -234,8 +241,18 @@ class StationsModule extends VuexModule implements IStationState {
   @Action
   async deleteLine({ id, lineId }: { id: string; lineId: string }) {
     this.toggleLoading();
-    await StationsAPI.deleteLine(id, lineId);
-    this.removeLineStation({ id, lineId });
+    try {
+      await StationsAPI.deleteLine(id, lineId);
+      this.removeLineStation({ id, lineId });
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        this.updateErrorMessage({
+          deleteStationErrorMessage:
+            "تعذر مسح المحطة كونها مرتبطة بخدمة تأمين أخرى"
+        });
+      }
+    }
+
     this.toggleLoading();
   }
 }
