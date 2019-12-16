@@ -8,15 +8,15 @@ import {
 
 import store from "..";
 import LinesAPI from "@/services/api/Lines";
-import { ILine, ILineState, IStation, ITrain } from "../models";
+import { Line, LineState, Station, Train } from "../models";
 
 @Module({ dynamic: true, namespaced: true, store, name: LinesAPI.END_POINT })
-class LinesModule extends VuexModule implements ILineState {
-  lines: ILine[] = [];
-  stations: IStation[] = [];
-  trains: ITrain[] = [];
+class LinesModule extends VuexModule implements LineState {
+  lines: Line[] = [];
+  stations: Station[] = [];
+  trains: Train[] = [];
   newLine = this.createEmptyLine();
-  currentLine: ILine = {
+  currentLine: Line = {
     name: "",
     stations: [],
     trains: []
@@ -28,7 +28,7 @@ class LinesModule extends VuexModule implements ILineState {
     this.loading = !this.loading;
   }
 
-  private createEmptyLine(): ILine {
+  private createEmptyLine(): Line {
     return {
       name: "",
       stations: [],
@@ -42,7 +42,7 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setNewLine(line: ILine) {
+  setNewLine(line: Line) {
     this.newLine = line;
   }
 
@@ -53,12 +53,12 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setCurrentLine(line: ILine) {
+  setCurrentLine(line: Line) {
     this.currentLine = line;
   }
 
   @Mutation
-  setCurrentLineStations(stations: IStation[]) {
+  setCurrentLineStations(stations: Station[]) {
     if (stations) {
       if (
         stations.length > 0 &&
@@ -80,7 +80,7 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setCurrentLineTrains(trains: ITrain[]) {
+  setCurrentLineTrains(trains: Train[]) {
     if (trains) {
       if (trains.length > 0 && trains[0].lines && trains[0].lines.length > 0) {
         this.currentLine = { ...trains[0].lines[0] };
@@ -92,12 +92,12 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  createLine(line: ILine) {
+  createLine(line: Line) {
     this.lines.push(line);
   }
 
   @Mutation
-  pushTrainToCurrentLine(train: ITrain) {
+  pushTrainToCurrentLine(train: Train) {
     if (!this.currentLine.trains) this.currentLine.trains = [];
     this.currentLine.trains.push(train);
   }
@@ -115,6 +115,14 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
+  updateLineTrain({ trainId, data }: { trainId?: string; data?: any } = {}) {
+    if (this.currentLine.trains && data.number) {
+      let train = this.currentLine.trains.find(train => train.id == trainId);
+      if (train) train.number = data.number;
+    }
+  }
+
+  @Mutation
   updateLine({ id, data }: { id?: string; data?: any } = {}) {
     let line = this.lines.find(line => line.id == id);
     if (line) line.name = data.name;
@@ -127,7 +135,7 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setLines(lines: ILine[]) {
+  setLines(lines: Line[]) {
     this.lines = lines;
   }
 
@@ -137,7 +145,7 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setStations(stations: IStation[]) {
+  setStations(stations: Station[]) {
     this.stations = stations;
   }
 
@@ -147,7 +155,7 @@ class LinesModule extends VuexModule implements ILineState {
   }
 
   @Mutation
-  setTrains(trains: ITrain[]) {
+  setTrains(trains: Train[]) {
     this.trains = trains;
   }
 
@@ -159,7 +167,7 @@ class LinesModule extends VuexModule implements ILineState {
   @Action
   async getAll() {
     this.toggleLoading();
-    const lines: ILine[] = await LinesAPI.getAll();
+    const lines: Line[] = await LinesAPI.getAll();
     this.setLines(lines);
     this.toggleLoading();
   }
@@ -167,7 +175,7 @@ class LinesModule extends VuexModule implements ILineState {
   @Action
   async getById(id: string) {
     this.toggleLoading();
-    const line: ILine = await LinesAPI.getById(id);
+    const line: Line = await LinesAPI.getById(id);
     this.setCurrentLine(line);
     this.toggleLoading();
     return line;
@@ -176,7 +184,7 @@ class LinesModule extends VuexModule implements ILineState {
   @Action
   async getStations(id: string) {
     this.toggleLoading();
-    const stations: IStation[] = await LinesAPI.getStations(id);
+    const stations: Station[] = await LinesAPI.getStations(id);
     this.setCurrentLineStations(stations);
     this.toggleLoading();
   }
@@ -184,7 +192,7 @@ class LinesModule extends VuexModule implements ILineState {
   @Action
   async getTrains(id: string) {
     this.toggleLoading();
-    const trains: ITrain[] = await LinesAPI.getTrains(id);
+    const trains: Train[] = await LinesAPI.getTrains(id);
     this.setCurrentLineTrains(trains);
     this.toggleLoading();
   }
@@ -193,7 +201,7 @@ class LinesModule extends VuexModule implements ILineState {
   async create() {
     this.toggleLoading();
     if (this.newLine.name !== "") {
-      const line: ILine = await LinesAPI.create(this.newLine);
+      const line: Line = await LinesAPI.create(this.newLine);
       line.trains = [];
       line.stations = [];
       this.createLine({ ...line });

@@ -220,7 +220,7 @@ import UserActions from "@/components/UsersActions.vue";
 import PoliceDepartmentsModule from "@/store/modules/PoliceDepartments";
 import UsersModule from "@/store/modules/Users";
 import RolesModule from "@/store/modules/Roles";
-import { IUser, IRole, IPoliceDepartment } from "@/store/models";
+import { User, Role, PoliceDepartment } from "@/store/models";
 
 @Component({
   components: { UserActions }
@@ -249,19 +249,19 @@ export default class Users extends Vue {
     return PoliceDepartmentsModule.loading;
   }
 
-  get newUser(): IUser {
+  get newUser(): User {
     return UsersModule.newUser;
   }
 
-  get users(): IUser[] {
+  get users(): User[] {
     return UsersModule.users;
   }
 
-  get roles(): IRole[] {
+  get roles(): Role[] {
     return RolesModule.roles;
   }
 
-  get policeDepartments(): IPoliceDepartment[] {
+  get policeDepartments(): PoliceDepartment[] {
     return PoliceDepartmentsModule.policeDepartments;
   }
 

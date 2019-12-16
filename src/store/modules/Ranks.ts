@@ -7,7 +7,7 @@ import {
 } from "vuex-module-decorators";
 
 import store from "..";
-import { IRank, IRankState } from "../models";
+import { Rank, RankState } from "../models";
 import RanksAPI from "@/services/api/Ranks";
 
 @Module({
@@ -16,8 +16,8 @@ import RanksAPI from "@/services/api/Ranks";
   store,
   name: RanksAPI.END_POINT
 })
-class RanksModule extends VuexModule implements IRankState {
-  ranks: IRank[] = [];
+class RanksModule extends VuexModule implements RankState {
+  ranks: Rank[] = [];
   loading: boolean = false;
 
   @Mutation
@@ -26,7 +26,7 @@ class RanksModule extends VuexModule implements IRankState {
   }
 
   @Mutation
-  setRanks(ranks: IRank[]) {
+  setRanks(ranks: Rank[]) {
     this.ranks = ranks;
   }
 
@@ -38,7 +38,7 @@ class RanksModule extends VuexModule implements IRankState {
   @Action
   async getAll() {
     this.toggleLoading();
-    const ranks: IRank[] = await RanksAPI.getAll();
+    const ranks: Rank[] = await RanksAPI.getAll();
     this.setRanks(ranks);
     this.toggleLoading();
   }

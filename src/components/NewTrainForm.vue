@@ -8,7 +8,7 @@
           >اضافة قطار جديد</v-btn
         >
       </template>
-      <v-card>
+      <v-card :loading="loading">
         <v-card-title>
           <span class="headline">اضافة قطار جديد</span>
         </v-card-title>
@@ -138,13 +138,16 @@
 
         <v-card-actions right>
           <v-btn
+            :loading="loading"
             :disabled="!isNewTrainValid"
             color="success darken-1"
             text
             @click="save"
             >حفظ</v-btn
           >
-          <v-btn color="blue darken-1" text @click="close">الغاء</v-btn>
+          <v-btn :loading="loading" color="blue darken-1" text @click="close"
+            >الغاء</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>

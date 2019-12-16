@@ -8,17 +8,18 @@ import {
 
 import store from "..";
 import StationsAPI from "@/services/api/Stations";
-import { IStation, IStationState, ILine } from "../models";
+import { Station, StationState, Line } from "../models";
 
 @Module({ dynamic: true, namespaced: true, store, name: StationsAPI.END_POINT })
-class StationsModule extends VuexModule implements IStationState {
-  stations: IStation[] = [];
+class StationsModule extends VuexModule implements StationState {
+  stations: Station[] = [];
   newStation = this.createEmptyStation();
   currentStation = this.createEmptyStation();
   loading: boolean = false;
 
   newStationOrderErrorMessage = null;
   deleteStationErrorMessage = null;
+  updateStationErrorMessage = null;
 
   @Mutation
   updateErrorMessage(data: any) {
@@ -33,6 +34,12 @@ class StationsModule extends VuexModule implements IStationState {
     ) {
       this.deleteStationErrorMessage = data.deleteStationErrorMessage;
     }
+    if (
+      data.updateStationErrorMessage ||
+      data.updateStationErrorMessage === null
+    ) {
+      this.updateStationErrorMessage = data.updateStationErrorMessage;
+    }
   }
 
   @Mutation
@@ -40,7 +47,7 @@ class StationsModule extends VuexModule implements IStationState {
     this.loading = !this.loading;
   }
 
-  createEmptyStation(): IStation {
+  createEmptyStation(): Station {
     return {
       name: "",
       lines: [],
@@ -59,7 +66,7 @@ class StationsModule extends VuexModule implements IStationState {
   }
 
   @Mutation
-  setNewStation(station: ILine) {
+  setNewStation(station: Line) {
     this.newStation = station;
   }
 
@@ -85,7 +92,7 @@ class StationsModule extends VuexModule implements IStationState {
   }
 
   @Mutation
-  setCurrentStation(station: IStation) {
+  setCurrentStation(station: Station) {
     this.currentStation = station;
   }
 
@@ -139,7 +146,7 @@ class StationsModule extends VuexModule implements IStationState {
       return station.id === id;
     });
     if (stationIndex > -1) {
-      const station: IStation = this.stations[stationIndex];
+      const station: Station = this.stations[stationIndex];
       if (station.lines && station.lines.length > 0) {
         const lineIndex = station.lines.findIndex(line => line.id == lineId);
         if (lineIndex > -1) {
@@ -153,7 +160,7 @@ class StationsModule extends VuexModule implements IStationState {
   }
 
   @Mutation
-  setStations(stations: IStation[]) {
+  setStations(stations: Station[]) {
     this.stations = stations;
   }
 
@@ -165,7 +172,7 @@ class StationsModule extends VuexModule implements IStationState {
   @Action
   async getAll() {
     this.toggleLoading();
-    const stations: IStation[] = await StationsAPI.getAll();
+    const stations: Station[] = await StationsAPI.getAll();
     this.setStations(stations);
     this.toggleLoading();
   }
@@ -173,7 +180,7 @@ class StationsModule extends VuexModule implements IStationState {
   @Action
   async getById(id: string) {
     this.toggleLoading();
-    const station: IStation = await StationsAPI.getById(id);
+    const station: Station = await StationsAPI.getById(id);
     this.setCurrentStation(station);
     this.toggleLoading();
   }
@@ -184,7 +191,7 @@ class StationsModule extends VuexModule implements IStationState {
     try {
       if (this.newStation.name !== "") {
         const { station } = await StationsAPI.create(this.newStation);
-        const createdStation: IStation = { ...this.newStation, ...station };
+        const createdStation: Station = { ...this.newStation, ...station };
         if (!this.newStation.lines) this.newStation.lines = [];
         createdStation.lines = [...this.newStation.lines];
         if (createdStation.line)
@@ -205,8 +212,16 @@ class StationsModule extends VuexModule implements IStationState {
   async update({ id, data }: { id: string; data: any }) {
     if (id && data && data.name !== "") {
       this.toggleLoading();
-      await StationsAPI.update(id, data);
-      this.updateStation({ id, data });
+      try {
+        await StationsAPI.update(id, data);
+        this.updateStation({ id, data });
+      } catch (err) {
+        if (err.response && err.response.status === 409) {
+          this.updateErrorMessage({
+            updateStationErrorMessage: "يوجد محطة أخرى بنفس الاسم لهذا الخط"
+          });
+        }
+      }
       this.toggleLoading();
     }
   }
@@ -223,9 +238,17 @@ class StationsModule extends VuexModule implements IStationState {
   }) {
     if (id && data && data.stationOrder > 0) {
       this.toggleLoading();
-      await StationsAPI.updateStationOrder(id, lineId, data);
-      this.updateStation({ id, data });
-      this.updateLineStationOrder({ id, lineId, data });
+      try {
+        await StationsAPI.updateStationOrder(id, lineId, data);
+        this.updateStation({ id, data });
+        this.updateLineStationOrder({ id, lineId, data });
+      } catch (err) {
+        if (err.response && err.response.status === 409) {
+          this.updateErrorMessage({
+            updateStationErrorMessage: "يوجد محطة أخرى بنفس الترتيب لهذا الخط"
+          });
+        }
+      }
       this.toggleLoading();
     }
   }

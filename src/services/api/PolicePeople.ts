@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IPolicePerson } from "@/store/models";
+import { PolicePerson } from "@/store/models";
 
 export default class PolicePeopleAPI {
   static readonly END_POINT = "policepeople";
@@ -14,7 +14,7 @@ export default class PolicePeopleAPI {
       .then(response => response.data);
   }
 
-  static create(policePerson: IPolicePerson) {
+  static create(policePerson: PolicePerson) {
     return axios
       .post(PolicePeopleAPI.END_POINT, policePerson)
       .then(response => response.data);

@@ -26,9 +26,23 @@
           <NewTrainForm :line="line" />
         </template>
 
-        <template v-slot:item.number="{ item }">{{
-          item.number | convertToArabic
-        }}</template>
+        <template v-slot:item.number="props">
+          <v-edit-dialog
+            @open="temporaryTrainNumber = props.item.number"
+            @save="onEditSubmit(props.item.id, temporaryTrainNumber)"
+          >
+            {{ props.item.number | convertToArabic }}
+            <template v-slot:input>
+              <v-text-field
+                :value="temporaryTrainNumber"
+                label="تعديل رقم القطار"
+                single-line
+                v-if="$can('update', 'Train')"
+                @change="onEditTrainNumberChange"
+              ></v-text-field>
+            </template>
+          </v-edit-dialog>
+        </template>
 
         <template v-if="line" v-slot:item.action="{ item }">
           <TrainActions
@@ -39,6 +53,10 @@
         </template>
       </v-data-table>
     </v-card>
+    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+      {{ updateTrainErrorMessage }}
+      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -55,7 +73,7 @@ import UsersModule from "@/store/modules/Users";
 import LinesModule from "@/store/modules/Lines";
 import TrainsModule from "@/store/modules/Trains";
 
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 @Component({
   components: { TrainActions, NewTrainForm, EditLineStationsForm }
@@ -66,9 +84,28 @@ export default class LineTrains extends Vue {
     { text: "", value: "action", sortable: false }
   ];
   search = "";
+  temporaryTrainNumber = "";
 
   get loading() {
     return LinesModule.loading;
+  }
+
+  get snackbar() {
+    return TrainsModule.updateTrainErrorMessage !== null;
+  }
+
+  set snackbar(value: any) {
+    this.snackbar = value;
+  }
+
+  get updateTrainErrorMessage() {
+    return TrainsModule.updateTrainErrorMessage;
+  }
+
+  closeSnackbar() {
+    TrainsModule.updateErrorMessage({
+      updateTrainErrorMessage: null
+    });
   }
 
   @Prop()
@@ -80,6 +117,14 @@ export default class LineTrains extends Vue {
 
   get trains() {
     return LinesModule.currentLine.trains;
+  }
+
+  onEditTrainNumberChange(value: any) {
+    this.temporaryTrainNumber = value;
+  }
+
+  onEditSubmit(id: any, number: any) {
+    if (number) TrainsModule.update({ id, data: { number } });
   }
 
   async created() {

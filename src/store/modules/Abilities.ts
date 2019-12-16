@@ -10,7 +10,7 @@ import {
 } from "vuex-module-decorators";
 
 import store from "..";
-import { IAbilityState } from "../models";
+import { AbilityState } from "../models";
 
 @Module({
   dynamic: true,
@@ -18,7 +18,7 @@ import { IAbilityState } from "../models";
   store,
   name: "abilities"
 })
-class AbilitiesModule extends VuexModule implements IAbilityState {
+class AbilitiesModule extends VuexModule implements AbilityState {
   ability: Ability = new Ability([]);
   rules: Rule[] = [];
 

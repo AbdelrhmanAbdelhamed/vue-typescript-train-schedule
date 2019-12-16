@@ -7,7 +7,7 @@ import {
 } from "vuex-module-decorators";
 
 import store from "..";
-import { IRole, IRoleState } from "../models";
+import { Role, RoleState } from "../models";
 import RolesAPI from "@/services/api/Roles";
 
 @Module({
@@ -16,8 +16,8 @@ import RolesAPI from "@/services/api/Roles";
   store,
   name: RolesAPI.END_POINT
 })
-class RolesModule extends VuexModule implements IRoleState {
-  roles: IRole[] = [];
+class RolesModule extends VuexModule implements RoleState {
+  roles: Role[] = [];
   loading: boolean = false;
 
   @Mutation
@@ -26,7 +26,7 @@ class RolesModule extends VuexModule implements IRoleState {
   }
 
   @Mutation
-  setRoles(roles: IRole[]) {
+  setRoles(roles: Role[]) {
     this.roles = roles;
   }
 
@@ -38,7 +38,7 @@ class RolesModule extends VuexModule implements IRoleState {
   @Action
   async getAll() {
     this.toggleLoading();
-    const roles: IRole[] = await RolesAPI.getAll();
+    const roles: Role[] = await RolesAPI.getAll();
     this.setRoles(roles);
     this.toggleLoading();
   }

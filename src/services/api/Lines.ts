@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 export default class LinesAPI {
   static readonly END_POINT = "lines";
@@ -26,7 +26,7 @@ export default class LinesAPI {
       .then(response => response.data);
   }
 
-  static create(line: ILine) {
+  static create(line: Line) {
     return axios.post(LinesAPI.END_POINT, line).then(response => response.data);
   }
 

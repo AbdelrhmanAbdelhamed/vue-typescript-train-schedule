@@ -10,23 +10,23 @@ import {
 import store from "..";
 import TrainsAPI from "@/services/api/Trains";
 import {
-  ITrain,
-  ITrainState,
-  ITrainRun,
-  IPolicePerson,
-  IPoliceDepartment,
-  IRank
+  Train,
+  TrainState,
+  TrainRun,
+  PolicePerson,
+  PoliceDepartment,
+  Rank
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
 import Vue from "vue";
 
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
-class TrainsModule extends VuexModule implements ITrainState {
-  trains: ITrain[] = [];
-  searchedTrains: ITrain[] = [];
-  newTrain: ITrain = this.createEmptyTrain();
-  currentTrain: ITrain = {
+class TrainsModule extends VuexModule implements TrainState {
+  trains: Train[] = [];
+  searchedTrains: Train[] = [];
+  newTrain: Train = this.createEmptyTrain();
+  currentTrain: Train = {
     number: "",
     trainRuns: [],
     stations: LinesModule.currentLine.stations
@@ -34,7 +34,7 @@ class TrainsModule extends VuexModule implements ITrainState {
       : []
   };
 
-  newTrainRun: ITrainRun = {
+  newTrainRun: TrainRun = {
     day: new Date().toLocaleDateString(),
     policePeople: [
       {
@@ -58,11 +58,13 @@ class TrainsModule extends VuexModule implements ITrainState {
     trainId: this.currentTrain ? this.currentTrain.id : ""
   };
 
-  trainRuns: ITrainRun[] = [];
+  trainRuns: TrainRun[] = [];
   loading: boolean = false;
 
   newTrainRunDateErrorMessage = null;
   newTrainNumberErrorMessage = null;
+
+  updateTrainErrorMessage = null;
 
   @Mutation
   updateErrorMessage(data: any) {
@@ -77,6 +79,9 @@ class TrainsModule extends VuexModule implements ITrainState {
     ) {
       this.newTrainNumberErrorMessage = data.newTrainNumberErrorMessage;
     }
+    if (data.updateTrainErrorMessage || data.updateTrainErrorMessage === null) {
+      this.updateTrainErrorMessage = data.updateTrainErrorMessage;
+    }
   }
 
   @Mutation
@@ -84,14 +89,14 @@ class TrainsModule extends VuexModule implements ITrainState {
     this.loading = !this.loading;
   }
 
-  createEmptyTrain(): ITrain {
+  createEmptyTrain(): Train {
     return {
       number: "",
       trainRuns: []
     };
   }
 
-  createEmptyTrainRun(): ITrainRun {
+  createEmptyTrainRun(): TrainRun {
     return {
       day: "",
       policePeople: [],
@@ -100,21 +105,21 @@ class TrainsModule extends VuexModule implements ITrainState {
     };
   }
 
-  createEmptyPoliceDepartment(): IPoliceDepartment {
+  createEmptyPoliceDepartment(): PoliceDepartment {
     return {
       name: "",
       policePeople: []
     };
   }
 
-  createEmptyRank(): IRank {
+  createEmptyRank(): Rank {
     return {
       name: "",
       policePeople: []
     };
   }
 
-  createEmptyPolicePerson(): IPolicePerson {
+  createEmptyPolicePerson(): PolicePerson {
     return {
       name: "",
       phoneNumber: "",
@@ -146,7 +151,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  setNewTrain(train: ITrain) {
+  setNewTrain(train: Train) {
     this.newTrain = train;
   }
 
@@ -182,7 +187,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  setCurrentTrain(train: ITrain) {
+  setCurrentTrain(train: Train) {
     this.currentTrain = train;
   }
 
@@ -231,7 +236,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  pushTrain(train: ITrain) {
+  pushTrain(train: Train) {
     this.trains.push(train);
   }
 
@@ -242,18 +247,23 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
+  updateLineTrain({ id, data }: { id?: string; data?: any } = {}) {
+    LinesModule.updateLineTrain({ trainId: id, data });
+  }
+
+  @Mutation
   removeTrain(id: string) {
     const index = this.trains.findIndex(train => train.id === id);
     if (index > -1) this.trains.splice(index, 1);
   }
 
   @Mutation
-  setTrains(trains: ITrain[]) {
+  setTrains(trains: Train[]) {
     this.trains = trains;
   }
 
   @Mutation
-  setSearchedTrains(trains: ITrain[]) {
+  setSearchedTrains(trains: Train[]) {
     this.searchedTrains = trains;
   }
 
@@ -263,7 +273,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  setTrainRuns(trainRuns: ITrainRun[]) {
+  setTrainRuns(trainRuns: TrainRun[]) {
     this.trainRuns = trainRuns;
   }
 
@@ -273,7 +283,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   }
 
   @Mutation
-  addTrainRun(trainRun: ITrainRun) {
+  addTrainRun(trainRun: TrainRun) {
     if (!this.currentTrain.trainRuns) this.currentTrain.trainRuns = [];
     this.currentTrain.trainRuns.push(trainRun);
   }
@@ -352,6 +362,25 @@ class TrainsModule extends VuexModule implements ITrainState {
       this.newTrainRun.policePeople.splice(policePersonIndex, 1);
   }
 
+  @Mutation
+  removeLineTrain({ id, lineId }: { id: string; lineId: string }) {
+    const trainIndex = this.trains.findIndex(train => {
+      return train.id === id;
+    });
+    if (trainIndex > -1) {
+      const train: Train = this.trains[trainIndex];
+      if (train.lines && train.lines.length > 0) {
+        const lineIndex = train.lines.findIndex(line => line.id == lineId);
+        if (lineIndex > -1) {
+          train.lines.splice(lineIndex, 1);
+        }
+      }
+      if (!train.lines || train.lines.length < 1) {
+        this.trains.splice(trainIndex, 1);
+      }
+    }
+  }
+
   @Action
   async getAllTrainRuns() {
     const trainRuns = await TrainsAPI.getAllRuns();
@@ -364,12 +393,13 @@ class TrainsModule extends VuexModule implements ITrainState {
     arrivalStation
   }: { departureStation?: string; arrivalStation?: string } = {}) {
     this.toggleLoading();
-    const trains: ITrain[] = await TrainsAPI.get(
+    const trains: Train[] = await TrainsAPI.get(
       departureStation,
       arrivalStation
     );
     if (departureStation && arrivalStation) {
-      this.setSearchedTrains(trains);
+      const constructedTrains = trains.map(train => new Train({ ...train }));
+      this.setSearchedTrains(constructedTrains);
     } else {
       this.setTrains(trains);
     }
@@ -379,7 +409,7 @@ class TrainsModule extends VuexModule implements ITrainState {
   @Action
   async getById(id: string) {
     this.toggleLoading();
-    const train: ITrain = await TrainsAPI.getById(id);
+    const train: Train = await TrainsAPI.getById(id);
     this.setCurrentTrain(train);
     this.toggleLoading();
     return train;
@@ -409,12 +439,12 @@ class TrainsModule extends VuexModule implements ITrainState {
   async create() {
     this.toggleLoading();
     try {
-      if (this.newTrain.number && Number(this.newTrain.number) > 0) {
-        const train: ITrain = await TrainsAPI.create({
+      if (this.newTrain.number) {
+        const train: Train = await TrainsAPI.create({
           ...this.newTrain
         });
         if (train.id) {
-          this.removeTrain(train.id);
+          LinesModule.removeTrainFromCurrentLine(train.id);
         }
         this.pushTrain({ ...this.newTrain, ...train });
         LinesModule.pushTrainToCurrentLine({ ...this.newTrain, ...train });
@@ -455,8 +485,17 @@ class TrainsModule extends VuexModule implements ITrainState {
   async update({ id, data }: { id: string; data: any }) {
     if (id && data) {
       this.toggleLoading();
-      await TrainsAPI.update(id, data);
-      this.updateTrain({ id, data });
+      try {
+        await TrainsAPI.update(id, data);
+        this.updateTrain({ id, data });
+        this.updateLineTrain({ id, data });
+      } catch (err) {
+        if (err.response && err.response.status === 409) {
+          this.updateErrorMessage({
+            updateTrainErrorMessage: "رقم القطار موجود بالفعل في هذا الخط"
+          });
+        }
+      }
       this.toggleLoading();
     }
   }
@@ -490,6 +529,7 @@ class TrainsModule extends VuexModule implements ITrainState {
     this.toggleLoading();
     await TrainsAPI.deleteTrainLine(id, lineId);
     LinesModule.removeTrainFromCurrentLine(id);
+    this.removeLineTrain({ id, lineId });
     this.toggleLoading();
   }
 
@@ -499,7 +539,7 @@ class TrainsModule extends VuexModule implements ITrainState {
     try {
       if (this.currentTrain.id) {
         this.newTrainRun.trainId = this.currentTrain.id;
-        const trainRun: ITrainRun = await TrainsAPI.addRun(
+        const trainRun: TrainRun = await TrainsAPI.addRun(
           trainId,
           this.newTrainRun
         );

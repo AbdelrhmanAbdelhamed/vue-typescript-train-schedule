@@ -38,7 +38,7 @@ import { Prop } from "vue-property-decorator";
 import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
 import UsersModule from "@/store/modules/Users";
-import { ILine, ITrain } from "@/store/models";
+import { Line, Train } from "@/store/models";
 
 @Component({
   components: {}

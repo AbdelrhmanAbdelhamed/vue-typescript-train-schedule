@@ -8,7 +8,7 @@ import {
 
 import store from "..";
 import PolicePeopleAPI from "@/services/api/PolicePeople";
-import { IPolicePerson, IPolicePersonState } from "../models";
+import { PolicePerson, PolicePersonState } from "../models";
 
 @Module({
   dynamic: true,
@@ -16,8 +16,8 @@ import { IPolicePerson, IPolicePersonState } from "../models";
   store,
   name: PolicePeopleAPI.END_POINT
 })
-class PolicePeopleModule extends VuexModule implements IPolicePersonState {
-  policePeople: IPolicePerson[] = [];
+class PolicePeopleModule extends VuexModule implements PolicePersonState {
+  policePeople: PolicePerson[] = [];
   loading: boolean = false;
 
   @Mutation
@@ -26,7 +26,7 @@ class PolicePeopleModule extends VuexModule implements IPolicePersonState {
   }
 
   @Mutation
-  setPolicePeople(policePeople: IPolicePerson[]) {
+  setPolicePeople(policePeople: PolicePerson[]) {
     this.policePeople = policePeople;
   }
 
@@ -38,7 +38,7 @@ class PolicePeopleModule extends VuexModule implements IPolicePersonState {
   @Action
   async getAll() {
     this.toggleLoading();
-    const policePeople: IPolicePerson[] = await PolicePeopleAPI.getAll();
+    const policePeople: PolicePerson[] = await PolicePeopleAPI.getAll();
     this.setPolicePeople(policePeople);
     this.toggleLoading();
   }

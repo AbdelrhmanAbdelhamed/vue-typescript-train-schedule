@@ -1,23 +1,23 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import {
-  IStationState,
-  ILineState,
-  ITrainState,
-  IPolicePersonState,
-  IUserState,
-  IAbilityState
+  StationState,
+  LineState,
+  TrainState,
+  PolicePersonState,
+  UserState,
+  AbilityState
 } from "./models";
 
 Vue.use(Vuex);
 
 export interface IRootState {
-  stations: IStationState;
-  lines: ILineState;
-  trains: ITrainState;
-  policePeople: IPolicePersonState;
-  users: IUserState;
-  abilities: IAbilityState;
+  stations: StationState;
+  lines: LineState;
+  trains: TrainState;
+  policePeople: PolicePersonState;
+  users: UserState;
+  abilities: AbilityState;
   idleVue: {
     isIdle: boolean;
   };

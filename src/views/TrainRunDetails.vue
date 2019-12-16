@@ -334,7 +334,7 @@ import PolicePeopleModule from "@/store/modules/PolicePeople";
 import PoliceDepartmentsModule from "@/store/modules/PoliceDepartments";
 import RanksModule from "@/store/modules/Ranks";
 
-import { ITrain, IPolicePerson } from "@/store/models";
+import { Train, PolicePerson } from "@/store/models";
 
 import { formatDayDate, convertToArabic, convertToEnglish } from "@/utils";
 

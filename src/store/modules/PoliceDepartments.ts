@@ -7,7 +7,7 @@ import {
 } from "vuex-module-decorators";
 
 import store from "..";
-import { IPoliceDepartment, IPoliceDepartmentState } from "../models";
+import { PoliceDepartment, PoliceDepartmentState } from "../models";
 import PoliceDepartmentsAPI from "@/services/api/PoliceDepartments";
 
 @Module({
@@ -17,8 +17,8 @@ import PoliceDepartmentsAPI from "@/services/api/PoliceDepartments";
   name: PoliceDepartmentsAPI.END_POINT
 })
 class PoliceDepartmentsModule extends VuexModule
-  implements IPoliceDepartmentState {
-  policeDepartments: IPoliceDepartment[] = [];
+  implements PoliceDepartmentState {
+  policeDepartments: PoliceDepartment[] = [];
   loading: boolean = false;
 
   @Mutation
@@ -27,7 +27,7 @@ class PoliceDepartmentsModule extends VuexModule
   }
 
   @Mutation
-  setPoliceDepartments(policeDepartments: IPoliceDepartment[]) {
+  setPoliceDepartments(policeDepartments: PoliceDepartment[]) {
     this.policeDepartments = policeDepartments;
   }
 
@@ -39,7 +39,7 @@ class PoliceDepartmentsModule extends VuexModule
   @Action
   async getAll() {
     this.toggleLoading();
-    const policeDepartments: IPoliceDepartment[] = await PoliceDepartmentsAPI.getAll();
+    const policeDepartments: PoliceDepartment[] = await PoliceDepartmentsAPI.getAll();
     this.setPoliceDepartments(policeDepartments);
     this.toggleLoading();
   }

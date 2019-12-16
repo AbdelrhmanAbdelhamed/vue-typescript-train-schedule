@@ -65,15 +65,41 @@
               clearable
             ></v-text-field>
           </v-card-title>
+
           <v-data-table
             v-if="showTable"
             :loading="loading"
-            item-key="number+line.name"
             class="elevation-1"
             :headers="headers"
             :items="trains"
+            item-key="number+lineName"
+            group-by="lineName"
             :search="search"
           >
+            <template
+              v-slot:group.header="{
+                items: [lineGroup],
+                headers,
+                group,
+                toggle
+              }"
+            >
+              <thead>
+                <th
+                  class="pointer"
+                  @click="toggleGroup(lineGroup.line, toggle)"
+                >
+                  <span>
+                    <v-icon>{{
+                      lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
+                    }}</v-icon>
+                  </span>
+                  <v-chip class="pointer" color="info">{{
+                    lineGroup.line.name
+                  }}</v-chip>
+                </th>
+              </thead>
+            </template>
             <template v-slot:item.number="{ item }">{{
               item.number | convertToArabic
             }}</template>
@@ -82,6 +108,7 @@
               <TrainActions
                 :actions="{ delete: false, details: true }"
                 :train="item"
+                :line="item.line"
               />
             </template>
           </v-data-table>
@@ -99,7 +126,7 @@ import { Prop } from "vue-property-decorator";
 import TrainActions from "@/components/TrainActions.vue";
 import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
-import { ILine, ITrain } from "@/store/models";
+import { Line, Train } from "@/store/models";
 
 @Component({
   components: { TrainActions }
@@ -120,6 +147,11 @@ export default class TrainsSearch extends Vue {
     return TrainsModule.loading || StationsModule.loading;
   }
 
+  toggleGroup(line: any, toggle: () => void) {
+    line.hide = !line.hide;
+    toggle();
+  }
+
   swapFormStations() {
     if (this.departureStation && this.arrivalStation) {
       let temp = this.departureStation;
@@ -136,8 +168,31 @@ export default class TrainsSearch extends Vue {
     });
   }
 
-  get trains() {
-    return TrainsModule.searchedTrains;
+  get trains(): Train[] {
+    const trains: Train[] = [];
+    TrainsModule.searchedTrains.forEach(train => {
+      if (train.lines && train.lines.length > 0) {
+        train.lines.forEach((line: any) => {
+          let trainItem: Train = new Train({
+            ...train,
+            lineName: line.name,
+            line: { ...line, hide: false }
+          });
+          trains.push(trainItem);
+        });
+      } else {
+        let trainItem: Train = new Train({
+          ...train,
+          lineName: "قطارات بدون خطوط بعد",
+          line: {
+            name: "قطارات بدون خطوط بعد",
+            hide: false
+          }
+        });
+        trains.push(trainItem);
+      }
+    });
+    return trains;
   }
 
   get stations() {
@@ -153,5 +208,8 @@ export default class TrainsSearch extends Vue {
 <style lang="scss">
 .pointer {
   cursor: pointer;
+}
+.v-row-group__header {
+  background: white !important;
 }
 </style>

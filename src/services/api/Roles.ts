@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IRole } from "@/store/models";
+import { Role } from "@/store/models";
 
 export default class RolesAPI {
   static readonly END_POINT = "roles";
@@ -14,7 +14,7 @@ export default class RolesAPI {
       .then(response => response.data);
   }
 
-  static create(role: IRole) {
+  static create(role: Role) {
     return axios.post(RolesAPI.END_POINT, role).then(response => response.data);
   }
 

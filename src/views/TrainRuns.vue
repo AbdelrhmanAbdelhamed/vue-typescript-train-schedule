@@ -60,13 +60,22 @@
           v-slot:group.header="{ items: [trainGroup], headers, group, toggle }"
         >
           <thead>
-            <th class="pointer" @click="toggleGroup(trainGroup.train, toggle)">
-              <span>
+            <th class="pointer">
+              <span @click="toggleGroup(trainGroup.train, toggle)">
                 <v-icon>
                   {{ trainGroup.train.hide ? "mdi-plus" : "mdi-minus" }}
                 </v-icon>
               </span>
-              <v-chip class="pointer" color="info">
+              <v-chip
+                @click="
+                  $router.push({
+                    name: `trains.run.details`,
+                    params: { id: trainGroup.train.id }
+                  })
+                "
+                class="pointer"
+                color="info"
+              >
                 قطار رقم:
                 {{ trainGroup.train.number | convertToArabic }}
               </v-chip>
@@ -98,7 +107,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 import TrainsModule from "@/store/modules/Trains";
-import { ITrainRun } from "@/store/models";
+import { TrainRun } from "@/store/models";
 import { convertToArabic, formatDayDate } from "@/utils";
 
 @Component({

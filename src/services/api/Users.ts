@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IUser } from "@/store/models";
+import { User } from "@/store/models";
 
 export default class UsersAPI {
   static readonly END_POINT = "users";
@@ -12,13 +12,13 @@ export default class UsersAPI {
     delete axios.defaults.headers.common["Authorization"];
   }
 
-  static login(user: IUser) {
+  static login(user: User) {
     return axios
       .post(`${UsersAPI.END_POINT}/login`, user)
       .then(response => response.data);
   }
 
-  static register(user: IUser) {
+  static register(user: User) {
     return axios
       .post(`${UsersAPI.END_POINT}/register`, user)
       .then(response => response.data);
@@ -28,7 +28,7 @@ export default class UsersAPI {
     return axios.get(`${UsersAPI.END_POINT}`).then(response => response.data);
   }
 
-  static create(user: IUser) {
+  static create(user: User) {
     return axios.post(UsersAPI.END_POINT, user).then(response => response.data);
   }
 

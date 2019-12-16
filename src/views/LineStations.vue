@@ -63,7 +63,7 @@ import { Prop } from "vue-property-decorator";
 
 import StationsModule from "@/store/modules/Stations";
 import LinesModule from "@/store/modules/Lines";
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 @Component({
   components: {}

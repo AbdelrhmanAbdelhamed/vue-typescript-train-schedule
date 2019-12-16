@@ -106,7 +106,7 @@ import LineActions from "@/components/LineActions.vue";
 import UsersModule from "@/store/modules/Users";
 import LinesModule from "@/store/modules/Lines";
 
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 import { convertToArabic } from "@/utils";
 
@@ -135,7 +135,7 @@ export default class Lines extends Vue {
     return LinesModule.loading;
   }
 
-  get lines(): ILine[] {
+  get lines(): Line[] {
     return LinesModule.lines;
   }
 

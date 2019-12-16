@@ -87,14 +87,14 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
 import TrainsModule from "@/store/modules/Trains";
-import { ITrain, ILine } from "../store/models";
+import { Train, Line } from "../store/models";
 
 @Component({
   components: {}
 })
 export default class EditLineStationsForm extends Vue {
   @Prop()
-  line!: ILine;
+  line!: Line;
 
   @Prop()
   editedLineStations: any;

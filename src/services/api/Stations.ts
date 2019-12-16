@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IStation } from "@/store/models";
+import { Station } from "@/store/models";
 
 export default class StationsAPI {
   static readonly END_POINT = "stations";
@@ -14,7 +14,7 @@ export default class StationsAPI {
       .then(response => response.data);
   }
 
-  static create(station: IStation) {
+  static create(station: Station) {
     return axios
       .post(StationsAPI.END_POINT, station)
       .then(response => response.data);

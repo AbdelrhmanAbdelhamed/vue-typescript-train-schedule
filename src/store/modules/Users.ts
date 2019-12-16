@@ -8,7 +8,7 @@ import {
 } from "vuex-module-decorators";
 
 import store from "..";
-import { IUserState, IUser } from "../models";
+import { UserState, User } from "../models";
 import UsersAPI from "@/services/api/Users";
 import AbilitiesModule from "../modules/Abilities";
 import Vue from "vue";
@@ -19,8 +19,8 @@ import Vue from "vue";
   store,
   name: UsersAPI.END_POINT
 })
-class UsersModule extends VuexModule implements IUserState {
-  currentUser: IUser = {
+class UsersModule extends VuexModule implements UserState {
+  currentUser: User = {
     fullName: sessionStorage.getItem("fullName") || "",
     username: "",
     password: "",
@@ -30,7 +30,7 @@ class UsersModule extends VuexModule implements IUserState {
       name: ""
     }
   };
-  newUser: IUser = {
+  newUser: User = {
     username: "",
     password: "",
     trains: [],
@@ -38,7 +38,7 @@ class UsersModule extends VuexModule implements IUserState {
       name: ""
     }
   };
-  users: IUser[] = [];
+  users: User[] = [];
 
   usernameErrorMessage = null;
   passwordErrorMessage = null;
@@ -89,7 +89,7 @@ class UsersModule extends VuexModule implements IUserState {
   }
 
   @Mutation
-  createUser(user: IUser) {
+  createUser(user: User) {
     this.users.push(user);
   }
 
@@ -117,7 +117,7 @@ class UsersModule extends VuexModule implements IUserState {
   }
 
   @Mutation
-  setUsers(users: IUser[]) {
+  setUsers(users: User[]) {
     this.users = users;
   }
 
@@ -156,7 +156,7 @@ class UsersModule extends VuexModule implements IUserState {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("fullName");
     UsersAPI.clearAuthorizationHeader();
-    const currentUser: IUser = {
+    const currentUser: User = {
       username: "",
       fullName: "",
       password: "",
@@ -175,7 +175,7 @@ class UsersModule extends VuexModule implements IUserState {
   async getAll() {
     this.setLoading(true);
 
-    const users: IUser[] = await UsersAPI.getAll();
+    const users: User[] = await UsersAPI.getAll();
     this.setUsers(users);
 
     this.setLoading(false);
@@ -212,6 +212,7 @@ class UsersModule extends VuexModule implements IUserState {
   async update({ id, data }: { id: string; data: any }) {
     if (id && data && (data.username !== "" || data.fullName !== "")) {
       this.setLoading(true);
+
       await UsersAPI.update(id, data);
       this.updateUser({ id, data });
 

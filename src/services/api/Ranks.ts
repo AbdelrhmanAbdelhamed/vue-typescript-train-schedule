@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IRank } from "@/store/models";
+import { Rank } from "@/store/models";
 
 export default class RanksAPI {
   static readonly END_POINT = "ranks";
@@ -14,7 +14,7 @@ export default class RanksAPI {
       .then(response => response.data);
   }
 
-  static create(rank: IRank) {
+  static create(rank: Rank) {
     return axios.post(RanksAPI.END_POINT, rank).then(response => response.data);
   }
 

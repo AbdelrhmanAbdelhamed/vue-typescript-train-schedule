@@ -26,32 +26,40 @@
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
         >
           <thead>
-            <th class="pointer" @click="toggleGroup(lineGroup.line, toggle)">
-              <span>
+            <th class="pointer">
+              <span @click="toggleGroup(lineGroup.line, toggle)">
                 <v-icon>{{
                   lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
                 }}</v-icon>
               </span>
-              <v-chip class="pointer" color="info">{{
-                lineGroup.line.name
-              }}</v-chip>
+              <v-chip
+                @click="
+                  $router.push({
+                    name: `lines.trains`,
+                    params: { lineId: lineGroup.line.id }
+                  })
+                "
+                class="pointer"
+                color="info"
+                >{{ lineGroup.line.name }}</v-chip
+              >
             </th>
           </thead>
         </template>
 
         <template v-slot:item.number="props">
           <v-edit-dialog
-            lazy
-            :return-value.sync="props.item.number"
-            @save="onEditSubmit(props.item.id, props.item.number)"
+            @open="temporaryTrainNumber = props.item.number"
+            @save="onEditSubmit(props.item.id, temporaryTrainNumber)"
           >
             {{ props.item.number | convertToArabic }}
             <template v-slot:input>
               <v-text-field
-                v-model="props.item.number"
+                :value="temporaryTrainNumber"
                 label="تعديل رقم القطار"
                 single-line
                 v-if="$can('update', 'Train')"
+                @change="onEditTrainNumberChange"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -59,13 +67,17 @@
 
         <template v-slot:item.action="{ item }">
           <TrainActions
-            :actions="{ delete: false, details: true }"
+            :actions="{ delete: true, details: true }"
             :train="item"
             :line="item.line"
           />
         </template>
       </v-data-table>
     </v-card>
+    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+      {{ updateTrainErrorMessage }}
+      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -79,7 +91,7 @@ import TrainActions from "@/components/TrainActions.vue";
 import TrainsModule from "@/store/modules/Trains";
 import UsersModule from "@/store/modules/Users";
 
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 import { validationRules, convertToArabic } from "@/utils";
 import TrainsAPI from "@/services/api/Trains";
@@ -95,8 +107,26 @@ export default class Trains extends Vue {
   search = "";
   dialog: boolean = false;
   isNewTrainValid = false;
-
+  temporaryTrainNumber = "";
   newTrainNumber = "";
+
+  get snackbar() {
+    return TrainsModule.updateTrainErrorMessage !== null;
+  }
+
+  set snackbar(value: any) {
+    this.snackbar = value;
+  }
+
+  get updateTrainErrorMessage() {
+    return TrainsModule.updateTrainErrorMessage;
+  }
+
+  closeSnackbar() {
+    TrainsModule.updateErrorMessage({
+      updateTrainErrorMessage: null
+    });
+  }
 
   toggleGroup(line: any, toggle: () => void) {
     line.hide = !line.hide;
@@ -156,6 +186,10 @@ export default class Trains extends Vue {
   save() {
     TrainsModule.create();
     this.close();
+  }
+
+  onEditTrainNumberChange(value: any) {
+    this.temporaryTrainNumber = value;
   }
 
   onEditSubmit(id: any, number: any) {

@@ -18,7 +18,7 @@
         :loading="stationsLoading"
         :headers="headers"
         :items="stations"
-        item-key="id+line.name"
+        item-key="id+lineName"
         group-by="lineName"
         class="elevation-1"
         :search="search"
@@ -107,19 +107,23 @@
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
         >
           <thead>
-            <th
-              ref="groupHeader"
-              class="pointer"
-              @click="toggleGroup(lineGroup.line, toggle)"
-            >
-              <span>
+            <th class="pointer">
+              <span @click="toggleGroup(lineGroup.line, toggle)">
                 <v-icon>
                   {{ lineGroup.line.hide ? "mdi-plus" : "mdi-minus" }}
                 </v-icon>
               </span>
-              <v-chip class="pointer" color="info">{{
-                lineGroup.line.name
-              }}</v-chip>
+              <v-chip
+                @click="
+                  $router.push({
+                    name: `lines.stations`,
+                    params: { lineId: lineGroup.line.id }
+                  })
+                "
+                class="pointer"
+                color="info"
+                >{{ lineGroup.line.name }}</v-chip
+              >
             </th>
           </thead>
         </template>
@@ -143,22 +147,19 @@
 
         <template v-slot:item.line.LineStation.stationOrder="{ item }">
           <v-edit-dialog
-            :return-value.sync="item.line.LineStation.stationOrder"
+            @open="temporaryStationOrder = item.line.LineStation.stationOrder"
             @save="
-              onEditOrderSubmit(
-                item.id,
-                item.line.id,
-                item.line.LineStation.stationOrder
-              )
+              onEditOrderSubmit(item.id, item.line.id, temporaryStationOrder)
             "
           >
             {{ item.line.LineStation.stationOrder | convertToArabic }}
             <template v-slot:input>
               <v-text-field
-                v-model="item.line.LineStation.stationOrder"
+                :value="temporaryStationOrder"
                 label="تعديل ترتيب المحطة بالخط"
                 single-line
                 v-if="$can('update', 'Station')"
+                @change="onEditLineStationOrderChange"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -169,6 +170,10 @@
         </template>
       </v-data-table>
     </v-card>
+    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+      {{ updateStationErrorMessage }}
+      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -183,7 +188,7 @@ import StationsModule from "@/store/modules/Stations";
 import LinesModule from "@/store/modules/Lines";
 import UsersModule from "@/store/modules/Users";
 
-import { ILine } from "@/store/models";
+import { Line } from "@/store/models";
 
 import { convertToArabic, IsNumber } from "@/utils";
 
@@ -205,6 +210,25 @@ export default class Stations extends Vue {
   search = "";
   dialog: boolean = false;
   isNewStationValid = false;
+  temporaryStationOrder = "";
+
+  get snackbar() {
+    return StationsModule.updateStationErrorMessage !== null;
+  }
+
+  set snackbar(value: any) {
+    this.snackbar = value;
+  }
+
+  get updateStationErrorMessage() {
+    return StationsModule.updateStationErrorMessage;
+  }
+
+  closeSnackbar() {
+    StationsModule.updateErrorMessage({
+      updateStationErrorMessage: null
+    });
+  }
 
   checkIfNotNumber(event: any) {
     if (!IsNumber(event.key)) return event.preventDefault();
@@ -265,6 +289,10 @@ export default class Stations extends Vue {
 
   onNameChange(value: any) {
     StationsModule.updateNewStation({ name: value });
+  }
+
+  onEditLineStationOrderChange(value: any) {
+    this.temporaryStationOrder = value;
   }
 
   onLineStationOrderChange(value: any) {

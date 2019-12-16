@@ -5,6 +5,7 @@
       small
       link
       outlined
+      v-if="$can('read', train)"
       :to="{ name: `trains.run.details`, params: { id: train.id } }"
       >الخدمات</v-btn
     >
@@ -14,7 +15,7 @@
       color="primary"
       small
       link
-      v-if="line"
+      v-if="line && $can('read', 'Station')"
       :to="{
         name: `trains.line.stations`,
         params: { lineId: line.id, id: train.id }
@@ -56,14 +57,14 @@ import { Prop } from "vue-property-decorator";
 import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
 import UsersModule from "@/store/modules/Users";
-import { ILine, ITrain } from "@/store/models";
+import { Line, Train } from "@/store/models";
 
 @Component({
   components: {}
 })
 export default class TrainActions extends Vue {
   @Prop()
-  train: any;
+  train!: Train;
 
   @Prop()
   line: any;
@@ -74,20 +75,12 @@ export default class TrainActions extends Vue {
   dialog = false;
 
   async onDeleteClicked() {
-    await TrainsModule.deleteTrainLine({
-      id: this.train.id,
-      lineId: this.line.id
-    });
-    this.dialog = false;
-  }
-
-  beforeCreated() {
-    if (this.train && this.line) {
-      TrainsModule.setCurrentTrain(this.train);
-      TrainsModule.getTrainLineStations({
-        id: this.train.id!,
-        lineId: this.line.id!
+    if (this.train.id && this.line.id) {
+      await TrainsModule.deleteTrainLine({
+        id: this.train.id,
+        lineId: this.line.id
       });
+      this.dialog = false;
     }
   }
 }

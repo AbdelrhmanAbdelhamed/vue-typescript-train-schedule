@@ -33,7 +33,7 @@
               <template v-slot:activator="{ on }">
                 <v-btn color="white" light v-on="on">تعديل</v-btn>
               </template>
-              <v-card>
+              <v-card :loading="trainsLoading || linesLoading">
                 <v-card-title class="pa-10">
                   <span class="headline">
                     تعديل مسار قطار رقم
@@ -52,10 +52,18 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-card-actions right>
-                    <v-btn color="success darken-1" text @click="update"
+                    <v-btn
+                      :loading="trainsLoading"
+                      color="success darken-1"
+                      text
+                      @click="update"
                       >حفظ</v-btn
                     >
-                    <v-btn color="blue darken-1" text @click="close"
+                    <v-btn
+                      :loading="trainsLoading"
+                      color="blue darken-1"
+                      text
+                      @click="close"
                       >الغاء</v-btn
                     >
                   </v-card-actions>
@@ -164,12 +172,12 @@ import EditLineStationsForm from "@/components/EditLineStationsForm.vue";
 
 import LinesModule from "@/store/modules/Lines";
 import TrainsModule from "@/store/modules/Trains";
-import { ITrain, ILine, IStation } from "@/store/models";
+import { Train, Line, Station } from "@/store/models";
 
 @Component({
   components: { EditLineStationsForm }
 })
-export default class LineTrainTimeLine extends Vue {
+export default class TrainLineStations extends Vue {
   dialog = false;
 
   get trainsLoading() {
@@ -244,7 +252,7 @@ export default class LineTrainTimeLine extends Vue {
             station.LineStationTrain!.departureTime !== null
           );
         })
-        .sort((stationA: IStation, stationB: IStation) => {
+        .sort((stationA: Station, stationB: Station) => {
           return (
             stationA.LineStation!.stationOrder -
             stationB.LineStation!.stationOrder
