@@ -114,12 +114,11 @@
                 </v-icon>
               </span>
               <v-chip
-                @click="
-                  $router.push({
-                    name: `lines.stations`,
-                    params: { lineId: lineGroup.line.id }
-                  })
-                "
+                link
+                :to="{
+                  name: `lines.stations`,
+                  params: { lineId: lineGroup.line.id }
+                }"
                 class="pointer"
                 color="info"
                 >{{ lineGroup.line.name }}</v-chip
