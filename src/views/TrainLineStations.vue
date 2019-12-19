@@ -168,6 +168,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
+import { orderBy } from "lodash";
+
 import EditLineStationsForm from "@/components/EditLineStationsForm.vue";
 
 import LinesModule from "@/store/modules/Lines";
@@ -244,22 +246,26 @@ export default class TrainLineStations extends Vue {
   }
 
   get trainTimelineStations() {
+    let trainTimelineStations: Station[] = [];
     if (TrainsModule.currentTrain.stations) {
-      return TrainsModule.currentTrain.stations
-        .filter(station => {
+      trainTimelineStations = TrainsModule.currentTrain.stations.filter(
+        station => {
           return (
             station.LineStationTrain!.arrivalTime !== null ||
             station.LineStationTrain!.departureTime !== null
           );
-        })
-        .sort((stationA: Station, stationB: Station) => {
-          return (
-            stationA.LineStation!.stationOrder -
-            stationB.LineStation!.stationOrder
-          );
-        });
+        }
+      );
     }
-    return [];
+    return orderBy(
+      trainTimelineStations,
+      [
+        "LineStationTrain.departureTime",
+        "LineStationTrain.arrivalTime",
+        "LineStation.stationOrder"
+      ],
+      ["asc", "asc", "asc"]
+    );
   }
 
   close() {
