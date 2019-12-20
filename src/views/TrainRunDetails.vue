@@ -70,7 +70,7 @@
                   link
                   :to="{
                     name: `trains.run.revision.details`,
-                    params: { id: train.id }
+                    params: { id }
                   }"
                   >سجل الخدمات</v-btn
                 ></v-col
