@@ -67,9 +67,21 @@ export default class TrainsAPI {
       .then(response => response.data);
   }
 
+  static getAllRunsRevisions() {
+    return axios
+      .get(`${TrainsAPI.END_POINT}/runs/revisions`)
+      .then(response => response.data);
+  }
+
   static getRunsByTrainId(trainId: string) {
     return axios
       .get(`${TrainsAPI.END_POINT}/${trainId}/runs`)
+      .then(response => response.data);
+  }
+
+  static getRunsRevisionsByTrainId(trainId: string) {
+    return axios
+      .get(`${TrainsAPI.END_POINT}/${trainId}/runs/revisions`)
       .then(response => response.data);
   }
 

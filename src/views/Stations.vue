@@ -189,7 +189,7 @@ import UsersModule from "@/store/modules/Users";
 
 import { Line } from "@/store/models";
 
-import { convertToArabic, IsNumber } from "@/utils";
+import { convertToArabic, isNumber } from "@/utils";
 
 @Component({
   components: {
@@ -230,7 +230,7 @@ export default class Stations extends Vue {
   }
 
   checkIfNotNumber(event: any) {
-    if (!IsNumber(event.key)) return event.preventDefault();
+    if (!isNumber(event.key)) return event.preventDefault();
   }
 
   toggleGroup(line: any, toggle: () => void) {

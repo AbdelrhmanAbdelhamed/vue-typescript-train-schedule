@@ -168,6 +168,18 @@ const routes: RouteConfig[] = [
       },
       {
         props: true,
+        name: "trains.run.revision.details",
+        path: ":id/runs/revisions",
+        // route level code-splitting
+        // this generates a separate chunk (trains.run.revision.details.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "trains.run.revision.details" */ "../views/TrainRunRevisionDetails.vue"
+          )
+      },
+      {
+        props: true,
         name: "trains.line.stations",
         path: ":id/stations/line/:lineId",
         // route level code-splitting
@@ -182,8 +194,8 @@ const routes: RouteConfig[] = [
   },
   {
     props: true,
-    name: "trainRuns",
     path: "/runs",
+    component: EmptyRouterView,
     meta: {
       nameArabic: "خدمات التأمين",
       visible: false,
@@ -191,11 +203,28 @@ const routes: RouteConfig[] = [
       resource: "TrainRun",
       requiresAuth: true
     },
-    // route level code-splitting
-    // this generates a separate chunk (trainRuns.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "trainRuns" */ "../views/TrainRuns.vue")
+    children: [
+      {
+        name: "runs",
+        path: "",
+        // route level code-splitting
+        // this generates a separate chunk (runs.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(/* webpackChunkName: "runs" */ "../views/TrainRuns.vue")
+      },
+      {
+        name: "runs.revisions",
+        path: "revisions",
+        // route level code-splitting
+        // this generates a separate chunk (runs.revisions.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "runs.revisions" */ "../views/TrainRunsRevisions.vue"
+          )
+      }
+    ]
   },
   // otherwise redirect to home
   {

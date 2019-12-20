@@ -121,6 +121,13 @@ export class TrainRun {
   policePeople!: PolicePerson[];
 }
 
+export class TrainRunRevision extends TrainRun {
+  revisionId!: string;
+  revisionValidFrom!: Date;
+  revisionValidTo!: Date;
+  whoDunnit!: string;
+}
+
 export class Train {
   id?: string;
   number!: string;
@@ -128,6 +135,7 @@ export class Train {
   updatedAt?: Date;
   lines?: Line[];
   trainRuns?: TrainRun[];
+  trainRunsRevisions?: TrainRunRevision[];
   stations?: Station[];
   users?: User[];
   line?: Line;
@@ -173,6 +181,8 @@ export class TrainState {
   newTrain!: Train;
   currentTrain!: Train;
   loading!: boolean;
+  trainRuns!: TrainRun[];
+  trainRunsRevisions!: TrainRunRevision[];
 }
 
 export class Role {

@@ -4,12 +4,20 @@ import {
   formatDayDate,
   formatTime,
   convertToArabic,
-  convertToEnglish
+  convertToEnglish,
+  timeFromNow,
+  formatDate
 } from "@/utils";
 
 Vue.filter("formatDayDate", (value: Date | string) => {
   if (value) {
     return formatDayDate(value);
+  }
+});
+
+Vue.filter("formatDate", (value: Date | string) => {
+  if (value) {
+    return formatDate(value);
   }
 });
 
@@ -25,4 +33,8 @@ Vue.filter("convertToArabic", (value: any) => {
 
 Vue.filter("convertToEnglish", (value: any) => {
   return convertToEnglish(value);
+});
+
+Vue.filter("timeFromNow", (value: Date) => {
+  return timeFromNow(value);
 });

@@ -1,6 +1,6 @@
 import moment from "moment";
 
-moment.locale("");
+moment.locale("ar");
 
 export const getDayOfWeek = (date: Date | string) => {
   let dayOfWeek = new Date(convertToEnglish(date)).getDay();
@@ -18,15 +18,28 @@ export const formatDayDate = (value: Date | string) => {
   }
 };
 
+export const formatDate = (value: Date | string) => {
+  if (value) {
+    let date = moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
+    let time = moment(String(convertToEnglish(value))).format("hh:mm A");
+    return `${getDayOfWeek(date)} ${date}  الساعة: ${time}`;
+  }
+};
+
 export const formatTime = (value: Date | string) => {
-  moment.locale("ar");
   if (value) {
     let date = moment(convertToEnglish(value), "HH:mm:ss").format("hh:mm A");
     return date;
   }
 };
 
-export const IsNumber = (value: string) => {
+export const timeFromNow = (value: Date) => {
+  if (value) {
+    return moment(value).fromNow();
+  }
+};
+
+export const isNumber = (value: string) => {
   return /\d/.test(value);
 };
 

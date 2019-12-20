@@ -15,7 +15,8 @@ import {
   TrainRun,
   PolicePerson,
   PoliceDepartment,
-  Rank
+  Rank,
+  TrainRunRevision
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
@@ -29,6 +30,7 @@ class TrainsModule extends VuexModule implements TrainState {
   currentTrain: Train = {
     number: "",
     trainRuns: [],
+    trainRunsRevisions: [],
     stations: LinesModule.currentLine.stations
       ? [...LinesModule.currentLine.stations]
       : []
@@ -59,6 +61,7 @@ class TrainsModule extends VuexModule implements TrainState {
   };
 
   trainRuns: TrainRun[] = [];
+  trainRunsRevisions: TrainRunRevision[] = [];
   loading: boolean = false;
 
   newTrainRunDateErrorMessage = null;
@@ -92,7 +95,8 @@ class TrainsModule extends VuexModule implements TrainState {
   createEmptyTrain(): Train {
     return {
       number: "",
-      trainRuns: []
+      trainRuns: [],
+      trainRunsRevisions: []
     };
   }
 
@@ -210,6 +214,18 @@ class TrainsModule extends VuexModule implements TrainState {
         Vue.set(TrainsModule.state.currentTrain, "trainRuns", []);
       }
     }
+    if (data.trainRunsRevisions) {
+      if (data.trainRunsRevisions.train) {
+        this.currentTrain = {
+          ...data.trainRunsRevisions.train
+        };
+      }
+      Vue.set(
+        TrainsModule.state.currentTrain,
+        "trainRunsRevisions",
+        data.trainRunsRevisions.items
+      );
+    }
   }
 
   @Mutation
@@ -278,8 +294,18 @@ class TrainsModule extends VuexModule implements TrainState {
   }
 
   @Mutation
+  setTrainRunsRevisions(trainRunsRevisions: TrainRunRevision[]) {
+    this.trainRunsRevisions = trainRunsRevisions;
+  }
+
+  @Mutation
   resetTrainRuns() {
     this.trainRuns = [];
+  }
+
+  @Mutation
+  resetTrainRunsRevisions() {
+    this.trainRunsRevisions = [];
   }
 
   @Mutation
@@ -388,6 +414,12 @@ class TrainsModule extends VuexModule implements TrainState {
   }
 
   @Action
+  async getAllTrainRunsRevisions() {
+    const trainRunsRevisions: TrainRunRevision[] = await TrainsAPI.getAllRunsRevisions();
+    this.setTrainRunsRevisions(trainRunsRevisions);
+  }
+
+  @Action
   async get({
     departureStation,
     arrivalStation
@@ -431,6 +463,18 @@ class TrainsModule extends VuexModule implements TrainState {
     this.updateCurrentTrain({
       data: {
         trainRuns
+      }
+    });
+  }
+
+  @Action
+  async getRunsRevisionsByTrainId({ trainId }: { trainId: string }) {
+    const trainRunsRevisions = await TrainsAPI.getRunsRevisionsByTrainId(
+      trainId
+    );
+    this.updateCurrentTrain({
+      data: {
+        trainRunsRevisions
       }
     });
   }
