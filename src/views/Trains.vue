@@ -90,7 +90,7 @@ import TrainActions from "@/components/TrainActions.vue";
 import TrainsModule from "@/store/modules/Trains";
 import UsersModule from "@/store/modules/Users";
 
-import { Line } from "@/store/models";
+import { Line, Train } from "@/store/models";
 
 import { validationRules, convertToArabic } from "@/utils";
 import TrainsAPI from "@/services/api/Trains";
@@ -148,22 +148,22 @@ export default class Trains extends Vue {
     TrainsModule.trains.forEach(train => {
       if (train.lines && train.lines.length > 0) {
         train.lines.forEach((line: any) => {
-          let trainItem = {
+          let trainItem: Train = new Train({
             ...train,
             lineName: line.name,
             line: { ...line, hide: false }
-          };
+          });
           trains.push(trainItem);
         });
       } else {
-        let trainItem = {
+        let trainItem: Train = new Train({
           ...train,
           lineName: "قطارات بدون خطوط بعد",
           line: {
             name: "قطارات بدون خطوط بعد",
             hide: false
           }
-        };
+        });
         trains.push(trainItem);
       }
     });
