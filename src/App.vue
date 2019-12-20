@@ -8,7 +8,7 @@
       <v-spacer />
       <div v-if="loggedIn">
         <span class="ma-3">{{ fullName }}</span>
-        <v-btn @click="onLogOutClick" color="secondary">تسجيل خروج</v-btn>
+        <v-btn @click="onLogOutClick" small color="secondary">تسجيل خروج</v-btn>
       </div>
     </v-app-bar>
 

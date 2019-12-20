@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "short_name": "",
+    "start_url": ".",
+    "name": "خدمات القطارت",
+    "short_name": "خدمات القطارات",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

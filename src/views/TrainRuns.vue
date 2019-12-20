@@ -56,6 +56,23 @@
         :search="search"
         :custom-filter="filterTrainRuns"
       >
+        <template v-slot:top v-if="$can('manage', 'Train')">
+          <div class="mx-4 d-print-none">
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              dark
+              class="mb-2"
+              link
+              :to="{
+                name: `runs.revisions`
+              }"
+              >سجل جميع الخدمات</v-btn
+            >
+          </div>
+        </template>
+
         <template
           v-slot:group.header="{ items: [trainGroup], headers, group, toggle }"
         >

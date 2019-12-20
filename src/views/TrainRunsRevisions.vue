@@ -11,7 +11,7 @@
           index) in trainRunsRevisions || []"
         >
           <v-list-item
-            :key="trainRunsRevision.revisionId"
+            :key="trainRunsRevision.revisionId + trainRunsRevision.id"
             :class="
               `${
                 trainRunsRevision.revisionValidTo ? 'destroyed' : 'created'
