@@ -1,6 +1,9 @@
 import { Ability, Rule } from "@casl/ability";
 
 export class Station {
+  static get modelName() {
+    return "Station";
+  }
   id?: string;
   name!: string;
   createdAt?: Date;
@@ -13,6 +16,9 @@ export class Station {
 }
 
 export class LineStationTrain {
+  static get modelName() {
+    return "LineStationTrain";
+  }
   arrivalTime?: string;
   departureTime?: string;
   isArrival!: boolean;
@@ -22,6 +28,9 @@ export class LineStationTrain {
 }
 
 export class LineStation {
+  static get modelName() {
+    return "LineStation";
+  }
   id?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -38,6 +47,9 @@ export class StationState {
 }
 
 export class Line {
+  static get modelName() {
+    return "Line";
+  }
   id?: string;
   name!: string;
   createdAt?: Date;
@@ -58,6 +70,9 @@ export class LineState {
 }
 
 export class Rank {
+  static get modelName() {
+    return "Rank";
+  }
   id?: string;
   name!: string;
   policePeople?: PolicePerson[];
@@ -78,6 +93,9 @@ export class PoliceDepartmentState {
 }
 
 export class PolicePerson {
+  static get modelName() {
+    return "PolicePerson";
+  }
   id?: string;
   name!: string;
   phoneNumber!: string;
@@ -104,6 +122,9 @@ export class PolicePerson {
 }
 
 export class PoliceDepartment {
+  static get modelName() {
+    return "PoliceDepartment";
+  }
   id?: string;
   name!: string;
   policePeople?: PolicePerson[];
@@ -112,6 +133,9 @@ export class PoliceDepartment {
 }
 
 export class TrainRun {
+  static get modelName() {
+    return "TrainRun";
+  }
   id?: string;
   day!: string;
   createdAt?: Date;
@@ -122,6 +146,9 @@ export class TrainRun {
 }
 
 export class TrainRunRevision extends TrainRun {
+  static get modelName() {
+    return "TrainRunRevision";
+  }
   revisionId!: string;
   revisionValidFrom!: Date;
   revisionValidTo!: Date;
@@ -129,6 +156,10 @@ export class TrainRunRevision extends TrainRun {
 }
 
 export class Train {
+  static get modelName() {
+    return "Train";
+  }
+
   id?: string;
   number!: string;
   createdAt?: Date;
@@ -186,6 +217,9 @@ export class TrainState {
 }
 
 export class Role {
+  static get modelName() {
+    return "Role";
+  }
   id?: string;
   name!: string;
   nameArabic!: string;
@@ -200,6 +234,9 @@ export class RoleState {
 }
 
 export class User {
+  static get modelName() {
+    return "User";
+  }
   id?: string;
   token?: string;
   fullName?: string;
