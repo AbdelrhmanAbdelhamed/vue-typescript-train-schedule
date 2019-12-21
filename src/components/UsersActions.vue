@@ -26,7 +26,10 @@
                     <v-row justify="center" align="center">
                       <v-col cols="12">
                         <v-text-field
-                          :rules="[v => !!v || 'برجاء ادخال كلمة المرور']"
+                          :rules="[
+                            v => !!v || 'برجاء ادخال كلمة المرور الجديدة',
+                            passwordConfirmationRule
+                          ]"
                           required
                           id="password"
                           label="كلمة المرور الجديدة"
@@ -34,6 +37,22 @@
                           prepend-icon="mdi-lock"
                           type="password"
                           v-model="newPassword"
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          :rules="[
+                            v =>
+                              !!v || ' برجاء ادخال تأكيد كلمة المرور الجديدة',
+                            passwordConfirmationRule
+                          ]"
+                          required
+                          id="re-password"
+                          label="تأكيد كلمة المرور الجديدة"
+                          name="re-password"
+                          prepend-icon="mdi-lock"
+                          type="password"
+                          v-model="reNewPassword"
                         />
                       </v-col>
                     </v-row>
@@ -127,6 +146,14 @@ export default class UserActions extends Vue {
   newPasswordDialog = false;
   isNewPasswordValid = false;
   newPassword = null;
+  reNewPassword = null;
+
+  get passwordConfirmationRule() {
+    return (
+      this.newPassword === this.reNewPassword ||
+      "كلمة المرور الجديدة غير متطابقة"
+    );
+  }
 
   get loading() {
     return TrainsModule.loading || UsersModule.loading;

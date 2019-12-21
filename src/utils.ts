@@ -1,6 +1,6 @@
-import moment from "moment";
+import Moment from "moment";
 
-moment.locale("ar");
+Moment.locale("ar");
 
 export const getDayOfWeek = (date: Date | string) => {
   let dayOfWeek = new Date(convertToEnglish(date)).getDay();
@@ -13,29 +13,29 @@ export const getDayOfWeek = (date: Date | string) => {
 
 export const formatDayDate = (value: Date | string) => {
   if (value) {
-    let date = moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
+    let date = Moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
     return `${getDayOfWeek(date)} ${date}`;
   }
 };
 
 export const formatDate = (value: Date | string) => {
   if (value) {
-    let date = moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
-    let time = moment(String(convertToEnglish(value))).format("hh:mm A");
+    let date = Moment(String(convertToEnglish(value))).format("YYYY/MM/DD");
+    let time = Moment(String(convertToEnglish(value))).format("hh:mm A");
     return `${getDayOfWeek(date)} ${date}  الساعة: ${time}`;
   }
 };
 
 export const formatTime = (value: Date | string) => {
   if (value) {
-    let date = moment(convertToEnglish(value), "HH:mm:ss").format("hh:mm A");
+    let date = Moment(convertToEnglish(value), "HH:mm:ss").format("hh:mm A");
     return date;
   }
 };
 
-export const timeFromNow = (value: Date) => {
+export const timeFromNow = (value: Date, withOutSuffix: boolean = false) => {
   if (value) {
-    return moment(value).fromNow();
+    return Moment(value).fromNow(withOutSuffix);
   }
 };
 
@@ -90,3 +90,5 @@ export const validationRules = {
     return pattern.test(value);
   }
 };
+
+export const moment = Moment;

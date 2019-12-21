@@ -3,7 +3,7 @@
     <v-card :loading="loading">
       <v-card-title>سجل خدمات تأمين قطار رقم: {{ train.number }}</v-card-title>
       <v-list
-        two-line
+        three-line
         v-if="train.trainRunsRevisions && train.trainRunsRevisions.length > 0"
       >
         <template
@@ -22,11 +22,29 @@
                 تاريخ الخدمة:
                 {{ trainRunsRevision.day | formatDayDate | convertToArabic }}
               </v-list-item-title>
+
+              <v-list-item-subtitle
+                class="text--primary"
+                v-if="trainRunsRevision.revisionValidTo"
+              >
+                تم اضافتها منذ:
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">
+                      {{ trainRunsRevision.revisionValidFrom | timeFromNow }}
+                    </span>
+                  </template>
+                  <span>{{
+                    trainRunsRevision.revisionValidFrom | formatDate
+                  }}</span>
+                </v-tooltip>
+              </v-list-item-subtitle>
+
               <v-list-item-subtitle class="text--primary">
                 {{
                   trainRunsRevision.revisionValidTo
                     ? "تم مسحها بواسطة: "
-                    : "تمت اضافتها بواسطة: "
+                    : "تم اضافتها بواسطة: "
                 }}
                 {{ trainRunsRevision.whoDunnit }}
               </v-list-item-subtitle>

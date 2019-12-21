@@ -1,80 +1,161 @@
 <template>
   <div class="train-runs-revisions">
-    <v-card :loading="loading">
-      <v-card-title>سجل جميع الخدمات</v-card-title>
-      <v-list
-        three-line
-        v-if="trainRunsRevisions && trainRunsRevisions.length > 0"
-      >
-        <template
-          v-for="({ train, item: trainRunsRevision },
-          index) in trainRunsRevisions || []"
+    <v-card>
+      <v-card-title>
+        سجل جميع الخدمات
+        <v-spacer></v-spacer>
+        <v-menu
+          ref="searchDayDateMenu"
+          v-model="searchDayDateMenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+          class="d-print-none"
         >
-          <v-list-item
-            :key="trainRunsRevision.revisionId + trainRunsRevision.id"
-            :class="
-              `${
-                trainRunsRevision.revisionValidTo ? 'destroyed' : 'created'
-              }-left-border`
-            "
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              :value="searchDayDateFormatted"
+              hide-details
+              clearable
+              readonly
+              label="استعلام بتاريخ الخدمة"
+              append-icon="mdi-calendar-search"
+              v-on="on"
+              @click:clear="search = ''"
+              class="d-print-none"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            scrollable
+            v-model="searchDayDate"
+            no-title
+            @input="onDaySearchInput"
+            class="d-print-none"
+          ></v-date-picker>
+        </v-menu>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-table-search"
+          label="استعلام بالمستخدم أو برقم القطار"
+          single-line
+          hide-details
+          clearable
+          @click:clear="
+            searchDayDate = '';
+            searchFromDate = '';
+          "
+          class="d-print-none"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-menu
+          ref="searchFromDateMenu"
+          v-model="searchFromDateMenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+          class="d-print-none"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              :value="searchFromDateFormatted"
+              hide-details
+              clearable
+              readonly
+              label="استعلام بالمدة (منذ)"
+              append-icon="mdi-calendar-search"
+              v-on="on"
+              @click:clear="search = ''"
+              class="d-print-none"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            scrollable
+            v-model="searchFromDate"
+            no-title
+            @input="onFromSearchInput"
+            class="d-print-none"
+          ></v-date-picker>
+        </v-menu>
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="trainRunsRevisions"
+        class="elevation-1"
+        :search="search"
+        :custom-filter="filterTrainRunsRevisions"
+      >
+        <template v-slot:item.train="{ item: { train } }">
+          <v-chip
+            link
+            :to="{
+              name: `trains.run.revision.details`,
+              params: { id: train.id }
+            }"
+            class="pointer"
+            color="info"
           >
-            <v-list-item-content>
-              <v-list-item-title>
-                تاريخ الخدمة:
-                {{ trainRunsRevision.day | formatDayDate | convertToArabic }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="text--primary">
-                {{
-                  trainRunsRevision.revisionValidTo
-                    ? "تم مسحها بواسطة: "
-                    : "تمت اضافتها بواسطة: "
-                }}
-                {{ trainRunsRevision.whoDunnit }}
-              </v-list-item-subtitle>
-              <v-list-item-subtitle class="text--primary">
-                رقم القطار:
-                {{ train.number }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-
-            <v-list-item-action>
-              <v-tooltip bottom v-if="trainRunsRevision.revisionValidTo">
-                <template v-slot:activator="{ on }">
-                  <span v-on="on">
-                    <v-list-item-action-text>
-                      {{ trainRunsRevision.revisionValidTo | timeFromNow }}
-                    </v-list-item-action-text>
-                  </span>
-                </template>
-                <span>{{
-                  trainRunsRevision.revisionValidTo | formatDate
-                }}</span>
-              </v-tooltip>
-
-              <v-tooltip bottom v-else>
-                <template v-slot:activator="{ on }">
-                  <span v-on="on">
-                    <v-list-item-action-text
-                      >{{ trainRunsRevision.revisionValidFrom | timeFromNow }}
-                    </v-list-item-action-text>
-                  </span>
-                </template>
-                <span>{{
-                  trainRunsRevision.revisionValidFrom | formatDate
-                }}</span>
-              </v-tooltip>
-            </v-list-item-action>
-          </v-list-item>
-
-          <v-divider
-            v-if="index + 1 < (trainRunsRevisions || []).length"
-            :key="index"
-          ></v-divider>
+            {{ train.number | convertToArabic }}
+          </v-chip>
         </template>
-      </v-list>
-      <v-card-text v-else>
-        لا توجد بيانات متاحة
-      </v-card-text>
+
+        <template v-slot:item.day="{ item: { day } }">
+          {{ day | formatDayDate | convertToArabic }}
+        </template>
+
+        <template v-slot:item.revisionValidTo="{ item: { revisionValidTo } }">
+          <v-chip :color="revisionValidTo ? 'error' : 'success'">
+            {{ revisionValidTo ? "حذف" : "اضافة" }}
+          </v-chip>
+        </template>
+
+        <template
+          v-slot:item.revisionValidFrom="{
+            item: { revisionValidFrom, revisionValidTo }
+          }"
+        >
+          <div v-if="revisionValidTo">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-list-item-action-text>
+                    {{ revisionValidTo | timeFromNow }}
+                  </v-list-item-action-text>
+                </span>
+              </template>
+              <span>{{ revisionValidTo | formatDate }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-list-item-action-text>
+                    (تم اضافتها منذ
+                    {{ revisionValidFrom | timeFromNow }}
+                    )
+                  </v-list-item-action-text>
+                </span>
+              </template>
+              <span>{{ revisionValidFrom | formatDate }}</span>
+            </v-tooltip>
+          </div>
+          <div v-else>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-list-item-action-text
+                    >{{ revisionValidFrom | timeFromNow }}
+                  </v-list-item-action-text>
+                </span>
+              </template>
+              <span>{{ revisionValidFrom | formatDate }}</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-data-table>
     </v-card>
   </div>
 </template>
@@ -85,17 +166,114 @@ import Component from "vue-class-component";
 
 import TrainsModule from "@/store/modules/Trains";
 import { TrainRunRevision } from "@/store/models";
+import { convertToArabic, formatDayDate, moment } from "@/utils";
 
 @Component({
   components: {}
 })
 export default class TrainRunsRevisions extends Vue {
+  headers: any[] = [
+    {
+      text: "رقم القطار",
+      value: "train",
+      sortable: false,
+      filterable: true
+    },
+    { text: "تاريخ الخدمة", value: "day", sortable: false, filterable: true },
+    {
+      text: "اضافة/حذف",
+      value: "revisionValidTo",
+      sortable: false,
+      filterable: false
+    },
+    { text: "بواسطة", value: "whoDunnit", sortable: false, filterable: true },
+    {
+      text: "منذ",
+      value: "revisionValidFrom",
+      sortable: false,
+      filterable: true
+    }
+  ];
+
+  search = "";
+  searchDayDate = "";
+  searchFromDate = "";
+  searchDayDateMenu: boolean = false;
+  searchFromDateMenu: boolean = false;
+
   get loading() {
     return TrainsModule.loading;
   }
 
-  get trainRunsRevisions(): any {
-    return TrainsModule.trainRunsRevisions;
+  get trainRunsRevisions(): any[] {
+    const trainRunsRevisions: any[] = TrainsModule.trainRunsRevisions || [];
+    let revisions = [];
+    return trainRunsRevisions.map(trainRunsRevision => {
+      return {
+        ...trainRunsRevision.item,
+        trainNumber: trainRunsRevision.train!.number,
+        train: { ...trainRunsRevision.train, hide: false }
+      };
+    });
+  }
+
+  get searchDayDateFormatted() {
+    return this.searchDayDate
+      ? convertToArabic(formatDayDate(this.searchDayDate))
+      : "";
+  }
+
+  get searchFromDateFormatted() {
+    return this.searchFromDate
+      ? convertToArabic(formatDayDate(this.searchFromDate))
+      : "";
+  }
+
+  toggleGroup(train: any, toggle: () => void) {
+    train.hide = !train.hide;
+    toggle();
+  }
+
+  onDaySearchInput(value: any) {
+    this.searchDayDateMenu = false;
+    this.search = this.searchDayDate;
+    this.searchFromDate = "";
+  }
+
+  onFromSearchInput(value: any) {
+    this.searchFromDateMenu = false;
+    this.search = this.searchFromDate;
+    this.searchDayDate = "";
+  }
+
+  filterTrainRunsRevisions(value: any, search: string, item: any) {
+    if (value != null && search != null) {
+      const dateFormat = "YYYY-MM-DD";
+      const fromDateFormatted = moment(new Date(value)).format(dateFormat);
+      const isValidDate = moment(fromDateFormatted, dateFormat, true).isValid();
+      if (
+        (typeof value === "string" || typeof value === "number") &&
+        !isValidDate
+      ) {
+        return (
+          value
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase()) !== -1 ||
+          item.trainNumber
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase()) !== -1
+        );
+      } else if (isValidDate && this.searchDayDate && !this.searchFromDate) {
+        return moment(item.day).isSame(this.searchDayDate);
+      } else if (isValidDate && this.searchFromDate && !this.searchDayDate) {
+        const revisionDate = item.revisionValidTo || item.revisionValidFrom;
+        return moment(revisionDate).isSameOrAfter(this.searchFromDate);
+      }
+    } else {
+      return false;
+    }
   }
 
   async created() {
@@ -110,5 +288,11 @@ export default class TrainRunsRevisions extends Vue {
 }
 .destroyed-left-border {
   border-left: 4px solid tomato;
+}
+.pointer {
+  cursor: pointer;
+}
+.v-row-group__header {
+  background: white !important;
 }
 </style>

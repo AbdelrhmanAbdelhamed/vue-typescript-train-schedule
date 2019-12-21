@@ -442,23 +442,54 @@ export default class TrainDetails extends Vue {
   filterTrainRuns(value: any, search: any, item: any) {
     if (value != null && search != null) {
       if (typeof value === "string" || typeof value === "number") {
-        return value.toString().indexOf(search) > -1;
+        return (
+          value
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase()) !== -1
+        );
       } else {
         let policePeople = value;
         let indices: any[] = [];
         for (let policePerson of policePeople) {
-          indices.push(policePerson.name.indexOf(search));
-          indices.push(policePerson.phoneNumber.indexOf(search));
-          indices.push(policePerson.policeDepartment.name.indexOf(search));
-          indices.push(policePerson.rank.name.indexOf(search));
           indices.push(
-            policePerson.TrainRunPolicePerson.fromStation.name.indexOf(search)
+            policePerson.name
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
           );
           indices.push(
-            policePerson.TrainRunPolicePerson.toStation.name.indexOf(search)
+            policePerson.phoneNumber
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
+          );
+          indices.push(
+            policePerson.policeDepartment.name
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
+          );
+          indices.push(
+            policePerson.rank.name
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
+          );
+          indices.push(
+            policePerson.TrainRunPolicePerson.fromStation.name
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
+          );
+          indices.push(
+            policePerson.TrainRunPolicePerson.toStation.name
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
           );
         }
-        return indices.some(index => index > -1);
+        return indices.some(index => index !== -1);
       }
     } else {
       return false;

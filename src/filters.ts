@@ -36,5 +36,5 @@ Vue.filter("convertToEnglish", (value: any) => {
 });
 
 Vue.filter("timeFromNow", (value: Date) => {
-  return timeFromNow(value);
+  return timeFromNow(value, true);
 });

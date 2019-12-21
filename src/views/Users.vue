@@ -74,7 +74,10 @@
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
-                            :rules="[v => !!v || 'برجاء ادخال كلمة المرور']"
+                            :rules="[
+                              v => !!v || 'برجاء ادخال كلمة المرور',
+                              passwordConfirmationRule
+                            ]"
                             required
                             id="password"
                             label="كلمة المرور"
@@ -82,6 +85,21 @@
                             prepend-icon="mdi-lock"
                             type="password"
                             @input="onPasswordChange"
+                          />
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            :rules="[
+                              v => !!v || 'برجاء ادخال تأكيد كلمة المرور',
+                              passwordConfirmationRule
+                            ]"
+                            required
+                            id="re-password"
+                            label="تأكيد كلمة المرور"
+                            name="re-password"
+                            prepend-icon="mdi-lock"
+                            type="password"
+                            v-model="rePassword"
                           />
                         </v-col>
                         <v-col cols="12">
@@ -236,6 +254,13 @@ export default class Users extends Vue {
   search = "";
   dialog = false;
   isNewUserValid = false;
+  rePassword = "";
+
+  get passwordConfirmationRule() {
+    return (
+      this.newUser.password === this.rePassword || "كلمة المرور غير متطابقة"
+    );
+  }
 
   get usersLoading() {
     return UsersModule.loading;

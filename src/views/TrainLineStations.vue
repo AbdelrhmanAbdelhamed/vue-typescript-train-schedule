@@ -257,15 +257,7 @@ export default class TrainLineStations extends Vue {
         }
       );
     }
-    return orderBy(
-      trainTimelineStations,
-      [
-        "LineStationTrain.departureTime",
-        "LineStationTrain.arrivalTime",
-        "LineStation.stationOrder"
-      ],
-      ["asc", "asc", "asc"]
-    );
+    return trainTimelineStations;
   }
 
   close() {
