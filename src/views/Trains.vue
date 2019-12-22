@@ -7,7 +7,7 @@
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
-          label="استعلام عن القطار"
+          label=" استعلام عن القطار أو الخط"
           single-line
           hide-details
           clearable
@@ -21,6 +21,7 @@
         group-by="lineName"
         class="elevation-1"
         :search="search"
+        :custom-filter="filterTrains"
       >
         <template
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
@@ -193,6 +194,26 @@ export default class Trains extends Vue {
 
   onEditSubmit(id: any, number: any) {
     if (number) TrainsModule.update({ id, data: { number } });
+  }
+
+  filterTrains(value: any, search: any, item: any) {
+    if (
+      (value != null && search != null && typeof value === "string") ||
+      typeof value === "number"
+    ) {
+      return (
+        value
+          .toString()
+          .toLocaleLowerCase()
+          .indexOf(search.toLocaleLowerCase()) !== -1 ||
+        item.lineName
+          .toString()
+          .toLocaleLowerCase()
+          .indexOf(search.toLocaleLowerCase()) !== -1
+      );
+    } else {
+      return false;
+    }
   }
 
   async beforeCreate() {

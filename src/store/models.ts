@@ -160,6 +160,7 @@ export class Train {
     return "Train";
   }
 
+  item?: Train;
   id?: string;
   number!: string;
   createdAt?: Date;

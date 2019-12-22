@@ -171,9 +171,7 @@ export default class TrainRuns extends Vue {
         );
       } else {
         let policePeople = value;
-        let indices: any[] = [
-          item.trainNumber.toString().indexOf(search.toLocaleLowerCase())
-        ];
+        let indices: any[] = [];
         for (let policePerson of policePeople) {
           indices.push(
             policePerson.name
@@ -212,6 +210,12 @@ export default class TrainRuns extends Vue {
               .indexOf(search.toLocaleLowerCase())
           );
         }
+        indices.push(
+          item.trainNumber
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase())
+        );
         return indices.some(index => index !== -1);
       }
     } else {

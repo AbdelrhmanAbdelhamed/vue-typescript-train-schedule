@@ -430,8 +430,7 @@ class TrainsModule extends VuexModule implements TrainState {
       arrivalStation
     );
     if (departureStation && arrivalStation) {
-      const constructedTrains = trains.map(train => new Train({ ...train }));
-      this.setSearchedTrains(constructedTrains);
+      this.setSearchedTrains(trains);
     } else {
       this.setTrains(trains);
     }
