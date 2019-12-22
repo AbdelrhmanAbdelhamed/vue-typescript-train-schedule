@@ -50,7 +50,9 @@
     <v-row v-else align="center" justify="center">
       <v-card color="primary" dark>
         <v-card-title>{{ ` محطات خط: ${line ? line.name : ""}` }}</v-card-title>
-        <v-card-subtitle>لا توجد بيانات متاحة</v-card-subtitle>
+        <v-card-subtitle class="text-center"
+          >لا توجد بيانات متاحة</v-card-subtitle
+        >
       </v-card>
     </v-row>
   </div>

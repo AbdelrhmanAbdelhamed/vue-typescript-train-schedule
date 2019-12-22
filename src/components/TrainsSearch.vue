@@ -173,12 +173,30 @@ export default class TrainsSearch extends Vue {
     TrainsModule.searchedTrains.forEach(train => {
       if (train.lines && train.lines.length > 0) {
         train.lines.forEach((line: any) => {
-          let trainItem: Train = new Train({
-            ...train,
-            lineName: line.name,
-            line: { ...line, hide: false }
-          });
-          trains.push(trainItem);
+          if (
+            line &&
+            line.id &&
+            line.name &&
+            typeof line.name === "string" &&
+            line.name.trim()
+          ) {
+            let trainItem: Train = new Train({
+              ...train,
+              lineName: line.name,
+              line: { ...line, hide: false }
+            });
+            trains.push(trainItem);
+          } else {
+            let trainItem: Train = new Train({
+              ...train,
+              lineName: "قطارات بدون خطوط بعد",
+              line: {
+                name: "قطارات بدون خطوط بعد",
+                hide: false
+              }
+            });
+            trains.push(trainItem);
+          }
         });
       } else {
         let trainItem: Train = new Train({
