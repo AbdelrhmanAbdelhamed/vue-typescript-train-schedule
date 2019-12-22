@@ -2,7 +2,7 @@
   <div class="train-details">
     <v-card>
       <v-card-title v-if="train">
-        رحلات قطار رقم: {{ train.number | convertToArabic }}
+        خدمات قطار رقم: {{ train.number | convertToArabic }}
         <v-spacer></v-spacer>
         <v-menu
           ref="searchDateMenu"
