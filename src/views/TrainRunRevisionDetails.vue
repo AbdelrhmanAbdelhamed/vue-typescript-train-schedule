@@ -55,6 +55,7 @@
                 <template v-slot:activator="{ on }">
                   <span v-on="on">
                     <v-list-item-action-text>
+                      منذ
                       {{ trainRunsRevision.revisionValidTo | timeFromNow }}
                     </v-list-item-action-text>
                   </span>
@@ -67,7 +68,7 @@
               <v-tooltip bottom v-else>
                 <template v-slot:activator="{ on }">
                   <span v-on="on">
-                    <v-list-item-action-text
+                    <v-list-item-action-text منذ
                       >{{ trainRunsRevision.revisionValidFrom | timeFromNow }}
                     </v-list-item-action-text>
                   </span>
