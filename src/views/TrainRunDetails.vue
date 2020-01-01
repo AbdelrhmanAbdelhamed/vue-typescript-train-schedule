@@ -208,17 +208,19 @@
                                   ></v-combobox>
                                 </v-col>
                                 <v-col cols="12" sm="2" md="2">
-                                  <v-combobox
+                                  <v-text-field
                                     :rules="[
-                                      v => !!v || 'برجاء ادخال رقم التليفون'
+                                      v => !!v || 'برجاء ادخال رقم التليفون',
+                                      v =>
+                                        (v &&
+                                          v.length == 11 &&
+                                          (v.startsWith('010') ||
+                                            v.startsWith('011') ||
+                                            v.startsWith('012') ||
+                                            v.startsWith('015'))) ||
+                                        'برجاء ادخال رقم تليفون صحيح'
                                     ]"
                                     required
-                                    :loading="loading"
-                                    :items="policePeople"
-                                    item-value="phoneNumber"
-                                    item-text="phoneNumber"
-                                    hide-no-data
-                                    :return-object="false"
                                     label="رقم التليفون"
                                     @input="
                                       onPolicePersonChange({
@@ -226,7 +228,7 @@
                                         data: { phoneNumber: $event }
                                       })
                                     "
-                                  ></v-combobox>
+                                  ></v-text-field>
                                 </v-col>
                               </v-row>
                               <v-row>
