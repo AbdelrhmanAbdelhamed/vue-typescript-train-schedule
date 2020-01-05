@@ -237,11 +237,9 @@
                                     :rules="[v => !!v || 'برجاء اختيار المحطة']"
                                     required
                                     :loading="loading"
-                                    v-model="fromStation"
                                     :return-object="true"
                                     label="من محطة"
                                     :items="stations"
-                                    item-value="name"
                                     item-text="name"
                                     prepend-icon="mdi-city"
                                     @input="
@@ -260,10 +258,8 @@
                                     :rules="[v => !!v || 'برجاء اختيار المحطة']"
                                     required
                                     :loading="loading"
-                                    v-model="toStation"
                                     label="الى محطة"
                                     :items="stations"
-                                    item-value="name"
                                     item-text="name"
                                     prepend-icon="mdi-city"
                                     :return-object="true"
@@ -328,7 +324,10 @@
         </template>
 
         <template v-slot:item.policePeople="{ item }">
-          <div v-for="policePerson in item.policePeople" :key="policePerson.id">
+          <div
+            v-for="policePerson in item.policePeople"
+            :key="policePerson.id + item.day"
+          >
             {{ policePerson.rank.name }}
             / {{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
@@ -385,8 +384,6 @@ export default class TrainDetails extends Vue {
   newTrainRunDate = "";
   isNewTrainRunValid = false;
   dialog = false;
-  fromStation: string = "";
-  toStation: string = "";
 
   @Prop()
   id!: string;
