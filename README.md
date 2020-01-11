@@ -1,5 +1,11 @@
 # train-schedule
 
+### Login Credentials
+| username | password | role   |
+|----------|----------|--------|
+| google   | test@123 | admin  |
+| tamer-k  | test@123 | editor |
+
 ## Project setup
 ```
 npm install
@@ -22,10 +28,3 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### Login Credentials
-| username | password | role   |
-|----------|----------|--------|
-| google   | test@123 | admin  |
-| tamer-k  | test@123 | editor |
-
