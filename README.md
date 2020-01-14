@@ -1,5 +1,11 @@
 # train-schedule
 
+### Login Credentials
+| username | password | role   |
+|----------|----------|--------|
+| google   | test@123 | admin  |
+| tamer-k  | test@123 | editor |
+
 ## Project setup
 ```
 npm install
