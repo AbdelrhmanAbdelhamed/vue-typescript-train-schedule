@@ -1,7 +1,10 @@
 <template>
   <div class="train-run-revision-details">
     <v-card :loading="loading">
-      <v-card-title>سجل خدمات تأمين قطار رقم: {{ train.number }}</v-card-title>
+      <v-card-title
+        >سجل خدمات تأمين قطار رقم:
+        {{ train.number | convertToArabic }}</v-card-title
+      >
       <v-list
         three-line
         v-if="train.trainRunsRevisions && train.trainRunsRevisions.length > 0"

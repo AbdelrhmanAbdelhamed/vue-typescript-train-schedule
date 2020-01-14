@@ -18,9 +18,13 @@
       </v-container>
     </v-content>
 
-    <v-footer color="primary" app dark class="d-print-none"
-      >جميع الحقوق محفوظة {{ new Date().getFullYear() }} &copy;</v-footer
-    >
+    <v-footer color="primary" app dark class="d-print-none">
+      <span class="font-weight-bold">
+        {{ new Date().getFullYear() | convertToArabic }} &copy; جميع الحقوق
+        محفوظة
+      </span>
+      . الإدارة العامة لشرطة النقل والمواصلات - إدارة تكنولوجيا المعلومات
+    </v-footer>
   </v-app>
 </template>
 

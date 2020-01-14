@@ -93,7 +93,7 @@
           <v-chip
             link
             :to="{
-              name: `trains.run.revision.details`,
+              name: `trains.run.details`,
               params: { id: train.id }
             }"
             class="pointer"
