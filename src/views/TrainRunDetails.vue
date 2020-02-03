@@ -56,6 +56,8 @@
         class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"
+        sort-by="day"
+        :sort-desc="true"
       >
         <template v-slot:top v-if="$can('create', 'TrainRun')">
           <div class="mx-4 d-print-none">
@@ -122,6 +124,10 @@
                                   v-model="newTrainRunDate"
                                   no-title
                                   @input="onNewTrainRunDayChange"
+                                  first-day-of-week="6"
+                                  locale="ar"
+                                  :min="nowDate"
+                                  :max="endDate"
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
@@ -382,6 +388,7 @@ export default class TrainDetails extends Vue {
   newTrainRunDateMenu: boolean = false;
   searchDate = "";
   newTrainRunDate = "";
+  nowDate = new Date().toISOString().slice(0, 10);
   isNewTrainRunValid = false;
   dialog = false;
 
@@ -397,6 +404,13 @@ export default class TrainDetails extends Vue {
       UsersModule.loading ||
       StationsModule.loading
     );
+  }
+
+  get endDate() {
+    return moment(this.nowDate)
+      .add(1, "month")
+      .toISOString()
+      .slice(0, 10);
   }
 
   get stations() {

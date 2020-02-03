@@ -52,6 +52,8 @@
         :headers="headers"
         :items="trainRuns"
         group-by="trainNumber"
+        sort-by="day"
+        :group-desc="true"
         class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"

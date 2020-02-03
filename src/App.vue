@@ -4,7 +4,18 @@
 
     <v-app-bar app color="cyan" dark class="d-print-none">
       <v-app-bar-nav-icon v-if="loggedIn" @click.stop="drawer = !drawer" />
-      <v-toolbar-title>شرطة النقل والمواصلات</v-toolbar-title>
+      <router-link to="/">
+        <v-img
+          class="mx-2"
+          :src="require('@/assets/logo.png')"
+          max-height="40"
+          max-width="40"
+          contain
+        ></v-img>
+      </router-link>
+      <router-link to="/" tag="span" style="cursor: pointer;">
+        <v-toolbar-title>شرطة النقل والمواصلات</v-toolbar-title>
+      </router-link>
       <v-spacer />
       <div v-if="loggedIn">
         <span class="ma-3">{{ fullName }}</span>
