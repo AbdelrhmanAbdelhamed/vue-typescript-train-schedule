@@ -54,7 +54,7 @@
       <v-col>
         <v-card>
           <v-card-title v-if="showTable && arrivalStation && departureStation">
-            <p>قطارات محطات {{ arrivalStation }} - {{ departureStation }}</p>
+            <p>قطارات محطات {{ departureStation }} - {{ arrivalStation }}</p>
             <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
@@ -72,34 +72,8 @@
             class="elevation-1"
             :headers="headers"
             :items="trains"
-            item-key="number+lineName"
-            group-by="lineName"
             :search="search"
           >
-            <template
-              v-slot:group.header="{
-                items: [lineGroup],
-                headers,
-                group,
-                toggle
-              }"
-            >
-              <thead>
-                <th
-                  class="pointer"
-                  @click="toggleGroup(lineGroup.line, toggle)"
-                >
-                  <span>
-                    <v-icon>{{
-                      lineGroup.line.hide ? "mdi-plus" : "mdi-minus"
-                    }}</v-icon>
-                  </span>
-                  <v-chip class="pointer" color="info">{{
-                    lineGroup.line.name
-                  }}</v-chip>
-                </th>
-              </thead>
-            </template>
             <template v-slot:item.number="{ item }">{{
               item.number | convertToArabic
             }}</template>
@@ -171,6 +145,14 @@ export default class TrainsSearch extends Vue {
   get trains(): Train[] {
     const trains: Train[] = [];
     TrainsModule.searchedTrains.forEach(train => {
+      let trainItem: Train = new Train({
+        ...train,
+        lineName: "قطارات بدون خطوط بعد",
+        line: {
+          name: "قطارات بدون خطوط بعد",
+          hide: false
+        }
+      });
       if (train.lines && train.lines.length > 0) {
         train.lines.forEach((line: any) => {
           if (
@@ -180,34 +162,16 @@ export default class TrainsSearch extends Vue {
             typeof line.name === "string" &&
             line.name.trim()
           ) {
-            let trainItem: Train = new Train({
+            trainItem = new Train({
               ...train,
               lineName: line.name,
               line: { ...line, hide: false }
             });
-            trains.push(trainItem);
-          } else {
-            let trainItem: Train = new Train({
-              ...train,
-              lineName: "قطارات بدون خطوط بعد",
-              line: {
-                name: "قطارات بدون خطوط بعد",
-                hide: false
-              }
-            });
-            trains.push(trainItem);
           }
+          trainItem.departureStation = this.departureStation;
+          trainItem.arrivalStation = this.arrivalStation;
+          trains.push(trainItem);
         });
-      } else {
-        let trainItem: Train = new Train({
-          ...train,
-          lineName: "قطارات بدون خطوط بعد",
-          line: {
-            name: "قطارات بدون خطوط بعد",
-            hide: false
-          }
-        });
-        trains.push(trainItem);
       }
     });
     return trains;

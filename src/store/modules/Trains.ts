@@ -409,8 +409,10 @@ class TrainsModule extends VuexModule implements TrainState {
 
   @Action
   async getAllTrainRuns() {
+    this.toggleLoading();
     const trainRuns = await TrainsAPI.getAllRuns();
     this.setTrainRuns(trainRuns);
+    this.toggleLoading();
   }
 
   @Action

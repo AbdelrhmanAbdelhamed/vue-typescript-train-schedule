@@ -172,6 +172,8 @@ export class Train {
   users?: User[];
   line?: Line;
   lineName?: string;
+  departureStation?: string;
+  arrivalStation?: string;
 
   constructor({
     id,

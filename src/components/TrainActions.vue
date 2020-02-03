@@ -18,7 +18,12 @@
       v-if="line && $can('read', 'Station')"
       :to="{
         name: `trains.line.stations`,
-        params: { lineId: line.id, id: train.id }
+        params: {
+          lineId: line.id,
+          id: train.id,
+          departureStation: train.departureStation,
+          arrivalStation: train.arrivalStation
+        }
       }"
       >المواعيد</v-btn
     >

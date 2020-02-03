@@ -28,7 +28,9 @@
             <v-dialog
               v-model="dialog"
               max-width="1000px"
-              v-if="$can('update', 'Line')"
+              v-if="
+                !departureStation && !arrivalStation && $can('update', 'Line')
+              "
             >
               <template v-slot:activator="{ on }">
                 <v-btn color="white" light v-on="on">تعديل</v-btn>
@@ -92,19 +94,24 @@
           <v-card-title class="headline">
             {{ station.name }}
             <div
-              v-if="station.LineStationTrain.departureTime && index === 0"
+              v-if="
+                (station.LineStationTrain.departureTime ||
+                  station.LineStationTrain.arrivalTime) &&
+                  index === 0
+              "
               class="mx-2"
             >
-              (محطة القيام بالخط)
+              (محطة القيام)
             </div>
             <div
               v-if="
-                station.LineStationTrain.arrivalTime &&
+                (station.LineStationTrain.arrivalTime ||
+                  station.LineStationTrain.departureTime) &&
                   index === trainTimelineStations.length - 1
               "
               class="mx-2"
             >
-              (محطة الوصول بالخط)
+              (محطة الوصول)
             </div>
           </v-card-title>
           <v-card-subtitle v-if="line" class="pt-1">
@@ -168,8 +175,6 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
-import { orderBy } from "lodash";
-
 import EditLineStationsForm from "@/components/EditLineStationsForm.vue";
 
 import LinesModule from "@/store/modules/Lines";
@@ -195,6 +200,12 @@ export default class TrainLineStations extends Vue {
 
   @Prop()
   id!: string;
+
+  @Prop()
+  departureStation!: string;
+
+  @Prop()
+  arrivalStation!: string;
 
   get line() {
     return LinesModule.currentLine;
@@ -245,19 +256,46 @@ export default class TrainLineStations extends Vue {
     return [];
   }
 
+  private filteredTrainStations(): any[] {
+    return TrainsModule.currentTrain.stations!.filter(station => {
+      return (
+        station.LineStationTrain!.arrivalTime !== null ||
+        station.LineStationTrain!.departureTime !== null
+      );
+    });
+  }
+
+  get departureStationIndex() {
+    let departureStationIndex = -1;
+    if (TrainsModule.currentTrain.stations && this.departureStation) {
+      departureStationIndex = this.filteredTrainStations().findIndex(
+        station => station.name === this.departureStation
+      );
+    }
+    return departureStationIndex;
+  }
+
+  get arrivalStationIndex() {
+    let arrivalStationIndex = -1;
+    if (TrainsModule.currentTrain.stations && this.arrivalStation) {
+      arrivalStationIndex = this.filteredTrainStations().findIndex(
+        station => station.name === this.arrivalStation
+      );
+    }
+    return arrivalStationIndex;
+  }
+
   get trainTimelineStations() {
     let trainTimelineStations: Station[] = [];
     if (TrainsModule.currentTrain.stations) {
-      trainTimelineStations = TrainsModule.currentTrain.stations.filter(
-        station => {
-          return (
-            station.LineStationTrain!.arrivalTime !== null ||
-            station.LineStationTrain!.departureTime !== null
-          );
-        }
-      );
+      trainTimelineStations = this.filteredTrainStations();
     }
-    return trainTimelineStations;
+    return this.departureStationIndex > -1 && this.arrivalStationIndex > -1
+      ? trainTimelineStations.slice(
+          this.departureStationIndex,
+          this.arrivalStationIndex + 1
+        )
+      : trainTimelineStations;
   }
 
   close() {
