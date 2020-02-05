@@ -312,7 +312,6 @@ export default class TrainLineStations extends Vue {
 
   async created() {
     if (this.id && this.lineId) {
-      await TrainsModule.getById(this.id);
       await TrainsModule.getTrainLineStations({
         id: this.id!,
         lineId: this.lineId!

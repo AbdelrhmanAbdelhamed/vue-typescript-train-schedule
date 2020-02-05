@@ -451,6 +451,9 @@ class TrainsModule extends VuexModule implements TrainState {
   @Action
   async getTrainLineStations({ id, lineId }: { id: string; lineId: string }) {
     const stations = await TrainsAPI.getTrainLineStation(id, lineId);
+    if (stations && stations.length > 0 && stations[0].train) {
+      this.setCurrentTrain(stations[0].train);
+    }
     this.updateCurrentTrain({
       data: {
         stations

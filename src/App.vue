@@ -14,7 +14,7 @@
         ></v-img>
       </router-link>
       <router-link to="/" tag="span" style="cursor: pointer;">
-        <v-toolbar-title>شرطة النقل والمواصلات</v-toolbar-title>
+        <v-toolbar-title>الإدارة العامة لشرطة النقل والمواصلات</v-toolbar-title>
       </router-link>
       <v-spacer />
       <div v-if="loggedIn">
