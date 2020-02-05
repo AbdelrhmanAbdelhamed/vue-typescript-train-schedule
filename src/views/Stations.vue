@@ -21,7 +21,6 @@
         item-key="id+lineName"
         group-by="lineName"
         sort-by="line.LineStation.stationOrder"
-        :group-desc="false"
         class="elevation-1"
         :search="search"
       >

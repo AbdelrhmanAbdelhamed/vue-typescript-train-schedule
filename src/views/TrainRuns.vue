@@ -53,6 +53,7 @@
         :items="trainRuns"
         group-by="trainNumber"
         sort-by="day"
+        :sort-desc="true"
         :group-desc="true"
         class="elevation-1"
         :search="search"
