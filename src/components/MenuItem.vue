@@ -1,5 +1,5 @@
 <template>
-  <v-list-item v-if="isVisible" link exact :to="{ name: routeName }">
+  <v-list-item v-if="isVisible" :to="{ name: routeName }" link exact>
     <v-list-item-action>
       <v-icon>{{ icon }}</v-icon>
     </v-list-item-action>

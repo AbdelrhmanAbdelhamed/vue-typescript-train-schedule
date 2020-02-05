@@ -25,19 +25,19 @@
                       <v-text-field
                         :value="station.LineStationTrain.arrivalTime"
                         @click:clear="onArrivalTimeChange(index, null)"
-                        label="وقت الوصول"
                         @input="onArrivalTimeChange(index, $event)"
+                        v-on="on"
+                        label="وقت الوصول"
                         prepend-icon="mdi-clock"
                         clearable
-                        v-on="on"
                       ></v-text-field>
                     </template>
                     <v-time-picker
+                      @change="onArrivalTimeChange(index, $event)"
                       format="24hr"
                       scrollable
                       ampm-in-title
                       full-width
-                      @change="onArrivalTimeChange(index, $event)"
                     ></v-time-picker>
                   </v-menu>
                 </v-col>
@@ -57,19 +57,19 @@
                       <v-text-field
                         :value="station.LineStationTrain.departureTime"
                         @click:clear="onDepartureTimeChange(index, null)"
-                        label="وقت القيام"
                         @input="onDepartureTimeChange(index, $event)"
-                        prepend-icon="mdi-clock"
                         v-on="on"
+                        label="وقت القيام"
+                        prepend-icon="mdi-clock"
                         clearable
                       ></v-text-field>
                     </template>
                     <v-time-picker
+                      @change="onDepartureTimeChange(index, $event)"
                       format="24hr"
                       scrollable
                       ampm-in-title
                       full-width
-                      @change="onDepartureTimeChange(index, $event)"
                     ></v-time-picker>
                   </v-menu>
                 </v-col>

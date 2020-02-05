@@ -1,10 +1,10 @@
 <template>
   <div class="LineTrainTimeLine">
     <v-skeleton-loader
+      v-if="trainsLoading || !trainTimelineStations"
       class="mx-auto"
       max-width="600"
       type="card@3"
-      v-if="trainsLoading || !trainTimelineStations"
     ></v-skeleton-loader>
     <v-container v-if="!trainsLoading && !!trainTimelineStations">
       <v-row no-gutters justify="center">
@@ -27,13 +27,13 @@
           <v-card-text>
             <v-dialog
               v-model="dialog"
-              max-width="1000px"
               v-if="
                 !departureStation && !arrivalStation && $can('update', 'Line')
               "
+              max-width="1000px"
             >
               <template v-slot:activator="{ on }">
-                <v-btn color="white" light v-on="on">تعديل</v-btn>
+                <v-btn v-on="on" color="white" light>تعديل</v-btn>
               </template>
               <v-card :loading="trainsLoading || linesLoading">
                 <v-card-title class="pa-10">
@@ -56,16 +56,16 @@
                   <v-card-actions right>
                     <v-btn
                       :loading="trainsLoading"
+                      @click="update"
                       color="success darken-1"
                       text
-                      @click="update"
                       >حفظ</v-btn
                     >
                     <v-btn
                       :loading="trainsLoading"
+                      @click="close"
                       color="blue darken-1"
                       text
-                      @click="close"
                       >الغاء</v-btn
                     >
                   </v-card-actions>
@@ -95,8 +95,9 @@
             {{ station.name }}
             <div
               v-if="
-                (station.LineStationTrain.departureTime ||
-                  station.LineStationTrain.arrivalTime) &&
+                station.LineStationTrain &&
+                  (station.LineStationTrain.departureTime ||
+                    station.LineStationTrain.arrivalTime) &&
                   index === 0
               "
               class="mx-2"
@@ -105,8 +106,9 @@
             </div>
             <div
               v-if="
-                (station.LineStationTrain.arrivalTime ||
-                  station.LineStationTrain.departureTime) &&
+                station.LineStationTrain &&
+                  (station.LineStationTrain.arrivalTime ||
+                    station.LineStationTrain.departureTime) &&
                   index === trainTimelineStations.length - 1
               "
               class="mx-2"
@@ -117,20 +119,34 @@
           <v-card-subtitle v-if="line" class="pt-1">
             <v-container>
               <v-row no-gutters>
-                <v-col cols="12" v-if="station.LineStationTrain.arrivalTime">
+                <v-col
+                  v-if="
+                    station.LineStationTrain &&
+                      station.LineStationTrain.arrivalTime
+                  "
+                  cols="12"
+                >
                   <strong>
                     وصول :
                     {{
-                      station.LineStationTrain.arrivalTime
-                        | formatTime
-                        | convertToArabic
+                      station.LineStationTrain &&
+                        station.LineStationTrain.arrivalTime
+                          | formatTime
+                          | convertToArabic
                     }}
                   </strong>
                 </v-col>
-                <v-col cols="12" v-if="station.LineStationTrain.departureTime">
+                <v-col
+                  v-if="
+                    station.LineStationTrain &&
+                      station.LineStationTrain.departureTime
+                  "
+                  cols="12"
+                >
                   <v-icon
                     v-if="
-                      station.LineStationTrain.arrivalTime &&
+                      station.LineStationTrain &&
+                        station.LineStationTrain.arrivalTime &&
                         station.LineStationTrain.departureTime
                     "
                     >mdi-arrow-left</v-icon
@@ -138,9 +154,10 @@
                   <strong>
                     قيام :
                     {{
-                      station.LineStationTrain.departureTime
-                        | formatTime
-                        | convertToArabic
+                      station.LineStationTrain &&
+                        station.LineStationTrain.departureTime
+                          | formatTime
+                          | convertToArabic
                     }}
                   </strong>
                 </v-col>

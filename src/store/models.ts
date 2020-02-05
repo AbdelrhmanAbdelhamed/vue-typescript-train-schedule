@@ -217,6 +217,9 @@ export class TrainState {
   loading!: boolean;
   trainRuns!: TrainRun[];
   trainRunsRevisions!: TrainRunRevision[];
+  departureStation?: string;
+  arrivalStation?: string;
+  showTable?: boolean;
 }
 
 export class Role {

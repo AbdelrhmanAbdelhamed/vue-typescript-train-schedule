@@ -6,8 +6,8 @@
         {{ train.number | convertToArabic }}</v-card-title
       >
       <v-list
-        three-line
         v-if="train.trainRunsRevisions && train.trainRunsRevisions.length > 0"
+        three-line
       >
         <template
           v-for="(trainRunsRevision, index) in train.trainRunsRevisions || []"
@@ -27,8 +27,8 @@
               </v-list-item-title>
 
               <v-list-item-subtitle
-                class="text--primary"
                 v-if="trainRunsRevision.revisionValidTo"
+                class="text--primary"
               >
                 تم اضافتها منذ:
                 <v-tooltip bottom>
@@ -54,7 +54,7 @@
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-tooltip bottom v-if="trainRunsRevision.revisionValidTo">
+              <v-tooltip v-if="trainRunsRevision.revisionValidTo" bottom>
                 <template v-slot:activator="{ on }">
                   <span v-on="on">
                     <v-list-item-action-text>
@@ -68,7 +68,7 @@
                 }}</span>
               </v-tooltip>
 
-              <v-tooltip bottom v-else>
+              <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on }">
                   <span v-on="on">
                     <v-list-item-action-text>

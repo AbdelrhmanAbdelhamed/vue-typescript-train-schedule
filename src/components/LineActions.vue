@@ -1,30 +1,30 @@
 <template>
   <div id="line-actions">
     <v-btn
+      :to="{ name: `lines.stations`, params: { lineId: line.id } }"
       class="ml-2"
       color="info"
       small
       link
       outlined
-      :to="{ name: `lines.stations`, params: { lineId: line.id } }"
       >المحطات</v-btn
     >
     <v-btn
+      :to="{ name: `lines.trains`, params: { lineId: line.id } }"
       color="primary"
       small
       link
-      :to="{ name: `lines.trains`, params: { lineId: line.id } }"
       >القطارات</v-btn
     >
 
     <v-dialog
       v-model="dialog"
+      v-if="$can('delete', 'Line')"
       persistent
       max-width="290"
-      v-if="$can('delete', 'Line')"
     >
       <template v-slot:activator="{ on }">
-        <v-icon class="mr-10" color="error" v-on="on">
+        <v-icon v-on="on" class="mr-10" color="error">
           mdi-delete
         </v-icon>
       </template>
@@ -33,8 +33,8 @@
         <v-card-text>هل أنت متأكد انك تريد مسح الخط؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>
-          <v-btn text @click="dialog = false">الغاء</v-btn>
+          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
+          <v-btn @click="dialog = false" text>الغاء</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

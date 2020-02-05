@@ -6,8 +6,8 @@
       <v-app-bar-nav-icon v-if="loggedIn" @click.stop="drawer = !drawer" />
       <router-link to="/">
         <v-img
-          class="mx-2"
           :src="require('@/assets/logo.png')"
+          class="mx-2"
           max-height="40"
           max-width="40"
           contain

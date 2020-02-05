@@ -2,12 +2,12 @@
   <div id="line-actions" class="d-print-none">
     <v-dialog
       v-model="dialog"
+      v-if="$can('delete', 'Station')"
       persistent
       max-width="290"
-      v-if="$can('delete', 'Station')"
     >
       <template v-slot:activator="{ on }">
-        <v-icon class="mr-10" color="error" v-on="on">mdi-delete</v-icon>
+        <v-icon v-on="on" class="mr-10" color="error">mdi-delete</v-icon>
       </template>
       <v-card>
         <v-card-title class="headline">
@@ -17,15 +17,15 @@
         <v-card-text>هل أنت متأكد انك تريد مسح المحطة؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>
-          <v-btn text @click="dialog = false">الغاء</v-btn>
+          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
+          <v-btn @click="dialog = false" text>الغاء</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+    <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ deleteStationErrorMessage }}
-      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
     </v-snackbar>
   </div>
 </template>

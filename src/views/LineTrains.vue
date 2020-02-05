@@ -18,9 +18,9 @@
         :loading="loading"
         :headers="headers"
         :items="trains"
+        :search="search"
         item-key="id"
         class="elevation-1"
-        :search="search"
       >
         <template v-slot:top v-if="line && $can('create', 'Train')">
           <NewTrainForm :line="line" />
@@ -35,16 +35,16 @@
             <template v-slot:input>
               <v-text-field
                 :value="temporaryTrainNumber"
-                label="تعديل رقم القطار"
-                single-line
                 v-if="$can('update', 'Train')"
                 @change="onEditTrainNumberChange"
+                label="تعديل رقم القطار"
+                single-line
               ></v-text-field>
             </template>
           </v-edit-dialog>
         </template>
 
-        <template v-if="line" v-slot:item.action="{ item }">
+        <template v-slot:item.action="{ item }">
           <TrainActions
             :actions="{ delete: true, details: true }"
             :train="item"
@@ -53,9 +53,9 @@
         </template>
       </v-data-table>
     </v-card>
-    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+    <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ updateTrainErrorMessage }}
-      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -73,7 +73,7 @@ import UsersModule from "@/store/modules/Users";
 import LinesModule from "@/store/modules/Lines";
 import TrainsModule from "@/store/modules/Trains";
 
-import { Line } from "@/store/models";
+import { Line, Train } from "@/store/models";
 
 @Component({
   components: { TrainActions, NewTrainForm, EditLineStationsForm }
@@ -116,7 +116,13 @@ export default class LineTrains extends Vue {
   }
 
   get trains() {
-    return LinesModule.currentLine.trains;
+    if (!LinesModule.currentLine.trains) LinesModule.currentLine.trains = [];
+    return LinesModule.currentLine.trains.map(
+      train =>
+        new Train({
+          ...train
+        })
+    );
   }
 
   onEditTrainNumberChange(value: any) {

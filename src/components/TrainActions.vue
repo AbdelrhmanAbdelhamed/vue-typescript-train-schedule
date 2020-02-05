@@ -1,20 +1,6 @@
 <template>
   <div id="train-actions" class="d-print-none">
     <v-btn
-      color="info"
-      small
-      link
-      outlined
-      v-if="$can('read', train)"
-      :to="{ name: `trains.run.details`, params: { id: train.id } }"
-      >الخدمات</v-btn
-    >
-
-    <v-btn
-      class="mx-2"
-      color="primary"
-      small
-      link
       v-if="line && $can('read', 'Station')"
       :to="{
         name: `trains.line.stations`,
@@ -25,7 +11,21 @@
           arrivalStation: train.arrivalStation
         }
       }"
+      class="mx-2"
+      color="primary"
+      small
+      link
       >المواعيد</v-btn
+    >
+
+    <v-btn
+      v-if="$can('read', train)"
+      :to="{ name: `trains.run.details`, params: { id: train.id } }"
+      color="info"
+      small
+      link
+      outlined
+      >الخدمات</v-btn
     >
 
     <v-dialog
@@ -35,7 +35,7 @@
       max-width="290"
     >
       <template v-slot:activator="{ on }">
-        <v-icon class="mr-10" color="error" v-on="on">
+        <v-icon v-on="on" class="mr-10" color="error">
           mdi-delete
         </v-icon>
       </template>
@@ -46,8 +46,8 @@
         <v-card-text>هل أنت متأكد انك تريد مسح القطار؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>
-          <v-btn text @click="dialog = false">الغاء</v-btn>
+          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
+          <v-btn @click="dialog = false" text>الغاء</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -17,70 +17,70 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               :value="searchDateFormatted"
+              v-on="on"
+              @click:clear="search = ''"
               hide-details
               clearable
               readonly
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
-              v-on="on"
-              @click:clear="search = ''"
               class="d-print-none"
             ></v-text-field>
           </template>
           <v-date-picker
-            scrollable
             v-model="searchDate"
-            no-title
             @input="onDaySearchInput"
+            scrollable
+            no-title
             class="d-print-none"
           ></v-date-picker>
         </v-menu>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
+          @click:clear="searchDate = ''"
           append-icon="mdi-table-search"
           label="استعلام بأفراد التأمين"
           single-line
           hide-details
           clearable
-          @click:clear="searchDate = ''"
           class="d-print-none"
         ></v-text-field>
       </v-card-title>
       <v-data-table
-        fixed-header
         :loading="loading"
         :headers="headers"
         :items="train.trainRuns"
-        item-key="id"
-        class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"
-        sort-by="day"
         :sort-desc="true"
+        fixed-header
+        item-key="id"
+        class="elevation-1"
+        sort-by="day"
       >
         <template v-slot:top v-if="$can('create', 'TrainRun')">
           <div class="mx-4 d-print-none">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-row>
-              <v-col cols="12" v-if="$can('manage', 'Train')">
+              <v-col v-if="$can('manage', 'Train')" cols="12">
                 <v-btn
-                  outlined
-                  color="info"
-                  dark
-                  link
                   :to="{
                     name: `trains.run.revision.details`,
                     params: { id }
                   }"
+                  outlined
+                  color="info"
+                  dark
+                  link
                   >سجل الخدمات</v-btn
                 ></v-col
               >
               <v-col cols="12">
                 <v-dialog v-model="dialog" max-width="1000px">
                   <template v-slot:activator="{ on }">
-                    <v-btn color="primary" dark class="mb-2" v-on="on"
+                    <v-btn v-on="on" color="primary" dark class="mb-2"
                       >اضافة خدمة جديد</v-btn
                     >
                   </template>
@@ -108,26 +108,26 @@
                                     :rules="[
                                       v => !!v || 'برجاء اختيار التاريخ'
                                     ]"
-                                    required
                                     :value="newTrainRunDateFormatted"
-                                    readonly
                                     :error-messages="
                                       newTrainRunDateErrorMessage
                                     "
+                                    v-on="on"
+                                    required
+                                    readonly
                                     label="تاريخ الخدمة"
                                     append-icon="mdi-calendar-search"
-                                    v-on="on"
                                   ></v-text-field>
                                 </template>
                                 <v-date-picker
-                                  scrollable
                                   v-model="newTrainRunDate"
-                                  no-title
                                   @input="onNewTrainRunDayChange"
-                                  first-day-of-week="6"
-                                  locale="ar"
                                   :min="nowDate"
                                   :max="endDate"
+                                  scrollable
+                                  no-title
+                                  first-day-of-week="6"
+                                  locale="ar"
                                 ></v-date-picker>
                               </v-menu>
                             </v-col>
@@ -141,13 +141,13 @@
                               <v-row>
                                 <v-col cols="12" sm="1" md="1">
                                   <v-btn
+                                    @click="
+                                      removePolicePerson(policePersonIndex)
+                                    "
                                     fab
                                     small
                                     dark
                                     color="error"
-                                    @click="
-                                      removePolicePerson(policePersonIndex)
-                                    "
                                   >
                                     <v-icon>mdi-minus</v-icon>
                                   </v-btn>
@@ -155,39 +155,39 @@
                                 <v-col cols="12" sm="1" md="1">
                                   <v-combobox
                                     :rules="[v => !!v || 'برجاء ادخال الدرجة']"
-                                    required
                                     :loading="loading"
                                     :items="policePeople"
-                                    item-value="rank.name"
-                                    item-text="rank.name"
-                                    hide-no-data
                                     :return-object="false"
-                                    label="الدرجة"
                                     @input="
                                       onPolicePersonChange({
                                         policePersonIndex,
                                         data: { rank: { name: $event } }
                                       })
                                     "
+                                    required
+                                    item-value="rank.name"
+                                    item-text="rank.name"
+                                    hide-no-data
+                                    label="الدرجة"
                                   ></v-combobox>
                                 </v-col>
                                 <v-col>
                                   <v-combobox
                                     :rules="[v => !!v || 'برجاء ادخال الاسم ']"
-                                    required
                                     :loading="loading"
                                     :items="policePeople"
-                                    item-value="name"
-                                    item-text="name"
                                     :return-object="false"
-                                    hide-no-data
-                                    label="الاسم"
                                     @input="
                                       onPolicePersonChange({
                                         policePersonIndex,
                                         data: { name: $event }
                                       })
                                     "
+                                    required
+                                    item-value="name"
+                                    item-text="name"
+                                    hide-no-data
+                                    label="الاسم"
                                   ></v-combobox>
                                 </v-col>
                                 <v-col>
@@ -195,14 +195,9 @@
                                     :rules="[
                                       v => !!v || 'برجاء ادخال أو اخنيار الجهة'
                                     ]"
-                                    required
                                     :loading="loading"
                                     :items="policePeople"
-                                    item-value="policeDepartment.name"
-                                    item-text="policeDepartment.name"
-                                    hide-no-data
                                     :return-object="false"
-                                    label="الجهة"
                                     @input="
                                       onPolicePersonChange({
                                         policePersonIndex,
@@ -211,6 +206,11 @@
                                         }
                                       })
                                     "
+                                    required
+                                    item-value="policeDepartment.name"
+                                    item-text="policeDepartment.name"
+                                    hide-no-data
+                                    label="الجهة"
                                   ></v-combobox>
                                 </v-col>
                                 <v-col cols="12" sm="2" md="2">
@@ -226,14 +226,14 @@
                                             v.startsWith('015'))) ||
                                         'برجاء ادخال رقم تليفون صحيح'
                                     ]"
-                                    required
-                                    label="رقم التليفون"
                                     @input="
                                       onPolicePersonChange({
                                         policePersonIndex,
                                         data: { phoneNumber: $event }
                                       })
                                     "
+                                    required
+                                    label="رقم التليفون"
                                   ></v-text-field>
                                 </v-col>
                               </v-row>
@@ -241,13 +241,9 @@
                                 <v-col cols="12" sm="6" md="6">
                                   <v-autocomplete
                                     :rules="[v => !!v || 'برجاء اختيار المحطة']"
-                                    required
                                     :loading="loading"
                                     :return-object="true"
-                                    label="من محطة"
                                     :items="stations"
-                                    item-text="name"
-                                    prepend-icon="mdi-city"
                                     @input="
                                       onPolicePersonChange({
                                         policePersonIndex,
@@ -257,17 +253,17 @@
                                         }
                                       })
                                     "
+                                    required
+                                    label="من محطة"
+                                    item-text="name"
+                                    prepend-icon="mdi-city"
                                   ></v-autocomplete>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="6">
                                   <v-autocomplete
                                     :rules="[v => !!v || 'برجاء اختيار المحطة']"
-                                    required
                                     :loading="loading"
-                                    label="الى محطة"
                                     :items="stations"
-                                    item-text="name"
-                                    prepend-icon="mdi-city"
                                     :return-object="true"
                                     @input="
                                       onPolicePersonChange({
@@ -278,6 +274,10 @@
                                         }
                                       })
                                     "
+                                    required
+                                    label="الى محطة"
+                                    item-text="name"
+                                    prepend-icon="mdi-city"
                                   ></v-autocomplete>
                                 </v-col>
                               </v-row>
@@ -286,11 +286,11 @@
                               <v-row>
                                 <v-col>
                                   <v-btn
+                                    @click="addPolicePerson"
                                     fab
                                     small
                                     dark
                                     color="primary"
-                                    @click="addPolicePerson"
                                   >
                                     <v-icon>mdi-plus</v-icon>
                                   </v-btn>
@@ -304,13 +304,13 @@
 
                     <v-card-actions>
                       <v-btn
-                        color="success darken-1"
-                        text
                         @click="save"
                         :disabled="!isNewTrainRunValid"
+                        color="success darken-1"
+                        text
                         >حفظ</v-btn
                       >
-                      <v-btn color="blue darken-1" text @click="close"
+                      <v-btn @click="close" color="blue darken-1" text
                         >الغاء</v-btn
                       >
                     </v-card-actions>

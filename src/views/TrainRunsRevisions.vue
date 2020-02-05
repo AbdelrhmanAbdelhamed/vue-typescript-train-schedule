@@ -17,36 +17,36 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               :value="searchDayDateFormatted"
+              v-on="on"
+              @click:clear="search = ''"
               hide-details
               clearable
               readonly
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
-              v-on="on"
-              @click:clear="search = ''"
               class="d-print-none"
             ></v-text-field>
           </template>
           <v-date-picker
-            scrollable
             v-model="searchDayDate"
-            no-title
             @input="onDaySearchInput"
+            scrollable
+            no-title
             class="d-print-none"
           ></v-date-picker>
         </v-menu>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
+          @click:clear="
+            searchDayDate = '';
+            searchFromDate = '';
+          "
           append-icon="mdi-table-search"
           label="استعلام بالمستخدم أو برقم القطار"
           single-line
           hide-details
           clearable
-          @click:clear="
-            searchDayDate = '';
-            searchFromDate = '';
-          "
           class="d-print-none"
         ></v-text-field>
         <v-spacer></v-spacer>
@@ -63,21 +63,21 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               :value="searchFromDateFormatted"
+              v-on="on"
+              @click:clear="search = ''"
               hide-details
               clearable
               readonly
               label="استعلام بالمدة (منذ)"
               append-icon="mdi-calendar-search"
-              v-on="on"
-              @click:clear="search = ''"
               class="d-print-none"
             ></v-text-field>
           </template>
           <v-date-picker
-            scrollable
             v-model="searchFromDate"
-            no-title
             @input="onFromSearchInput"
+            scrollable
+            no-title
             class="d-print-none"
           ></v-date-picker>
         </v-menu>
@@ -85,17 +85,17 @@
       <v-data-table
         :headers="headers"
         :items="trainRunsRevisions"
-        class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRunsRevisions"
+        class="elevation-1"
       >
         <template v-slot:item.train="{ item: { train } }">
           <v-chip
-            link
             :to="{
               name: `trains.run.details`,
               params: { id: train.id }
             }"
+            link
             class="pointer"
             color="info"
           >

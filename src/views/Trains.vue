@@ -17,11 +17,11 @@
         :loading="loading"
         :headers="headers"
         :items="trains"
+        :search="search"
+        :custom-filter="filterTrains"
         item-key="number+lineName"
         group-by="lineName"
         class="elevation-1"
-        :search="search"
-        :custom-filter="filterTrains"
       >
         <template
           v-slot:group.header="{ items: [lineGroup], headers, group, toggle }"
@@ -34,11 +34,11 @@
                 }}</v-icon>
               </span>
               <v-chip
-                link
                 :to="{
                   name: `lines.trains`,
                   params: { lineId: lineGroup.line.id }
                 }"
+                link
                 class="pointer"
                 color="info"
                 >{{ lineGroup.line.name }}</v-chip
@@ -56,10 +56,10 @@
             <template v-slot:input>
               <v-text-field
                 :value="temporaryTrainNumber"
-                label="تعديل رقم القطار"
-                single-line
                 v-if="$can('update', 'Train')"
                 @change="onEditTrainNumberChange"
+                label="تعديل رقم القطار"
+                single-line
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -74,9 +74,9 @@
         </template>
       </v-data-table>
     </v-card>
-    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+    <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ updateTrainErrorMessage }}
-      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
     </v-snackbar>
   </div>
 </template>

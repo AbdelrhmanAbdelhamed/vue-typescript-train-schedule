@@ -2,7 +2,7 @@
   <v-container id="trains-search">
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="4">
-        <v-card class="elevation-12" :loading="loading">
+        <v-card :loading="loading" class="elevation-12">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>استعلام عن القطارات</v-toolbar-title>
             <v-spacer />
@@ -11,11 +11,11 @@
             <v-form v-model="validSearch">
               <v-autocomplete
                 :rules="[v => !!v || 'برجاء اختيار المحطة']"
-                required
                 :loading="loading"
                 v-model="departureStation"
-                label="محطة القيام"
                 :items="stations"
+                required
+                label="محطة القيام"
                 item-value="name"
                 item-text="name"
                 prepend-icon="mdi-city"
@@ -28,11 +28,11 @@
 
               <v-autocomplete
                 :rules="[v => !!v || 'برجاء اختيار المحطة']"
-                required
                 :loading="loading"
                 v-model="arrivalStation"
-                label="محطة الوصول"
                 :items="stations"
+                required
+                label="محطة الوصول"
                 item-value="name"
                 item-text="name"
                 prepend-icon="mdi-city"
@@ -43,8 +43,8 @@
             <v-btn
               :disabled="!validSearch"
               :loading="loading"
-              color="primary"
               @click="getTrainsByStations()"
+              color="primary"
               >استعلام</v-btn
             >
             <v-spacer />
@@ -69,10 +69,10 @@
           <v-data-table
             v-if="showTable"
             :loading="loading"
-            class="elevation-1"
             :headers="headers"
             :items="trains"
             :search="search"
+            class="elevation-1"
           >
             <template v-slot:item.number="{ item }">{{
               item.number | convertToArabic
@@ -106,9 +106,6 @@ import { Line, Train } from "@/store/models";
   components: { TrainActions }
 })
 export default class TrainsSearch extends Vue {
-  departureStation: string = "";
-  arrivalStation: string = "";
-  showTable = false;
   validSearch = false;
 
   headers = [
@@ -140,6 +137,30 @@ export default class TrainsSearch extends Vue {
       departureStation: this.departureStation,
       arrivalStation: this.arrivalStation
     });
+  }
+
+  get departureStation() {
+    return TrainsModule.departureStation;
+  }
+
+  get arrivalStation() {
+    return TrainsModule.arrivalStation;
+  }
+
+  set departureStation(departureStation: string) {
+    TrainsModule.setDepartureStation(departureStation);
+  }
+
+  set arrivalStation(arrivalStation: string) {
+    TrainsModule.setArrivalStation(arrivalStation);
+  }
+
+  get showTable() {
+    return TrainsModule.showTable;
+  }
+
+  set showTable(showTable: boolean) {
+    TrainsModule.setShowTable(showTable);
   }
 
   get trains(): Train[] {

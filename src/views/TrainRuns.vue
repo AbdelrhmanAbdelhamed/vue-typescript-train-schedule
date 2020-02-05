@@ -17,33 +17,33 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               :value="searchDateFormatted"
+              v-on="on"
+              @click:clear="search = ''"
               hide-details
               clearable
               readonly
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
-              v-on="on"
-              @click:clear="search = ''"
               class="d-print-none"
             ></v-text-field>
           </template>
           <v-date-picker
-            scrollable
             v-model="searchDate"
-            no-title
             @input="onDaySearchInput"
+            scrollable
+            no-title
             class="d-print-none"
           ></v-date-picker>
         </v-menu>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
+          @click:clear="searchDate = ''"
           append-icon="mdi-table-search"
           label="  استعلام بأفراد التأمين أو برقم القطار"
           single-line
           hide-details
           clearable
-          @click:clear="searchDate = ''"
           class="d-print-none"
         ></v-text-field>
       </v-card-title>
@@ -51,26 +51,26 @@
         :loading="loading"
         :headers="headers"
         :items="trainRuns"
-        group-by="trainNumber"
-        sort-by="day"
         :sort-desc="true"
         :group-desc="true"
-        class="elevation-1"
         :search="search"
         :custom-filter="filterTrainRuns"
+        group-by="trainNumber"
+        sort-by="day"
+        class="elevation-1"
       >
         <template v-slot:top v-if="$can('manage', 'Train')">
           <div class="mx-4 d-print-none">
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-btn
+              :to="{
+                name: `runs.revisions`
+              }"
               color="primary"
               dark
               class="mb-2"
               link
-              :to="{
-                name: `runs.revisions`
-              }"
               >سجل جميع الخدمات</v-btn
             >
           </div>
@@ -87,11 +87,11 @@
                 </v-icon>
               </span>
               <v-chip
-                link
                 :to="{
                   name: `trains.run.details`,
                   params: { id: trainGroup.train.id }
                 }"
+                link
                 class="pointer"
                 color="info"
               >

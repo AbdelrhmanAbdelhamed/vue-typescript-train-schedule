@@ -17,8 +17,8 @@
         :loading="usersLoading"
         :headers="headers"
         :items="users"
-        class="elevation-1"
         :search="search"
+        class="elevation-1"
       >
         <template v-slot:top v-if="$can('create', 'User')">
           <div class="mx-4">
@@ -26,7 +26,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on"
+                <v-btn v-on="on" color="primary" dark class="mb-2"
                   >اضافة حساب جديد</v-btn
                 >
               </template>
@@ -42,8 +42,8 @@
                         <v-col cols="12">
                           <v-text-field
                             :rules="[v => !!v || 'برجاء ادخال الاسم كامل']"
-                            required
                             @input="onFullNameChange"
+                            required
                             label="الاسم كامل"
                             prepend-icon="mdi-account-outline"
                           ></v-text-field>
@@ -51,8 +51,8 @@
                         <v-col cols="12">
                           <v-text-field
                             :rules="[v => !!v || 'برجاء ادخال اسم المسخدم']"
-                            required
                             @input="onUsernameChange"
+                            required
                             label="اسم المستخدم"
                             prepend-icon="mdi-account"
                           ></v-text-field>
@@ -60,58 +60,58 @@
                         <v-col cols="12">
                           <v-combobox
                             :rules="[v => !!v || 'برجاء ادخال الجهة']"
-                            required
                             :loading="policeDepartmentsLoading"
                             :return-object="false"
-                            label="جهة المستخدم"
                             :items="policeDepartments"
+                            @input="onDepartmentChange"
+                            required
+                            label="جهة المستخدم"
                             item-value="name"
                             item-text="name"
                             hide-no-data
-                            @input="onDepartmentChange"
                             prepend-icon="mdi-city"
                           ></v-combobox>
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
+                            id="password"
                             :rules="[
                               v => !!v || 'برجاء ادخال كلمة المرور',
                               passwordConfirmationRule
                             ]"
+                            @input="onPasswordChange"
                             required
-                            id="password"
                             label="كلمة المرور"
                             name="password"
                             prepend-icon="mdi-lock"
                             type="password"
-                            @input="onPasswordChange"
                           />
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
+                            id="re-password"
                             :rules="[
                               v => !!v || 'برجاء ادخال تأكيد كلمة المرور',
                               passwordConfirmationRule
                             ]"
+                            v-model="rePassword"
                             required
-                            id="re-password"
                             label="تأكيد كلمة المرور"
                             name="re-password"
                             prepend-icon="mdi-lock"
                             type="password"
-                            v-model="rePassword"
                           />
                         </v-col>
                         <v-col cols="12">
                           <v-autocomplete
                             :return-object="true"
                             :loading="rolesLoading"
-                            label="وظيفة المستخدم"
                             :items="roles"
+                            @change="onUserRoleChange"
+                            label="وظيفة المستخدم"
                             item-value="name"
                             item-text="nameArabic"
                             prepend-icon="mdi-account-question"
-                            @change="onUserRoleChange"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -122,12 +122,12 @@
                 <v-card-actions>
                   <v-btn
                     :disabled="!isNewUserValid"
+                    @click="save"
                     color="success darken-1"
                     text
-                    @click="save"
                     >حفظ</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click="close">الغاء</v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -143,9 +143,9 @@
             <template v-slot:input>
               <v-text-field
                 v-model="props.item.fullName"
+                v-if="$can('update', 'User')"
                 label="تعديل الاسم الرباعي"
                 single-line
-                v-if="$can('update', 'User')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -160,9 +160,9 @@
             <template v-slot:input>
               <v-text-field
                 v-model="props.item.username"
+                v-if="$can('update', 'User')"
                 label="تعديل اسم المستخدم"
                 single-line
-                v-if="$can('update', 'User')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -184,8 +184,8 @@
                 v-model="props.item.policeDepartment.name"
                 :return-object="false"
                 :loading="policeDepartmentsLoading"
-                label="تعديل جهة المستخدم"
                 :items="policeDepartments"
+                label="تعديل جهة المستخدم"
                 item-value="name"
                 item-text="name"
               ></v-combobox>
@@ -207,8 +207,8 @@
                       v-model="props.item.role"
                       :return-object="true"
                       :loading="rolesLoading"
-                      label="تعديل وظيفة المستخدم"
                       :items="roles"
+                      label="تعديل وظيفة المستخدم"
                       item-value="name"
                       item-text="nameArabic"
                     ></v-autocomplete>

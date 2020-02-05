@@ -5,11 +5,11 @@
         <v-col>
           <v-dialog
             v-model="newPasswordDialog"
-            max-width="500px"
             v-if="$can('update', user)"
+            max-width="500px"
           >
             <template v-slot:activator="{ on }">
-              <v-btn small color="primary" dark v-on="on"
+              <v-btn v-on="on" small color="primary" dark
                 >تغيير كلمة المرور</v-btn
               >
             </template>
@@ -26,33 +26,33 @@
                     <v-row justify="center" align="center">
                       <v-col cols="12">
                         <v-text-field
+                          id="password"
                           :rules="[
                             v => !!v || 'برجاء ادخال كلمة المرور الجديدة',
                             passwordConfirmationRule
                           ]"
+                          v-model="newPassword"
                           required
-                          id="password"
                           label="كلمة المرور الجديدة"
                           name="password"
                           prepend-icon="mdi-lock"
                           type="password"
-                          v-model="newPassword"
                         />
                       </v-col>
                       <v-col cols="12">
                         <v-text-field
+                          id="re-password"
                           :rules="[
                             v =>
                               !!v || ' برجاء ادخال تأكيد كلمة المرور الجديدة',
                             passwordConfirmationRule
                           ]"
+                          v-model="reNewPassword"
                           required
-                          id="re-password"
                           label="تأكيد كلمة المرور الجديدة"
                           name="re-password"
                           prepend-icon="mdi-lock"
                           type="password"
-                          v-model="reNewPassword"
                         />
                       </v-col>
                     </v-row>
@@ -63,15 +63,15 @@
               <v-card-actions>
                 <v-btn
                   :disabled="!isNewPasswordValid"
+                  @click="onPasswordChangeClick"
                   color="success darken-1"
                   text
-                  @click="onPasswordChangeClick"
                   >تغيير</v-btn
                 >
                 <v-btn
+                  @click="newPasswordDialog = false"
                   color="blue darken-1"
                   text
-                  @click="newPasswordDialog = false"
                   >الغاء</v-btn
                 >
               </v-card-actions>
@@ -81,12 +81,12 @@
         <v-col>
           <v-dialog
             v-model="deleteUserDialog"
+            v-if="$can('delete', 'User')"
             persistent
             max-width="290"
-            v-if="$can('delete', 'User')"
           >
             <template v-slot:activator="{ on }">
-              <v-icon color="error" v-on="on">mdi-delete</v-icon>
+              <v-icon v-on="on" color="error">mdi-delete</v-icon>
             </template>
             <v-card>
               <v-card-title class="headline"
@@ -95,8 +95,8 @@
               <v-card-text>هل أنت متأكد انك تريد مسح الحساب؟!</v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>
-                <v-btn text @click="deleteUserDialog = false">الغاء</v-btn>
+                <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
+                <v-btn @click="deleteUserDialog = false" text>الغاء</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -107,18 +107,18 @@
             :value="user.trains"
             :return-object="true"
             :loading="loading"
+            :items="trains"
+            @change="onTrainsChange(user.id, $event)"
             multiple
             small-chips
             deletable-chips
             dense
             hide-details
             label="قطارات المستخدم"
-            :items="trains"
             item-value="number"
             item-text="number"
-            @change="onTrainsChange(user.id, $event)"
           >
-            <template v-slot:activator="{ on }">{{
+            <template v-slot:activator="{}">{{
               user.item.description
             }}</template>
           </v-autocomplete>

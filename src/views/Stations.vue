@@ -18,11 +18,15 @@
         :loading="stationsLoading"
         :headers="headers"
         :items="stations"
+        :search="search"
+        :page.sync="page"
+        @page-count="pageCount = $event"
         item-key="id+lineName"
+        items-per-page="100"
         group-by="lineName"
         sort-by="line.LineStation.stationOrder"
         class="elevation-1"
-        :search="search"
+        hide-default-footer
       >
         <template v-slot:top v-if="$can('create', 'Station')">
           <div class="mx-4 d-print-none">
@@ -30,7 +34,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on"
+                <v-btn v-on="on" color="primary" dark class="mb-2"
                   >اضافة محطة جديد</v-btn
                 >
               </template>
@@ -46,25 +50,25 @@
                         <v-col cols="12">
                           <v-combobox
                             :rules="[v => !!v || 'برجاء ادخال أو اختيار الاسم']"
-                            required
                             :loading="stationsLoading"
                             @input="onNameChange"
-                            label="اسم المحطة"
                             :items="stations"
+                            :return-object="false"
+                            required
+                            label="اسم المحطة"
                             item-value="name"
                             item-text="name"
                             prepend-icon="mdi-city"
-                            :return-object="false"
                           ></v-combobox>
                         </v-col>
                         <v-col cols="12">
                           <v-autocomplete
                             @input="onLineNameChange"
                             :rules="[v => !!v || 'برجاء اختيار الخط']"
-                            required
                             :loading="linesLoading"
-                            label="الخط التابعة له المحطة"
                             :items="lines"
+                            required
+                            label="الخط التابعة له المحطة"
                             return-object
                             item-value="name"
                             item-text="name"
@@ -76,11 +80,11 @@
                             :rules="[
                               v => (!!v && v > 0) || 'برجاء ادخال ترتيب المحطة'
                             ]"
-                            required
                             @input="onLineStationOrderChange"
                             v-on:keypress="checkIfNotNumber($event)"
-                            label="ترتيب المحطة"
                             :error-messages="newStationOrderErrorMessage"
+                            required
+                            label="ترتيب المحطة"
                             prepend-icon="mdi-reorder-horizontal"
                           ></v-text-field>
                         </v-col>
@@ -92,12 +96,12 @@
                 <v-card-actions>
                   <v-btn
                     :disabled="!isNewStationValid"
+                    @click="save"
                     color="success darken-1"
                     text
-                    @click="save"
                     >حفظ</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click="close">الغاء</v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -115,11 +119,11 @@
                 </v-icon>
               </span>
               <v-chip
-                link
                 :to="{
                   name: `lines.stations`,
                   params: { lineId: lineGroup.line.id }
                 }"
+                link
                 class="pointer"
                 color="info"
                 >{{ lineGroup.line.name }}</v-chip
@@ -137,9 +141,9 @@
             <template v-slot:input>
               <v-text-field
                 v-model="props.item.name"
+                v-if="$can('update', 'Station')"
                 label="تعديل اسم المحطة"
                 single-line
-                v-if="$can('update', 'Station')"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -156,10 +160,10 @@
             <template v-slot:input>
               <v-text-field
                 :value="temporaryStationOrder"
-                label="تعديل ترتيب المحطة بالخط"
-                single-line
                 v-if="$can('update', 'Station')"
                 @change="onEditLineStationOrderChange"
+                label="تعديل ترتيب المحطة بالخط"
+                single-line
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -169,10 +173,19 @@
           <StationActions :station="item" />
         </template>
       </v-data-table>
+      <v-card-actions>
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          circle
+          prev-icon="mdi-menu-left"
+          next-icon="mdi-menu-right"
+        ></v-pagination>
+      </v-card-actions>
     </v-card>
-    <v-snackbar v-model="snackbar" top color="error" :timeout="0">
+    <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ updateStationErrorMessage }}
-      <v-btn dark text @click="closeSnackbar">اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -211,6 +224,8 @@ export default class Stations extends Vue {
   dialog: boolean = false;
   isNewStationValid = false;
   temporaryStationOrder = "";
+  page = 1;
+  pageCount = 0;
 
   get snackbar() {
     return StationsModule.updateStationErrorMessage !== null;

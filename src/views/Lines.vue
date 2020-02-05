@@ -17,8 +17,8 @@
         :loading="loading"
         :headers="headers"
         :items="lines"
-        class="elevation-1"
         :search="search"
+        class="elevation-1"
       >
         <template v-slot:top v-if="$can('create', 'Line')">
           <div class="mx-4">
@@ -26,7 +26,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on"
+                <v-btn v-on="on" color="primary" dark class="mb-2"
                   >اضافة خط جديد</v-btn
                 >
               </template>
@@ -42,8 +42,8 @@
                         <v-col cols="12">
                           <v-text-field
                             :rules="[v => !!v || 'برجاء ادخال الاسم']"
-                            required
                             @input="onNameChange"
+                            required
                             label="اسم الخط"
                             prepend-icon="mdi-arrow-expand-horizontal"
                           ></v-text-field>
@@ -56,12 +56,12 @@
                 <v-card-actions>
                   <v-btn
                     :disabled="!isNewLineValid"
+                    @click="save"
                     color="success darken-1"
                     text
-                    @click="save"
                     >حفظ</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click="close">الغاء</v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -77,9 +77,9 @@
             <template v-slot:input>
               <v-text-field
                 v-model="props.item.name"
+                v-if="$can('update', 'Line')"
                 label="تعديل اسم الخط"
                 single-line
-                v-if="$can('update', 'Line')"
               ></v-text-field>
             </template>
           </v-edit-dialog>

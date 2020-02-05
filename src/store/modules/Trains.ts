@@ -25,7 +25,10 @@ import Vue from "vue";
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
 class TrainsModule extends VuexModule implements TrainState {
   trains: Train[] = [];
+  departureStation: string = "";
+  arrivalStation: string = "";
   searchedTrains: Train[] = [];
+  showTable: boolean = false;
   newTrain: Train = this.createEmptyTrain();
   currentTrain: Train = {
     number: "",
@@ -133,6 +136,11 @@ class TrainsModule extends VuexModule implements TrainState {
   }
 
   @Mutation
+  setShowTable(showTable: boolean) {
+    this.showTable = showTable;
+  }
+
+  @Mutation
   resetNewTrainRun() {
     this.newTrainRun = {
       day: "",
@@ -147,6 +155,26 @@ class TrainsModule extends VuexModule implements TrainState {
       train: this.currentTrain,
       trainId: this.currentTrain ? this.currentTrain.id : ""
     };
+  }
+
+  @Mutation
+  setArrivalStation(arrivalStation: string) {
+    this.arrivalStation = arrivalStation;
+  }
+
+  @Mutation
+  setDepartureStation(departureStation: string) {
+    this.departureStation = departureStation;
+  }
+
+  @Mutation
+  resetArrivalStation() {
+    this.arrivalStation = "";
+  }
+
+  @Mutation
+  resetDepartureStation() {
+    this.departureStation = "";
   }
 
   @Mutation

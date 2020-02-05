@@ -6,7 +6,7 @@
   >
     <v-dialog v-model="dialog" persistent max-width="500">
       <template v-slot:activator="{ on }">
-        <v-icon class="mr-10" color="error" v-on="on">
+        <v-icon v-on="on" class="mr-10" color="error">
           mdi-delete
         </v-icon>
       </template>
@@ -22,8 +22,8 @@
         <v-card-text>هل أنت متأكد انك تريد مسح الخدمة؟!</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="error" text @click="onDeleteClicked">مسح</v-btn>
-          <v-btn text @click="dialog = false">الغاء</v-btn>
+          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
+          <v-btn @click="dialog = false" text>الغاء</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

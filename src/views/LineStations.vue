@@ -1,10 +1,10 @@
 <template>
   <div class="stations-timeline">
     <v-skeleton-loader
+      v-if="loading || !stations"
       class="mx-auto"
       max-width="600"
       type="card@3"
-      v-if="loading || !stations"
     ></v-skeleton-loader>
     <v-container v-if="!loading || !stations">
       <v-row no-gutters justify="center">
