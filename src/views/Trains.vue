@@ -19,6 +19,9 @@
         :items="trains"
         :search="search"
         :custom-filter="filterTrains"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         item-key="number+lineName"
         group-by="lineName"
         class="elevation-1"
@@ -223,10 +226,7 @@ export default class Trains extends Vue {
       typeof value === "number"
     ) {
       return (
-        value
-          .toString()
-          .toLocaleLowerCase()
-          .indexOf(search.toLocaleLowerCase()) !== -1 ||
+        value.toString().toLocaleLowerCase() === search ||
         item.lineName
           .toString()
           .toLocaleLowerCase()

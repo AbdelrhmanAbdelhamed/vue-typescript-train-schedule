@@ -53,6 +53,9 @@
         :items="train.trainRuns"
         :search="search"
         :custom-filter="filterTrainRuns"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         :sort-desc="true"
         fixed-header
         item-key="id"

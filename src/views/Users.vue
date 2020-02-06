@@ -18,6 +18,9 @@
         :headers="headers"
         :items="users"
         :search="search"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         class="elevation-1"
       >
         <template v-slot:top v-if="$can('create', 'User')">

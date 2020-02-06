@@ -19,6 +19,9 @@
         :headers="headers"
         :items="trains"
         :search="search"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         item-key="id"
         class="elevation-1"
       >

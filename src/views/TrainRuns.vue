@@ -55,6 +55,9 @@
         :group-desc="true"
         :search="search"
         :custom-filter="filterTrainRuns"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         group-by="trainNumber"
         sort-by="day"
         class="elevation-1"

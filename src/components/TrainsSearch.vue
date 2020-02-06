@@ -73,7 +73,15 @@
             :headers="headers"
             :items="trains"
             :search="search"
+            :footer-props="{
+              showFirstLastPage: true
+            }"
+            :sort-by="[
+              'departureStation.departureTime',
+              'arrivalStation.arrivalTime'
+            ]"
             class="elevation-1"
+            multi-sort
           >
             <template v-slot:item.number="{ item }">
               {{ item.number | convertToArabic }}
@@ -82,8 +90,24 @@
             <template v-slot:item.departureStation.departureTime="{ item }">
               {{
                 item.departureStation.departureTime
-                  | formatTime
-                  | convertToArabic
+                  ? item.departureStation.departureTime
+                  : item.departureStation.arrivalTime
+                    | formatTime
+                    | convertToArabic
+              }}
+            </template>
+
+            <template v-slot:item.crossedNextDay="{ item }">
+              {{ item.crossedNextDay ? "اليوم التالي" : "ذات اليوم" }}
+            </template>
+
+            <template v-slot:item.arrivalStation.arrivalTime="{ item }">
+              {{
+                item.arrivalStation.arrivalTime
+                  ? item.arrivalStation.arrivalTime
+                  : item.arrivalStation.departureTime
+                    | formatTime
+                    | convertToArabic
               }}
             </template>
 
@@ -124,6 +148,17 @@ export default class TrainsSearch extends Vue {
       value: "departureStation.departureTime",
       sortable: true
     },
+    {
+      text: "تاريخ الوصول",
+      value: "crossedNextDay",
+      sortable: true
+    },
+    {
+      text: "وقت الوصول",
+      value: "arrivalStation.arrivalTime",
+      sortable: true
+    },
+
     { text: "", value: "action", sortable: false }
   ];
   search = "";

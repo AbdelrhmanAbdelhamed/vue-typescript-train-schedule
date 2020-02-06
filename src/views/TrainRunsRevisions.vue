@@ -87,6 +87,9 @@
         :items="trainRunsRevisions"
         :search="search"
         :custom-filter="filterTrainRunsRevisions"
+        :footer-props="{
+          showFirstLastPage: true
+        }"
         class="elevation-1"
       >
         <template v-slot:item.train="{ item: { train } }">

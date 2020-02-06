@@ -208,6 +208,7 @@ export class Train {
   lineName?: string;
   departureStation?: Station;
   arrivalStation?: Station;
+  crossedNextDay?: boolean;
 
   constructor({
     id,
@@ -221,7 +222,8 @@ export class Train {
     line,
     lineName,
     departureStation,
-    arrivalStation
+    arrivalStation,
+    crossedNextDay
   }: {
     id?: string;
     number: string;
@@ -235,6 +237,7 @@ export class Train {
     lineName?: string;
     departureStation?: Station;
     arrivalStation?: Station;
+    crossedNextDay?: boolean;
   }) {
     this.id = id;
     (this.number = number), (this.createdAt = createdAt);
@@ -247,6 +250,7 @@ export class Train {
     this.lineName = lineName;
     this.departureStation = departureStation;
     this.arrivalStation = arrivalStation;
+    this.crossedNextDay = crossedNextDay;
   }
 }
 

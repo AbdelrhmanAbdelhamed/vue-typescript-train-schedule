@@ -7,7 +7,7 @@
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
-          label="استعلام عن المحطة"
+          label="استعلام عن المحطة أو الخط"
           single-line
           hide-details
           clearable
@@ -19,10 +19,11 @@
         :headers="headers"
         :items="stations"
         :search="search"
+        :custom-filter="filterStations"
         :page.sync="page"
         @page-count="pageCount = $event"
         item-key="id+lineName"
-        items-per-page="100"
+        items-per-page="57"
         group-by="lineName"
         sort-by="line.LineStation.stationOrder"
         class="elevation-1"
@@ -181,7 +182,6 @@
         <v-pagination
           v-model="page"
           :length="pageCount"
-          circle
           prev-icon="mdi-menu-left"
           next-icon="mdi-menu-right"
         />
@@ -345,6 +345,23 @@ export default class Stations extends Vue {
   onEditOrderSubmit(id: any, lineId: any, stationOrder: any) {
     if (stationOrder)
       StationsModule.updateStationOrder({ id, lineId, data: { stationOrder } });
+  }
+
+  filterStations(value: any, search: any, item: any) {
+    if (
+      (value != null && search != null && typeof value === "string") ||
+      typeof value === "number"
+    ) {
+      return (
+        value
+          .toString()
+          .toLocaleLowerCase()
+          .indexOf(search.toLocaleLowerCase()) !== -1 ||
+        item.lineName.toString().toLocaleLowerCase() === search
+      );
+    } else {
+      return false;
+    }
   }
 
   async beforeCreate() {
