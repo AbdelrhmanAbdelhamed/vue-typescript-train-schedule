@@ -46,8 +46,9 @@
                 color="primary"
                 type="submit"
                 form="loginForm"
-                >دخول</v-btn
               >
+                دخول
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>

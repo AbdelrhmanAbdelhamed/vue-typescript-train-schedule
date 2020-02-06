@@ -15,8 +15,9 @@
       color="primary"
       small
       link
-      >المواعيد</v-btn
     >
+      المواعيد
+    </v-btn>
 
     <v-btn
       v-if="$can('read', train)"
@@ -25,8 +26,9 @@
       small
       link
       outlined
-      >الخدمات</v-btn
     >
+      الخدمات
+    </v-btn>
 
     <v-dialog
       v-if="actions.delete && $can('delete', 'Train')"
@@ -40,14 +42,18 @@
         </v-icon>
       </template>
       <v-card>
-        <v-card-title class="headline"
-          >مسح قطار {{ train.number }}</v-card-title
-        >
+        <v-card-title class="headline">
+          مسح قطار {{ train.number }}
+        </v-card-title>
         <v-card-text>هل أنت متأكد انك تريد مسح القطار؟!</v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
-          <v-btn @click="dialog = false" text>الغاء</v-btn>
+          <v-spacer />
+          <v-btn @click="onDeleteClicked" color="error" text>
+            مسح
+          </v-btn>
+          <v-btn @click="dialog = false" text>
+            الغاء
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

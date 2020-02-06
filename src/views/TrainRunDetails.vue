@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title v-if="train">
         خدمات قطار رقم: {{ train.number | convertToArabic }}
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-menu
           ref="searchDateMenu"
           v-model="searchDateMenu"
@@ -25,7 +25,7 @@
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
               class="d-print-none"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
             v-model="searchDate"
@@ -33,9 +33,9 @@
             scrollable
             no-title
             class="d-print-none"
-          ></v-date-picker>
+          />
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           @click:clear="searchDate = ''"
@@ -45,7 +45,7 @@
           hide-details
           clearable
           class="d-print-none"
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="loading"
@@ -61,8 +61,8 @@
       >
         <template v-slot:top v-if="$can('create', 'TrainRun')">
           <div class="mx-4 d-print-none">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
+            <v-divider class="mx-4" inset vertical />
+            <v-spacer />
             <v-row>
               <v-col v-if="$can('manage', 'Train')" cols="12">
                 <v-btn
@@ -74,15 +74,16 @@
                   color="info"
                   dark
                   link
-                  >سجل الخدمات</v-btn
-                ></v-col
-              >
+                >
+                  سجل الخدمات
+                </v-btn>
+              </v-col>
               <v-col cols="12">
                 <v-dialog v-model="dialog" max-width="1000px">
                   <template v-slot:activator="{ on }">
-                    <v-btn v-on="on" color="primary" dark class="mb-2"
-                      >اضافة خدمة جديد</v-btn
-                    >
+                    <v-btn v-on="on" color="primary" dark class="mb-2">
+                      اضافة خدمة جديد
+                    </v-btn>
                   </template>
                   <v-card>
                     <v-card-title>
@@ -117,7 +118,7 @@
                                     readonly
                                     label="تاريخ الخدمة"
                                     append-icon="mdi-calendar-search"
-                                  ></v-text-field>
+                                  />
                                 </template>
                                 <v-date-picker
                                   v-model="newTrainRunDate"
@@ -128,7 +129,7 @@
                                   no-title
                                   first-day-of-week="6"
                                   locale="ar"
-                                ></v-date-picker>
+                                />
                               </v-menu>
                             </v-col>
 
@@ -169,7 +170,7 @@
                                     item-text="rank.name"
                                     hide-no-data
                                     label="الدرجة"
-                                  ></v-combobox>
+                                  />
                                 </v-col>
                                 <v-col>
                                   <v-combobox
@@ -188,7 +189,7 @@
                                     item-text="name"
                                     hide-no-data
                                     label="الاسم"
-                                  ></v-combobox>
+                                  />
                                 </v-col>
                                 <v-col>
                                   <v-combobox
@@ -211,7 +212,7 @@
                                     item-text="policeDepartment.name"
                                     hide-no-data
                                     label="الجهة"
-                                  ></v-combobox>
+                                  />
                                 </v-col>
                                 <v-col cols="12" sm="2" md="2">
                                   <v-text-field
@@ -234,7 +235,7 @@
                                     "
                                     required
                                     label="رقم التليفون"
-                                  ></v-text-field>
+                                  />
                                 </v-col>
                               </v-row>
                               <v-row>
@@ -257,7 +258,7 @@
                                     label="من محطة"
                                     item-text="name"
                                     prepend-icon="mdi-city"
-                                  ></v-autocomplete>
+                                  />
                                 </v-col>
                                 <v-col cols="12" sm="6" md="6">
                                   <v-autocomplete
@@ -278,7 +279,7 @@
                                     label="الى محطة"
                                     item-text="name"
                                     prepend-icon="mdi-city"
-                                  ></v-autocomplete>
+                                  />
                                 </v-col>
                               </v-row>
                             </v-container>
@@ -308,11 +309,12 @@
                         :disabled="!isNewTrainRunValid"
                         color="success darken-1"
                         text
-                        >حفظ</v-btn
                       >
-                      <v-btn @click="close" color="blue darken-1" text
-                        >الغاء</v-btn
-                      >
+                        حفظ
+                      </v-btn>
+                      <v-btn @click="close" color="blue darken-1" text>
+                        الغاء
+                      </v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>

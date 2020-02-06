@@ -9,9 +9,9 @@
             max-width="500px"
           >
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" small color="primary" dark
-                >تغيير كلمة المرور</v-btn
-              >
+              <v-btn v-on="on" small color="primary" dark>
+                تغيير كلمة المرور
+              </v-btn>
             </template>
             <v-card>
               <v-card-title>
@@ -66,14 +66,16 @@
                   @click="onPasswordChangeClick"
                   color="success darken-1"
                   text
-                  >تغيير</v-btn
                 >
+                  تغيير
+                </v-btn>
                 <v-btn
                   @click="newPasswordDialog = false"
                   color="blue darken-1"
                   text
-                  >الغاء</v-btn
                 >
+                  الغاء
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -86,17 +88,23 @@
             max-width="290"
           >
             <template v-slot:activator="{ on }">
-              <v-icon v-on="on" color="error">mdi-delete</v-icon>
+              <v-icon v-on="on" color="error">
+                mdi-delete
+              </v-icon>
             </template>
             <v-card>
-              <v-card-title class="headline"
-                >مسح حساب {{ user.username }}</v-card-title
-              >
+              <v-card-title class="headline">
+                مسح حساب {{ user.username }}
+              </v-card-title>
               <v-card-text>هل أنت متأكد انك تريد مسح الحساب؟!</v-card-text>
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
-                <v-btn @click="deleteUserDialog = false" text>الغاء</v-btn>
+                <v-spacer />
+                <v-btn @click="onDeleteClicked" color="error" text>
+                  مسح
+                </v-btn>
+                <v-btn @click="deleteUserDialog = false" text>
+                  الغاء
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -118,9 +126,9 @@
             item-value="number"
             item-text="number"
           >
-            <template v-slot:activator="{}">{{
-              user.item.description
-            }}</template>
+            <template v-slot:activator="{}">
+              {{ user.item.description }}
+            </template>
           </v-autocomplete>
         </v-col>
       </v-row>

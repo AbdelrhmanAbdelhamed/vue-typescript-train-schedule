@@ -1,12 +1,12 @@
 <template>
   <div v-if="$can('create', 'Train')" class="mx-4 d-print-none">
-    <v-divider class="mx-4" inset vertical></v-divider>
-    <v-spacer></v-spacer>
+    <v-divider class="mx-4" inset vertical />
+    <v-spacer />
     <v-dialog v-model="dialog" max-width="1000px">
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" color="primary" dark class="mb-2"
-          >اضافة قطار جديد</v-btn
-        >
+        <v-btn v-on="on" color="primary" dark class="mb-2">
+          اضافة قطار جديد
+        </v-btn>
       </template>
       <v-card :loading="loading">
         <v-card-title>
@@ -44,7 +44,7 @@
                     placeholder="قم بإدخال رقم القطار المراد اضافته"
                     outlined
                     prepend-icon="mdi-train"
-                  ></v-combobox>
+                  />
                 </v-col>
               </v-row>
               <v-row justify="center" align="center">
@@ -79,7 +79,7 @@
                                   label="وقت الوصول"
                                   prepend-icon="mdi-clock"
                                   clearable
-                                ></v-text-field>
+                                />
                               </template>
                               <v-time-picker
                                 @change="onArrivalTimeChange(index, $event)"
@@ -87,11 +87,11 @@
                                 scrollable
                                 ampm-in-title
                                 full-width
-                              ></v-time-picker>
+                              />
                             </v-menu>
                           </v-col>
 
-                          <v-divider vertical class="mr-2"></v-divider>
+                          <v-divider vertical class="mr-2" />
 
                           <v-col>
                             <v-menu
@@ -115,7 +115,7 @@
                                   label="وقت القيام"
                                   prepend-icon="mdi-clock"
                                   clearable
-                                ></v-text-field>
+                                />
                               </template>
                               <v-time-picker
                                 @change="onDepartureTimeChange(index, $event)"
@@ -123,7 +123,7 @@
                                 scrollable
                                 ampm-in-title
                                 full-width
-                              ></v-time-picker>
+                              />
                             </v-menu>
                           </v-col>
                         </v-row>
@@ -143,11 +143,12 @@
             @click="save"
             color="success darken-1"
             text
-            >حفظ</v-btn
           >
-          <v-btn :loading="loading" @click="close" color="blue darken-1" text
-            >الغاء</v-btn
-          >
+            حفظ
+          </v-btn>
+          <v-btn :loading="loading" @click="close" color="blue darken-1" text>
+            الغاء
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -10,9 +10,43 @@ export class Station {
   updatedAt?: Date;
   lines?: Line[];
   line?: Line;
+  lineName?: string;
   LineStation?: LineStation;
-  lineStationId?: number;
+  lineStationId?: string;
   LineStationTrain?: LineStationTrain;
+  constructor({
+    id,
+    name,
+    createdAt,
+    updatedAt,
+    lines,
+    line,
+    lineName,
+    LineStation,
+    lineStationId,
+    LineStationTrain
+  }: {
+    id?: string;
+    name: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    lines?: Line[];
+    line?: Line;
+    lineName?: string;
+    LineStation?: LineStation;
+    lineStationId?: string;
+    LineStationTrain?: LineStationTrain;
+  }) {
+    this.id = id;
+    (this.name = name), (this.createdAt = createdAt);
+    this.updatedAt = updatedAt;
+    this.lines = lines;
+    this.line = line;
+    this.lineName = lineName;
+    this.LineStation = LineStation;
+    this.lineStationId = lineStationId;
+    this.LineStationTrain = LineStationTrain;
+  }
 }
 
 export class LineStationTrain {
@@ -172,8 +206,8 @@ export class Train {
   users?: User[];
   line?: Line;
   lineName?: string;
-  departureStation?: string;
-  arrivalStation?: string;
+  departureStation?: Station;
+  arrivalStation?: Station;
 
   constructor({
     id,
@@ -185,7 +219,9 @@ export class Train {
     stations,
     users,
     line,
-    lineName
+    lineName,
+    departureStation,
+    arrivalStation
   }: {
     id?: string;
     number: string;
@@ -197,6 +233,8 @@ export class Train {
     users?: User[];
     line?: Line;
     lineName?: string;
+    departureStation?: Station;
+    arrivalStation?: Station;
   }) {
     this.id = id;
     (this.number = number), (this.createdAt = createdAt);
@@ -207,6 +245,8 @@ export class Train {
     this.users = users;
     this.line = line;
     this.lineName = lineName;
+    this.departureStation = departureStation;
+    this.arrivalStation = arrivalStation;
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <NavMenu v-model="drawer"></NavMenu>
+    <NavMenu v-model="drawer" />
 
     <v-app-bar app color="cyan" dark class="d-print-none">
       <v-app-bar-nav-icon v-if="loggedIn" @click.stop="drawer = !drawer" />
@@ -11,7 +11,7 @@
           max-height="40"
           max-width="40"
           contain
-        ></v-img>
+        />
       </router-link>
       <router-link to="/" tag="span" style="cursor: pointer;">
         <v-toolbar-title>الإدارة العامة لشرطة النقل والمواصلات</v-toolbar-title>
@@ -19,13 +19,15 @@
       <v-spacer />
       <div v-if="loggedIn">
         <span class="ma-3">{{ fullName }}</span>
-        <v-btn @click="onLogOutClick" small color="secondary">تسجيل خروج</v-btn>
+        <v-btn @click="onLogOutClick" small color="secondary">
+          تسجيل خروج
+        </v-btn>
       </div>
     </v-app-bar>
 
     <v-content>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view />
       </v-container>
     </v-content>
 

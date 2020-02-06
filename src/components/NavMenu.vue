@@ -7,11 +7,7 @@
     class="d-print-none"
   >
     <v-list dense>
-      <MenuItem
-        v-for="(route, index) in routes"
-        :key="index"
-        :route="route"
-      ></MenuItem>
+      <MenuItem v-for="(route, index) in routes" :key="index" :route="route" />
     </v-list>
   </v-navigation-drawer>
 </template>

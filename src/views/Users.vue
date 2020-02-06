@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>
         {{ `ادارة الحسابات` }}
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
@@ -11,7 +11,7 @@
           single-line
           hide-details
           clearable
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="usersLoading"
@@ -22,13 +22,13 @@
       >
         <template v-slot:top v-if="$can('create', 'User')">
           <div class="mx-4">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
+            <v-divider class="mx-4" inset vertical />
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" color="primary" dark class="mb-2"
-                  >اضافة حساب جديد</v-btn
-                >
+                <v-btn v-on="on" color="primary" dark class="mb-2">
+                  اضافة حساب جديد
+                </v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -46,7 +46,7 @@
                             required
                             label="الاسم كامل"
                             prepend-icon="mdi-account-outline"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
@@ -55,7 +55,7 @@
                             required
                             label="اسم المستخدم"
                             prepend-icon="mdi-account"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col cols="12">
                           <v-combobox
@@ -70,7 +70,7 @@
                             item-text="name"
                             hide-no-data
                             prepend-icon="mdi-city"
-                          ></v-combobox>
+                          />
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
@@ -112,7 +112,7 @@
                             item-value="name"
                             item-text="nameArabic"
                             prepend-icon="mdi-account-question"
-                          ></v-autocomplete>
+                          />
                         </v-col>
                       </v-row>
                     </v-form>
@@ -125,9 +125,12 @@
                     @click="save"
                     color="success darken-1"
                     text
-                    >حفظ</v-btn
                   >
-                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
+                    حفظ
+                  </v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>
+                    الغاء
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -146,7 +149,7 @@
                 v-if="$can('update', 'User')"
                 label="تعديل الاسم الرباعي"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -163,7 +166,7 @@
                 v-if="$can('update', 'User')"
                 label="تعديل اسم المستخدم"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -188,7 +191,7 @@
                 label="تعديل جهة المستخدم"
                 item-value="name"
                 item-text="name"
-              ></v-combobox>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -211,7 +214,7 @@
                       label="تعديل وظيفة المستخدم"
                       item-value="name"
                       item-text="nameArabic"
-                    ></v-autocomplete>
+                    />
                   </template>
                 </v-edit-dialog>
               </span>

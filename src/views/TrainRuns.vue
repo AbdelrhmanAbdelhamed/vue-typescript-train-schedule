@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>
         جميع الخدمات
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-menu
           ref="searchDateMenu"
           v-model="searchDateMenu"
@@ -25,7 +25,7 @@
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
               class="d-print-none"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
             v-model="searchDate"
@@ -33,9 +33,9 @@
             scrollable
             no-title
             class="d-print-none"
-          ></v-date-picker>
+          />
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           @click:clear="searchDate = ''"
@@ -45,7 +45,7 @@
           hide-details
           clearable
           class="d-print-none"
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="loading"
@@ -61,8 +61,8 @@
       >
         <template v-slot:top v-if="$can('manage', 'Train')">
           <div class="mx-4 d-print-none">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
+            <v-divider class="mx-4" inset vertical />
+            <v-spacer />
             <v-btn
               :to="{
                 name: `runs.revisions`
@@ -71,8 +71,9 @@
               dark
               class="mb-2"
               link
-              >سجل جميع الخدمات</v-btn
             >
+              سجل جميع الخدمات
+            </v-btn>
           </div>
         </template>
 

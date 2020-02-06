@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title v-if="line">
         {{ `قطارت خط ${line.name}` }}
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
@@ -12,7 +12,7 @@
           hide-details
           clearable
           class="d-print-none"
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="loading"
@@ -39,7 +39,7 @@
                 @change="onEditTrainNumberChange"
                 label="تعديل رقم القطار"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -55,7 +55,9 @@
     </v-card>
     <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ updateTrainErrorMessage }}
-      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>
+        اغلاق
+      </v-btn>
     </v-snackbar>
   </div>
 </template>

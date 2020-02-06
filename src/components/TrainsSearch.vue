@@ -19,7 +19,7 @@
                 item-value="name"
                 item-text="name"
                 prepend-icon="mdi-city"
-              ></v-autocomplete>
+              />
               <div class="text-center">
                 <v-btn @click="swapFormStations" text icon>
                   <v-icon>mdi-swap-vertical-bold</v-icon>
@@ -36,7 +36,7 @@
                 item-value="name"
                 item-text="name"
                 prepend-icon="mdi-city"
-              ></v-autocomplete>
+              />
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -45,8 +45,9 @@
               :loading="loading"
               @click="getTrainsByStations()"
               color="primary"
-              >استعلام</v-btn
             >
+              استعلام
+            </v-btn>
             <v-spacer />
           </v-card-actions>
         </v-card>
@@ -55,7 +56,7 @@
         <v-card>
           <v-card-title v-if="showTable && arrivalStation && departureStation">
             <p>قطارات محطات {{ departureStation }} - {{ arrivalStation }}</p>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-text-field
               v-model="search"
               append-icon="mdi-table-search"
@@ -63,7 +64,7 @@
               single-line
               hide-details
               clearable
-            ></v-text-field>
+            />
           </v-card-title>
 
           <v-data-table
@@ -74,9 +75,17 @@
             :search="search"
             class="elevation-1"
           >
-            <template v-slot:item.number="{ item }">{{
-              item.number | convertToArabic
-            }}</template>
+            <template v-slot:item.number="{ item }">
+              {{ item.number | convertToArabic }}
+            </template>
+
+            <template v-slot:item.departureStation.departureTime="{ item }">
+              {{
+                item.departureStation.departureTime
+                  | formatTime
+                  | convertToArabic
+              }}
+            </template>
 
             <template v-slot:item.action="{ item }">
               <TrainActions
@@ -100,7 +109,7 @@ import { Prop } from "vue-property-decorator";
 import TrainActions from "@/components/TrainActions.vue";
 import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
-import { Line, Train } from "@/store/models";
+import { Line, Train, Station } from "@/store/models";
 
 @Component({
   components: { TrainActions }
@@ -110,6 +119,11 @@ export default class TrainsSearch extends Vue {
 
   headers = [
     { text: "رقم القطار", value: "number", sortable: true },
+    {
+      text: "وقت القيام",
+      value: "departureStation.departureTime",
+      sortable: true
+    },
     { text: "", value: "action", sortable: false }
   ];
   search = "";
@@ -189,8 +203,6 @@ export default class TrainsSearch extends Vue {
               line: { ...line, hide: false }
             });
           }
-          trainItem.departureStation = this.departureStation;
-          trainItem.arrivalStation = this.arrivalStation;
           trains.push(trainItem);
         });
       }

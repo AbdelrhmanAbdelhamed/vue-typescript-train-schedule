@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>
         محطات كل خط
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
@@ -12,7 +12,7 @@
           hide-details
           clearable
           class="d-print-none"
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="stationsLoading"
@@ -30,13 +30,13 @@
       >
         <template v-slot:top v-if="$can('create', 'Station')">
           <div class="mx-4 d-print-none">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
+            <v-divider class="mx-4" inset vertical />
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" color="primary" dark class="mb-2"
-                  >اضافة محطة جديد</v-btn
-                >
+                <v-btn v-on="on" color="primary" dark class="mb-2">
+                  اضافة محطة جديد
+                </v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -59,7 +59,7 @@
                             item-value="name"
                             item-text="name"
                             prepend-icon="mdi-city"
-                          ></v-combobox>
+                          />
                         </v-col>
                         <v-col cols="12">
                           <v-autocomplete
@@ -73,7 +73,7 @@
                             item-value="name"
                             item-text="name"
                             prepend-icon="mdi-arrow-expand-horizontal"
-                          ></v-autocomplete>
+                          />
                         </v-col>
                         <v-col cols="12">
                           <v-text-field
@@ -86,7 +86,7 @@
                             required
                             label="ترتيب المحطة"
                             prepend-icon="mdi-reorder-horizontal"
-                          ></v-text-field>
+                          />
                         </v-col>
                       </v-row>
                     </v-form>
@@ -99,9 +99,12 @@
                     @click="save"
                     color="success darken-1"
                     text
-                    >حفظ</v-btn
                   >
-                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
+                    حفظ
+                  </v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>
+                    الغاء
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -126,8 +129,9 @@
                 link
                 class="pointer"
                 color="info"
-                >{{ lineGroup.line.name }}</v-chip
               >
+                {{ lineGroup.line.name }}
+              </v-chip>
             </th>
           </thead>
         </template>
@@ -144,7 +148,7 @@
                 v-if="$can('update', 'Station')"
                 label="تعديل اسم المحطة"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -164,7 +168,7 @@
                 @change="onEditLineStationOrderChange"
                 label="تعديل ترتيب المحطة بالخط"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
@@ -180,12 +184,14 @@
           circle
           prev-icon="mdi-menu-left"
           next-icon="mdi-menu-right"
-        ></v-pagination>
+        />
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbar" :timeout="0" top color="error">
       {{ updateStationErrorMessage }}
-      <v-btn @click="closeSnackbar" dark text>اغلاق</v-btn>
+      <v-btn @click="closeSnackbar" dark text>
+        اغلاق
+      </v-btn>
     </v-snackbar>
   </div>
 </template>

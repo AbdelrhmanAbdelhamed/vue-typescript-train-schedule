@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>
         سجل جميع الخدمات
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-menu
           ref="searchDayDateMenu"
           v-model="searchDayDateMenu"
@@ -25,7 +25,7 @@
               label="استعلام بتاريخ الخدمة"
               append-icon="mdi-calendar-search"
               class="d-print-none"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
             v-model="searchDayDate"
@@ -33,9 +33,9 @@
             scrollable
             no-title
             class="d-print-none"
-          ></v-date-picker>
+          />
         </v-menu>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           @click:clear="
@@ -48,8 +48,8 @@
           hide-details
           clearable
           class="d-print-none"
-        ></v-text-field>
-        <v-spacer></v-spacer>
+        />
+        <v-spacer />
         <v-menu
           ref="searchFromDateMenu"
           v-model="searchFromDateMenu"
@@ -71,7 +71,7 @@
               label="استعلام بالمدة (منذ)"
               append-icon="mdi-calendar-search"
               class="d-print-none"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
             v-model="searchFromDate"
@@ -79,7 +79,7 @@
             scrollable
             no-title
             class="d-print-none"
-          ></v-date-picker>
+          />
         </v-menu>
       </v-card-title>
       <v-data-table

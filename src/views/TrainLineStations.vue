@@ -5,7 +5,7 @@
       class="mx-auto"
       max-width="600"
       type="card@3"
-    ></v-skeleton-loader>
+    />
     <v-container v-if="!trainsLoading && !!trainTimelineStations">
       <v-row no-gutters justify="center">
         <v-card
@@ -15,7 +15,10 @@
           dark
         >
           <v-card-title v-if="!linesLoading && line" class="title">
-            <div>خط {{ line.name }}</div>
+            <div>
+              خط
+              {{ line.name }}
+            </div>
           </v-card-title>
           <v-card-subtitle class="pt-1">
             <div class="text-center">
@@ -32,8 +35,14 @@
               "
               max-width="1000px"
             >
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" color="white" light>تعديل</v-btn>
+              <template
+                v-slot:activator="{
+                  on
+                }"
+              >
+                <v-btn v-on="on" color="white" light>
+                  تعديل
+                </v-btn>
               </template>
               <v-card :loading="trainsLoading || linesLoading">
                 <v-card-title class="pa-10">
@@ -59,15 +68,17 @@
                       @click="update"
                       color="success darken-1"
                       text
-                      >حفظ</v-btn
                     >
+                      حفظ
+                    </v-btn>
                     <v-btn
                       :loading="trainsLoading"
                       @click="close"
                       color="blue darken-1"
                       text
-                      >الغاء</v-btn
                     >
+                      الغاء
+                    </v-btn>
                   </v-card-actions>
                 </v-card-actions>
               </v-card>
@@ -149,8 +160,9 @@
                         station.LineStationTrain.arrivalTime &&
                         station.LineStationTrain.departureTime
                     "
-                    >mdi-arrow-left</v-icon
                   >
+                    mdi-arrow-left
+                  </v-icon>
                   <strong>
                     قيام :
                     {{
@@ -181,7 +193,9 @@
       justify="center"
     >
       <v-card color="info" dark>
-        <v-card-title class="title dark">لا توجد بيانات متاحة</v-card-title>
+        <v-card-title class="title dark">
+          لا توجد بيانات متاحة
+        </v-card-title>
       </v-card>
     </v-row>
   </div>
@@ -199,7 +213,9 @@ import TrainsModule from "@/store/modules/Trains";
 import { Train, Line, Station } from "@/store/models";
 
 @Component({
-  components: { EditLineStationsForm }
+  components: {
+    EditLineStationsForm
+  }
 })
 export default class TrainLineStations extends Vue {
   dialog = false;
@@ -219,10 +235,10 @@ export default class TrainLineStations extends Vue {
   id!: string;
 
   @Prop()
-  departureStation!: string;
+  departureStation!: Station;
 
   @Prop()
-  arrivalStation!: string;
+  arrivalStation!: Station;
 
   get line() {
     return LinesModule.currentLine;
@@ -242,8 +258,12 @@ export default class TrainLineStations extends Vue {
             );
             if (trainStation) {
               return {
-                LineStation: { ...trainStation.LineStation },
-                LineStationTrain: { ...trainStation.LineStationTrain },
+                LineStation: {
+                  ...trainStation.LineStation
+                },
+                LineStationTrain: {
+                  ...trainStation.LineStationTrain
+                },
                 createdAt: trainStation.createdAt,
                 id: trainStation.id,
                 lineStationId: trainStation.lineStationId,
@@ -286,7 +306,7 @@ export default class TrainLineStations extends Vue {
     let departureStationIndex = -1;
     if (TrainsModule.currentTrain.stations && this.departureStation) {
       departureStationIndex = this.filteredTrainStations().findIndex(
-        station => station.name === this.departureStation
+        station => station.name === this.departureStation.name
       );
     }
     return departureStationIndex;
@@ -296,7 +316,7 @@ export default class TrainLineStations extends Vue {
     let arrivalStationIndex = -1;
     if (TrainsModule.currentTrain.stations && this.arrivalStation) {
       arrivalStationIndex = this.filteredTrainStations().findIndex(
-        station => station.name === this.arrivalStation
+        station => station.name === this.arrivalStation.name
       );
     }
     return arrivalStationIndex;

@@ -21,9 +21,13 @@
         </v-card-title>
         <v-card-text>هل أنت متأكد انك تريد مسح الخدمة؟!</v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
-          <v-btn @click="dialog = false" text>الغاء</v-btn>
+          <v-spacer />
+          <v-btn @click="onDeleteClicked" color="error" text>
+            مسح
+          </v-btn>
+          <v-btn @click="dialog = false" text>
+            الغاء
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

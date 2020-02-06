@@ -7,15 +7,17 @@
       small
       link
       outlined
-      >المحطات</v-btn
     >
+      المحطات
+    </v-btn>
     <v-btn
       :to="{ name: `lines.trains`, params: { lineId: line.id } }"
       color="primary"
       small
       link
-      >القطارات</v-btn
     >
+      القطارات
+    </v-btn>
 
     <v-dialog
       v-model="dialog"
@@ -29,12 +31,16 @@
         </v-icon>
       </template>
       <v-card>
-        <v-card-title class="headline">مسح خط {{ line.name }}</v-card-title>
+        <v-card-title class="headline"> مسح خط {{ line.name }} </v-card-title>
         <v-card-text>هل أنت متأكد انك تريد مسح الخط؟!</v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="onDeleteClicked" color="error" text>مسح</v-btn>
-          <v-btn @click="dialog = false" text>الغاء</v-btn>
+          <v-spacer />
+          <v-btn @click="onDeleteClicked" color="error" text>
+            مسح
+          </v-btn>
+          <v-btn @click="dialog = false" text>
+            الغاء
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -30,7 +30,7 @@
                         label="وقت الوصول"
                         prepend-icon="mdi-clock"
                         clearable
-                      ></v-text-field>
+                      />
                     </template>
                     <v-time-picker
                       @change="onArrivalTimeChange(index, $event)"
@@ -38,11 +38,11 @@
                       scrollable
                       ampm-in-title
                       full-width
-                    ></v-time-picker>
+                    />
                   </v-menu>
                 </v-col>
 
-                <v-divider vertical class="mr-2"></v-divider>
+                <v-divider vertical class="mr-2" />
 
                 <v-col>
                   <v-menu
@@ -62,7 +62,7 @@
                         label="وقت القيام"
                         prepend-icon="mdi-clock"
                         clearable
-                      ></v-text-field>
+                      />
                     </template>
                     <v-time-picker
                       @change="onDepartureTimeChange(index, $event)"
@@ -70,7 +70,7 @@
                       scrollable
                       ampm-in-title
                       full-width
-                    ></v-time-picker>
+                    />
                   </v-menu>
                 </v-col>
               </v-row>

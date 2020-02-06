@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>
         الخطوط
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="mdi-table-search"
@@ -11,7 +11,7 @@
           single-line
           hide-details
           clearable
-        ></v-text-field>
+        />
       </v-card-title>
       <v-data-table
         :loading="loading"
@@ -22,13 +22,13 @@
       >
         <template v-slot:top v-if="$can('create', 'Line')">
           <div class="mx-4">
-            <v-divider class="mx-4" inset vertical></v-divider>
-            <v-spacer></v-spacer>
+            <v-divider class="mx-4" inset vertical />
+            <v-spacer />
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" color="primary" dark class="mb-2"
-                  >اضافة خط جديد</v-btn
-                >
+                <v-btn v-on="on" color="primary" dark class="mb-2">
+                  اضافة خط جديد
+                </v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -46,7 +46,7 @@
                             required
                             label="اسم الخط"
                             prepend-icon="mdi-arrow-expand-horizontal"
-                          ></v-text-field>
+                          />
                         </v-col>
                       </v-row>
                     </v-form>
@@ -59,9 +59,12 @@
                     @click="save"
                     color="success darken-1"
                     text
-                    >حفظ</v-btn
                   >
-                  <v-btn @click="close" color="blue darken-1" text>الغاء</v-btn>
+                    حفظ
+                  </v-btn>
+                  <v-btn @click="close" color="blue darken-1" text>
+                    الغاء
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -80,14 +83,14 @@
                 v-if="$can('update', 'Line')"
                 label="تعديل اسم الخط"
                 single-line
-              ></v-text-field>
+              />
             </template>
           </v-edit-dialog>
         </template>
 
-        <template v-slot:item.stationCount="{ item }">{{
-          convertToArabic(item.stationCount | 0)
-        }}</template>
+        <template v-slot:item.stationCount="{ item }">
+          {{ convertToArabic(item.stationCount | 0) }}
+        </template>
 
         <template v-slot:item.action="{ item }">
           <LineActions :line="item" />
