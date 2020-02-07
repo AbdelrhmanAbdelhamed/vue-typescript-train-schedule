@@ -373,7 +373,7 @@ import PolicePeopleModule from "@/store/modules/PolicePeople";
 import PoliceDepartmentsModule from "@/store/modules/PoliceDepartments";
 import RanksModule from "@/store/modules/Ranks";
 
-import { Train, PolicePerson } from "@/store/models";
+import { Train, PolicePerson, TrainRun } from "@/store/models";
 
 import { formatDayDate, convertToArabic, convertToEnglish } from "@/utils";
 
@@ -431,7 +431,14 @@ export default class TrainDetails extends Vue {
   }
 
   get train() {
-    return TrainsModule.currentTrain;
+    let currentTrain = TrainsModule.currentTrain;
+    currentTrain.trainRuns = currentTrain.trainRuns ?? [];
+    currentTrain.trainRuns = [
+      ...currentTrain.trainRuns.map(trainRun => {
+        return new TrainRun({ ...trainRun });
+      })
+    ];
+    return currentTrain;
   }
 
   get searchDateFormatted() {

@@ -151,7 +151,7 @@ export default class LineTrains extends Vue {
           return {
             ...station,
             lineStationId: station.lines[0].LineStation!.id,
-            LineStationTrain: {
+            LineTrainStation: {
               lineId: this.line.id || this.lineId,
               arrivalTime: null,
               departureTime: null,

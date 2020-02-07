@@ -20,6 +20,8 @@ import {
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
+import UsersModule from "@/store/modules/Users";
+
 import Vue from "vue";
 
 @Module({ dynamic: true, namespaced: true, store, name: TrainsAPI.END_POINT })
@@ -40,6 +42,7 @@ class TrainsModule extends VuexModule implements TrainState {
   };
 
   newTrainRun: TrainRun = {
+    userId: UsersModule.currentUser.id!,
     day: new Date().toLocaleDateString(),
     policePeople: [
       {
@@ -107,6 +110,7 @@ class TrainsModule extends VuexModule implements TrainState {
     return {
       day: "",
       policePeople: [],
+      userId: UsersModule.currentUser.id!,
       train: this.currentTrain,
       trainId: this.currentTrain ? this.currentTrain.id : ""
     };
@@ -152,6 +156,7 @@ class TrainsModule extends VuexModule implements TrainState {
           policeDepartment: { name: "" }
         }
       ],
+      userId: UsersModule.currentUser.id!,
       train: this.currentTrain,
       trainId: this.currentTrain ? this.currentTrain.id : ""
     };
@@ -203,16 +208,16 @@ class TrainsModule extends VuexModule implements TrainState {
       index >= 0
     ) {
       if (data.departureTime === null || data.departureTime) {
-        this.newTrain.stations[index].LineStationTrain!.departureTime =
+        this.newTrain.stations[index].LineTrainStation!.departureTime =
           data.departureTime;
-        this.newTrain.stations[index].LineStationTrain!.isDeprature =
+        this.newTrain.stations[index].LineTrainStation!.isDeprature =
           data.departureTime !== null;
       }
 
       if (data.arrivalTime === null || data.arrivalTime) {
-        this.newTrain.stations[index].LineStationTrain!.arrivalTime =
+        this.newTrain.stations[index].LineTrainStation!.arrivalTime =
           data.arrivalTime;
-        this.newTrain.stations[index].LineStationTrain!.isArrival =
+        this.newTrain.stations[index].LineTrainStation!.isArrival =
           data.arrivalTime !== null;
       }
     }
@@ -264,16 +269,16 @@ class TrainsModule extends VuexModule implements TrainState {
       index >= 0
     ) {
       if (data.departureTime === null || data.departureTime) {
-        this.currentTrain.stations[index].LineStationTrain!.departureTime =
+        this.currentTrain.stations[index].LineTrainStation!.departureTime =
           data.departureTime;
-        this.currentTrain.stations[index].LineStationTrain!.isDeprature =
+        this.currentTrain.stations[index].LineTrainStation!.isDeprature =
           data.departureTime !== null;
       }
 
       if (data.arrivalTime === null || data.arrivalTime) {
-        this.currentTrain.stations[index].LineStationTrain!.arrivalTime =
+        this.currentTrain.stations[index].LineTrainStation!.arrivalTime =
           data.arrivalTime;
-        this.currentTrain.stations[index].LineStationTrain!.isArrival =
+        this.currentTrain.stations[index].LineTrainStation!.isArrival =
           data.arrivalTime !== null;
       }
     }
@@ -531,8 +536,8 @@ class TrainsModule extends VuexModule implements TrainState {
               return {
                 ...station,
                 lineStationId: station.LineStation!.id,
-                LineStationTrain: {
-                  ...station.LineStationTrain,
+                LineTrainStation: {
+                  ...station.LineTrainStation,
                   arrivalTime: null,
                   departureTime: null,
                   isArrival: false,

@@ -13,7 +13,7 @@ export class Station {
   lineName?: string;
   LineStation?: LineStation;
   lineStationId?: string;
-  LineStationTrain?: LineStationTrain;
+  LineTrainStation?: LineTrainStation;
   constructor({
     id,
     name,
@@ -24,7 +24,7 @@ export class Station {
     lineName,
     LineStation,
     lineStationId,
-    LineStationTrain
+    LineTrainStation
   }: {
     id?: string;
     name: string;
@@ -35,7 +35,7 @@ export class Station {
     lineName?: string;
     LineStation?: LineStation;
     lineStationId?: string;
-    LineStationTrain?: LineStationTrain;
+    LineTrainStation?: LineTrainStation;
   }) {
     this.id = id;
     (this.name = name), (this.createdAt = createdAt);
@@ -45,13 +45,13 @@ export class Station {
     this.lineName = lineName;
     this.LineStation = LineStation;
     this.lineStationId = lineStationId;
-    this.LineStationTrain = LineStationTrain;
+    this.LineTrainStation = LineTrainStation;
   }
 }
 
-export class LineStationTrain {
+export class LineTrainStation {
   static get modelName() {
-    return "LineStationTrain";
+    return "LineTrainStation";
   }
   arrivalTime?: string;
   departureTime?: string;
@@ -177,6 +177,36 @@ export class TrainRun {
   train?: Train;
   trainId?: string;
   policePeople!: PolicePerson[];
+  userId!: string;
+
+  constructor({
+    id,
+    day,
+    createdAt,
+    updatedAt,
+    train,
+    trainId,
+    policePeople,
+    userId
+  }: {
+    id?: string;
+    day: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    train?: Train;
+    trainId?: string;
+    policePeople: PolicePerson[];
+    userId: string;
+  }) {
+    this.id = id;
+    this.day = day;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.train = train;
+    this.trainId = trainId;
+    this.policePeople = policePeople;
+    this.userId = userId;
+  }
 }
 
 export class TrainRunRevision extends TrainRun {

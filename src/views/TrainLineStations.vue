@@ -106,9 +106,9 @@
             {{ station.name }}
             <div
               v-if="
-                station.LineStationTrain &&
-                  (station.LineStationTrain.departureTime ||
-                    station.LineStationTrain.arrivalTime) &&
+                station.LineTrainStation &&
+                  (station.LineTrainStation.departureTime ||
+                    station.LineTrainStation.arrivalTime) &&
                   index === 0
               "
               class="mx-2"
@@ -117,9 +117,9 @@
             </div>
             <div
               v-if="
-                station.LineStationTrain &&
-                  (station.LineStationTrain.arrivalTime ||
-                    station.LineStationTrain.departureTime) &&
+                station.LineTrainStation &&
+                  (station.LineTrainStation.arrivalTime ||
+                    station.LineTrainStation.departureTime) &&
                   index === trainTimelineStations.length - 1
               "
               class="mx-2"
@@ -132,16 +132,16 @@
               <v-row no-gutters>
                 <v-col
                   v-if="
-                    station.LineStationTrain &&
-                      station.LineStationTrain.arrivalTime
+                    station.LineTrainStation &&
+                      station.LineTrainStation.arrivalTime
                   "
                   cols="12"
                 >
                   <strong>
                     وصول :
                     {{
-                      station.LineStationTrain &&
-                        station.LineStationTrain.arrivalTime
+                      station.LineTrainStation &&
+                        station.LineTrainStation.arrivalTime
                           | formatTime
                           | convertToArabic
                     }}
@@ -149,16 +149,16 @@
                 </v-col>
                 <v-col
                   v-if="
-                    station.LineStationTrain &&
-                      station.LineStationTrain.departureTime
+                    station.LineTrainStation &&
+                      station.LineTrainStation.departureTime
                   "
                   cols="12"
                 >
                   <v-icon
                     v-if="
-                      station.LineStationTrain &&
-                        station.LineStationTrain.arrivalTime &&
-                        station.LineStationTrain.departureTime
+                      station.LineTrainStation &&
+                        station.LineTrainStation.arrivalTime &&
+                        station.LineTrainStation.departureTime
                     "
                   >
                     mdi-arrow-left
@@ -166,8 +166,8 @@
                   <strong>
                     قيام :
                     {{
-                      station.LineStationTrain &&
-                        station.LineStationTrain.departureTime
+                      station.LineTrainStation &&
+                        station.LineTrainStation.departureTime
                           | formatTime
                           | convertToArabic
                     }}
@@ -261,8 +261,8 @@ export default class TrainLineStations extends Vue {
                 LineStation: {
                   ...trainStation.LineStation
                 },
-                LineStationTrain: {
-                  ...trainStation.LineStationTrain
+                LineTrainStation: {
+                  ...trainStation.LineTrainStation
                 },
                 createdAt: trainStation.createdAt,
                 id: trainStation.id,
@@ -275,7 +275,7 @@ export default class TrainLineStations extends Vue {
                 ...station,
                 LineStation: station.lines![0].LineStation,
                 lineStationId: station.lines![0].LineStation!.id,
-                LineStationTrain: {
+                LineTrainStation: {
                   lineId: this.line.id || this.lineId,
                   arrivalTime: null,
                   departureTime: null,
@@ -296,8 +296,8 @@ export default class TrainLineStations extends Vue {
   private filteredTrainStations(): any[] {
     return TrainsModule.currentTrain.stations!.filter(station => {
       return (
-        station.LineStationTrain!.arrivalTime !== null ||
-        station.LineStationTrain!.departureTime !== null
+        station.LineTrainStation!.arrivalTime !== null ||
+        station.LineTrainStation!.departureTime !== null
       );
     });
   }

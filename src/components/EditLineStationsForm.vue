@@ -23,7 +23,7 @@
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        :value="station.LineStationTrain.arrivalTime"
+                        :value="station.LineTrainStation.arrivalTime"
                         @click:clear="onArrivalTimeChange(index, null)"
                         @input="onArrivalTimeChange(index, $event)"
                         v-on="on"
@@ -55,7 +55,7 @@
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        :value="station.LineStationTrain.departureTime"
+                        :value="station.LineTrainStation.departureTime"
                         @click:clear="onDepartureTimeChange(index, null)"
                         @input="onDepartureTimeChange(index, $event)"
                         v-on="on"
@@ -110,16 +110,16 @@ export default class EditLineStationsForm extends Vue {
       index >= 0
     ) {
       if (data.departureTime === null || data.departureTime) {
-        this.editedLineStations[index].LineStationTrain.departureTime =
+        this.editedLineStations[index].LineTrainStation.departureTime =
           data.departureTime;
-        this.editedLineStations[index].LineStationTrain.isDeprature =
+        this.editedLineStations[index].LineTrainStation.isDeprature =
           data.departureTime !== null;
       }
 
       if (data.arrivalTime === null || data.arrivalTime) {
-        this.editedLineStations[index].LineStationTrain.arrivalTime =
+        this.editedLineStations[index].LineTrainStation.arrivalTime =
           data.arrivalTime;
-        this.editedLineStations[index].LineStationTrain.isArrival =
+        this.editedLineStations[index].LineTrainStation.isArrival =
           data.arrivalTime !== null;
       }
     }

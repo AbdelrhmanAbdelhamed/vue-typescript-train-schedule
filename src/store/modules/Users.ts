@@ -21,6 +21,7 @@ import Vue from "vue";
 })
 class UsersModule extends VuexModule implements UserState {
   currentUser: User = {
+    id: sessionStorage.getItem("userId") || "",
     fullName: sessionStorage.getItem("fullName") || "",
     username: "",
     password: "",
@@ -64,6 +65,7 @@ class UsersModule extends VuexModule implements UserState {
 
   @Mutation
   updateCurrentUserData(data: any) {
+    if (data.id) this.currentUser.id = data.id;
     if (data.username) this.currentUser.username = data.username;
     if (data.fullName) this.currentUser.fullName = data.fullName;
     if (data.password) this.currentUser.password = data.password;
@@ -133,6 +135,7 @@ class UsersModule extends VuexModule implements UserState {
       const { user, token } = await UsersAPI.login({ username, password });
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("fullName", user.fullName);
+      sessionStorage.setItem("userId", user.id);
       UsersAPI.setAuthorizationHeader(token);
       user.token = token;
       AbilitiesModule.getRulesFromToken(token);

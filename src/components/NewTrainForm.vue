@@ -70,7 +70,7 @@
                             >
                               <template v-slot:activator="{ on }">
                                 <v-text-field
-                                  :value="station.LineStationTrain.arrivalTime"
+                                  :value="station.LineTrainStation.arrivalTime"
                                   @input="onArrivalTimeChange(index, $event)"
                                   @click:clear="
                                     onArrivalTimeChange(index, null)
@@ -105,7 +105,7 @@
                               <template v-slot:activator="{ on }">
                                 <v-text-field
                                   :value="
-                                    station.LineStationTrain.departureTime
+                                    station.LineTrainStation.departureTime
                                   "
                                   @input="onDepartureTimeChange(index, $event)"
                                   @click:clear="
