@@ -82,6 +82,7 @@
               showFirstLastPage: true
             }"
             :custom-sort="customSort"
+            sort-by="departureStation.departureTime"
             class="elevation-1"
           >
             <template v-slot:item.number="{ item }">
@@ -137,6 +138,7 @@ import TrainsModule from "@/store/modules/Trains";
 import { Line, Train, Station } from "@/store/models";
 
 import * as Moment from "moment";
+import orderBy from "lodash";
 
 @Component({
   components: { TrainActions }
@@ -145,21 +147,21 @@ export default class TrainsSearch extends Vue {
   validSearch = false;
 
   headers = [
-    { text: "رقم القطار", value: "number", sortable: false },
+    { text: "رقم القطار", value: "number", sortable: true },
     {
       text: "وقت القيام",
       value: "departureStation.departureTime",
-      sortable: false
+      sortable: true
     },
     {
       text: "تاريخ الوصول",
       value: "crossedNextDay",
-      sortable: false
+      sortable: true
     },
     {
       text: "وقت الوصول",
       value: "arrivalStation.arrivalTime",
-      sortable: false
+      sortable: true
     },
 
     { text: "", value: "action", sortable: false }
@@ -193,20 +195,48 @@ export default class TrainsSearch extends Vue {
 
   customSort(
     items: any[],
-    sortBy: string[],
-    sortDesc: boolean[],
+    sortByKeys: string[],
+    sortDescValues: boolean[],
     locale: string
   ): any[] {
+    const [sortKey] = sortByKeys;
+    const [sortDescValue] = sortDescValues;
     return items.sort((itemA: any, itemB: any) => {
-      const sortKeyA =
-        itemA.departureStation.departureTime ??
-        itemA.departureStation.arrivalTime;
-      const sortKeyB =
-        itemB.departureStation.departureTime ??
-        itemB.departureStation.arrivalTime;
-      return Moment.utc(sortKeyA, "HH:mm:ss").diff(
-        Moment.utc(sortKeyB, "HH:mm:ss")
-      );
+      if (sortKey == "departureStation.departureTime") {
+        const sortKeyA =
+          itemA.departureStation.departureTime ??
+          itemA.departureStation.arrivalTime;
+
+        const sortKeyB =
+          itemB.departureStation.departureTime ??
+          itemB.departureStation.arrivalTime;
+
+        const timeA = Moment.utc(sortKeyA, "HH:mm:ss");
+        const timeB = Moment.utc(sortKeyB, "HH:mm:ss");
+
+        return sortDescValue ? timeB.diff(timeA) : timeA.diff(timeB);
+      } else if (sortKey == "arrivalStation.arrivalTime") {
+        const sortKeyA =
+          itemA.arrivalStation.arrivalTime ??
+          itemA.arrivalStation.departureTime;
+
+        const sortKeyB =
+          itemB.arrivalStation.arrivalTime ??
+          itemB.arrivalStation.departureTime;
+
+        const timeA = Moment.utc(sortKeyA, "HH:mm:ss");
+        const timeB = Moment.utc(sortKeyB, "HH:mm:ss");
+
+        return sortDescValue
+          ? Number(itemB.crossedNextDay) - Number(itemA.crossedNextDay) ||
+              timeB.diff(timeA)
+          : Number(itemA.crossedNextDay) - Number(itemB.crossedNextDay) ||
+              timeA.diff(timeB);
+      } else {
+        return sortDescValue
+          ? itemB[sortKey] - itemA[sortKey]
+          : itemA[sortKey] - itemB[sortKey];
+      }
     });
   }
 
