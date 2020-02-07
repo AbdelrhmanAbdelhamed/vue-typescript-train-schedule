@@ -8,7 +8,11 @@
             <v-spacer />
           </v-toolbar>
           <v-card-text>
-            <v-form v-model="validSearch">
+            <v-form
+              id="train-search-form"
+              @submit.prevent="onSearchClick"
+              v-model="validSearch"
+            >
               <v-autocomplete
                 :rules="[v => !!v || 'برجاء اختيار المحطة']"
                 :loading="loading"
@@ -43,7 +47,8 @@
             <v-btn
               :disabled="!validSearch"
               :loading="loading"
-              @click="getTrainsByStations()"
+              type="submit"
+              form="train-search-form"
               color="primary"
             >
               استعلام
@@ -76,12 +81,8 @@
             :footer-props="{
               showFirstLastPage: true
             }"
-            :sort-by="[
-              'departureStation.departureTime',
-              'arrivalStation.arrivalTime'
-            ]"
+            :custom-sort="customSort"
             class="elevation-1"
-            multi-sort
           >
             <template v-slot:item.number="{ item }">
               {{ item.number | convertToArabic }}
@@ -135,6 +136,8 @@ import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
 import { Line, Train, Station } from "@/store/models";
 
+import * as Moment from "moment";
+
 @Component({
   components: { TrainActions }
 })
@@ -142,21 +145,21 @@ export default class TrainsSearch extends Vue {
   validSearch = false;
 
   headers = [
-    { text: "رقم القطار", value: "number", sortable: true },
+    { text: "رقم القطار", value: "number", sortable: false },
     {
       text: "وقت القيام",
       value: "departureStation.departureTime",
-      sortable: true
+      sortable: false
     },
     {
       text: "تاريخ الوصول",
       value: "crossedNextDay",
-      sortable: true
+      sortable: false
     },
     {
       text: "وقت الوصول",
       value: "arrivalStation.arrivalTime",
-      sortable: true
+      sortable: false
     },
 
     { text: "", value: "action", sortable: false }
@@ -186,6 +189,29 @@ export default class TrainsSearch extends Vue {
       departureStation: this.departureStation,
       arrivalStation: this.arrivalStation
     });
+  }
+
+  customSort(
+    items: any[],
+    sortBy: string[],
+    sortDesc: boolean[],
+    locale: string
+  ): any[] {
+    return items.sort((itemA: any, itemB: any) => {
+      const sortKeyA =
+        itemA.departureStation.departureTime ??
+        itemA.departureStation.arrivalTime;
+      const sortKeyB =
+        itemB.departureStation.departureTime ??
+        itemB.departureStation.arrivalTime;
+      return Moment.utc(sortKeyA, "HH:mm:ss").diff(
+        Moment.utc(sortKeyB, "HH:mm:ss")
+      );
+    });
+  }
+
+  onSearchClick() {
+    this.getTrainsByStations();
   }
 
   get departureStation() {
