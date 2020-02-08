@@ -131,7 +131,7 @@ import Component from "vue-class-component";
 
 import TrainsModule from "@/store/modules/Trains";
 import { TrainRun } from "@/store/models";
-import { convertToArabic, formatDayDate } from "@/utils";
+import { convertToArabic, formatDayDate, moment } from "@/utils";
 
 @Component({
   components: {}
@@ -169,60 +169,75 @@ export default class TrainRuns extends Vue {
 
   filterTrainRuns(value: any, search: any, item: any) {
     if (value != null && search != null) {
-      if (typeof value === "string" || typeof value === "number") {
+      const dateFormat = "YYYY-MM-DD";
+      const fromDateFormatted = moment(new Date(value)).format(dateFormat);
+      const isValidDate = moment(fromDateFormatted, dateFormat, true).isValid();
+      if (
+        (typeof value === "string" || typeof value === "number") &&
+        !isValidDate
+      ) {
         return (
           value
             .toString()
             .toLocaleLowerCase()
             .indexOf(search.toLocaleLowerCase()) !== -1
         );
+      } else if (isValidDate && this.searchDate) {
+        return moment(item.day).isSame(this.searchDate);
       } else {
         let policePeople = value;
         let indices: any[] = [];
         for (let policePerson of policePeople) {
-          indices.push(
-            policePerson.name
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
-          indices.push(
-            policePerson.phoneNumber
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
-          indices.push(
-            policePerson.policeDepartment.name
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
-          indices.push(
-            policePerson.rank.name
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
-          indices.push(
-            policePerson.TrainRunPolicePerson.fromStation.name
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
-          indices.push(
-            policePerson.TrainRunPolicePerson.toStation.name
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
+          if (policePerson?.name)
+            indices.push(
+              policePerson.name
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
+          if (policePerson?.phoneNumber)
+            indices.push(
+              policePerson.phoneNumber
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
+          if (policePerson?.policeDepartment?.name)
+            indices.push(
+              policePerson.policeDepartment.name
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
+          if (policePerson?.rank?.name)
+            indices.push(
+              policePerson?.rank?.name
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
+          if (policePerson?.TrainRunPolicePerson?.fromStation?.name)
+            indices.push(
+              policePerson?.TrainRunPolicePerson?.fromStation?.name
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
+          if (policePerson?.TrainRunPolicePerson?.toStation?.name)
+            indices.push(
+              policePerson?.TrainRunPolicePerson?.toStation?.name
+                .toString()
+                .toLocaleLowerCase()
+                .indexOf(search.toLocaleLowerCase())
+            );
         }
-        indices.push(
-          item.trainNumber
-            .toString()
-            .toLocaleLowerCase()
-            .indexOf(search.toLocaleLowerCase())
-        );
+        if (item.trainNumber)
+          indices.push(
+            item.trainNumber
+              .toString()
+              .toLocaleLowerCase()
+              .indexOf(search.toLocaleLowerCase())
+          );
         return indices.some(index => index !== -1);
       }
     } else {

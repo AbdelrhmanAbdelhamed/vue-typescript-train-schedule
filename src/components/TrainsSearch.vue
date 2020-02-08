@@ -137,7 +137,7 @@ import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
 import { Line, Train, Station } from "@/store/models";
 
-import * as Moment from "moment";
+import { moment } from "@/utils";
 import orderBy from "lodash";
 
 @Component({
@@ -211,8 +211,8 @@ export default class TrainsSearch extends Vue {
           itemB.departureStation.departureTime ??
           itemB.departureStation.arrivalTime;
 
-        const timeA = Moment.utc(sortKeyA, "HH:mm:ss");
-        const timeB = Moment.utc(sortKeyB, "HH:mm:ss");
+        const timeA = moment.utc(sortKeyA, "HH:mm:ss");
+        const timeB = moment.utc(sortKeyB, "HH:mm:ss");
 
         return sortDescValue ? timeB.diff(timeA) : timeA.diff(timeB);
       } else if (sortKey == "arrivalStation.arrivalTime") {
@@ -224,8 +224,8 @@ export default class TrainsSearch extends Vue {
           itemB.arrivalStation.arrivalTime ??
           itemB.arrivalStation.departureTime;
 
-        const timeA = Moment.utc(sortKeyA, "HH:mm:ss");
-        const timeB = Moment.utc(sortKeyB, "HH:mm:ss");
+        const timeA = moment.utc(sortKeyA, "HH:mm:ss");
+        const timeB = moment.utc(sortKeyB, "HH:mm:ss");
 
         return sortDescValue
           ? Number(itemB.crossedNextDay) - Number(itemA.crossedNextDay) ||

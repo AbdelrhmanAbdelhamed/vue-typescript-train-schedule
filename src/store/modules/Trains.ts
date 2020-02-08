@@ -450,8 +450,10 @@ class TrainsModule extends VuexModule implements TrainState {
 
   @Action
   async getAllTrainRunsRevisions() {
+    this.toggleLoading();
     const trainRunsRevisions: TrainRunRevision[] = await TrainsAPI.getAllRunsRevisions();
     this.setTrainRunsRevisions(trainRunsRevisions);
+    this.toggleLoading();
   }
 
   @Action
@@ -483,6 +485,7 @@ class TrainsModule extends VuexModule implements TrainState {
 
   @Action
   async getTrainLineStations({ id, lineId }: { id: string; lineId: string }) {
+    this.toggleLoading();
     const stations = await TrainsAPI.getTrainLineStation(id, lineId);
     if (stations && stations.length > 0 && stations[0].train) {
       this.setCurrentTrain(stations[0].train);
@@ -492,20 +495,24 @@ class TrainsModule extends VuexModule implements TrainState {
         stations
       }
     });
+    this.toggleLoading();
   }
 
   @Action
   async getRunsByTrainId({ trainId }: { trainId: string }) {
+    this.toggleLoading();
     const trainRuns = await TrainsAPI.getRunsByTrainId(trainId);
     this.updateCurrentTrain({
       data: {
         trainRuns
       }
     });
+    this.toggleLoading();
   }
 
   @Action
   async getRunsRevisionsByTrainId({ trainId }: { trainId: string }) {
+    this.toggleLoading();
     const trainRunsRevisions = await TrainsAPI.getRunsRevisionsByTrainId(
       trainId
     );
@@ -514,6 +521,7 @@ class TrainsModule extends VuexModule implements TrainState {
         trainRunsRevisions
       }
     });
+    this.toggleLoading();
   }
 
   @Action

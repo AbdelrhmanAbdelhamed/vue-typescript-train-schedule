@@ -90,6 +90,10 @@
         :footer-props="{
           showFirstLastPage: true
         }"
+        :sort-desc="true"
+        :custom-sort="customSort"
+        :loading="loading"
+        sort-by="revisionValidFrom"
         class="elevation-1"
       >
         <template v-slot:item.train="{ item: { train } }">
@@ -108,6 +112,17 @@
 
         <template v-slot:item.day="{ item: { day } }">
           {{ day | formatDayDate | convertToArabic }}
+        </template>
+
+        <template v-slot:item.policePeople="{ item }">
+          <div v-for="policePerson in item.policePeople" :key="policePerson.id">
+            {{ policePerson.rank.name }}
+            / {{ policePerson.name }} -
+            {{ policePerson.policeDepartment.name }} -
+            {{ policePerson.phoneNumber | convertToArabic }} من محطة:
+            {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
+            {{ policePerson.TrainRunPolicePerson.toStation.name }}
+          </div>
         </template>
 
         <template v-slot:item.revisionValidTo="{ item: { revisionValidTo } }">
@@ -179,21 +194,27 @@ export default class TrainRunsRevisions extends Vue {
     {
       text: "رقم القطار",
       value: "train",
+      sortable: true,
+      filterable: true
+    },
+    { text: "تاريخ الخدمة", value: "day", sortable: true, filterable: true },
+    {
+      text: "أفراد التأمين",
+      value: "policePeople",
       sortable: false,
       filterable: true
     },
-    { text: "تاريخ الخدمة", value: "day", sortable: false, filterable: true },
     {
       text: "اضافة/حذف",
       value: "revisionValidTo",
-      sortable: false,
-      filterable: false
+      sortable: true,
+      filterable: true
     },
-    { text: "بواسطة", value: "whoDunnit", sortable: false, filterable: true },
+    { text: "بواسطة", value: "whoDunnit", sortable: true, filterable: true },
     {
       text: "منذ",
       value: "revisionValidFrom",
-      sortable: false,
+      sortable: true,
       filterable: true
     }
   ];
@@ -213,7 +234,7 @@ export default class TrainRunsRevisions extends Vue {
     let revisions = [];
     return trainRunsRevisions.map(trainRunsRevision => {
       return {
-        ...trainRunsRevision.item,
+        ...trainRunsRevision,
         trainNumber: trainRunsRevision.train!.number,
         train: { ...trainRunsRevision.train, hide: false }
       };
@@ -277,6 +298,65 @@ export default class TrainRunsRevisions extends Vue {
     } else {
       return false;
     }
+  }
+
+  customSort(
+    items: any[],
+    sortByKeys: string[],
+    sortDescValues: boolean[],
+    locale: string
+  ): any[] {
+    const [sortKey] = sortByKeys;
+    const [sortDescValue] = sortDescValues;
+    return items.sort((itemA: any, itemB: any) => {
+      const maxDate = moment(8640000000000000);
+      const minDate = moment(-8640000000000000);
+      if (sortKey == "revisionValidFrom") {
+        const sortKeyA = moment.max(
+          moment(itemA.revisionValidFrom),
+          itemA.revisionValidTo ? moment(itemA.revisionValidTo) : minDate
+        );
+        const sortKeyB = moment.max(
+          moment(itemB.revisionValidFrom),
+          itemB.revisionValidTo ? moment(itemB.revisionValidTo) : minDate
+        );
+        return sortDescValue
+          ? sortKeyB.diff(sortKeyA)
+          : sortKeyA.diff(sortKeyB);
+      } else if (sortKey == "revisionValidTo") {
+        const sortKeyA = !!itemA.revisionValidTo;
+        const sortKeyB = !!itemB.revisionValidTo;
+        return sortDescValue
+          ? Number(sortKeyB) - Number(sortKeyA)
+          : Number(sortKeyA) - Number(sortKeyB);
+      } else if (sortKey == "train") {
+        const { number: numberA } = itemA[sortKey];
+        const { number: numberB } = itemB[sortKey];
+        return sortDescValue ? numberB - numberA : numberA - numberB;
+      } else if (sortKey == "whoDunnit") {
+        return sortDescValue
+          ? itemA.whoDunnit > itemB.whoDunnit
+            ? -1
+            : itemB.whoDunnit > itemA.whoDunnit
+            ? 1
+            : 0
+          : itemA.whoDunnit < itemB.whoDunnit
+          ? -1
+          : itemB.whoDunnit < itemA.whoDunnit
+          ? 1
+          : 0;
+      } else if (sortKey == "day") {
+        const sortKeyA = moment(itemA.day);
+        const sortKeyB = moment(itemB.day);
+        return sortDescValue
+          ? sortKeyB.diff(sortKeyA)
+          : sortKeyA.diff(sortKeyB);
+      } else {
+        return sortDescValue
+          ? itemB[sortKey] - itemA[sortKey]
+          : itemA[sortKey] - itemB[sortKey];
+      }
+    });
   }
 
   async created() {

@@ -6,11 +6,11 @@
         {{ train.number | convertToArabic }}
       </v-card-title>
       <v-list
-        v-if="train.trainRunsRevisions && train.trainRunsRevisions.length > 0"
+        v-if="trainRunsRevisions && trainRunsRevisions.length > 0"
         three-line
       >
         <template
-          v-for="(trainRunsRevision, index) in train.trainRunsRevisions || []"
+          v-for="(trainRunsRevision, index) in trainRunsRevisions || []"
         >
           <v-list-item
             :key="trainRunsRevision.revisionId + trainRunsRevision.id"
@@ -85,13 +85,13 @@
           </v-list-item>
 
           <v-divider
-            v-if="index + 1 < (train.trainRunsRevisions || []).length"
+            v-if="index + 1 < (trainRunsRevisions || []).length"
             :key="index"
           />
         </template>
       </v-list>
       <v-card-text v-else>
-        لا توجد بيانات متاحة
+        {{ loading ? "تحميل العنصر..." : "لا توجد بيانات متاحة" }}
       </v-card-text>
     </v-card>
   </div>
@@ -104,6 +104,7 @@ import { Prop } from "vue-property-decorator";
 
 import TrainsModule from "@/store/modules/Trains";
 import { Train } from "@/store/models";
+import { moment } from "@/utils";
 
 @Component({
   components: {}
@@ -114,6 +115,26 @@ export default class TrainRunRevisionDetails extends Vue {
 
   get loading() {
     return TrainsModule.loading;
+  }
+
+  get trainRunsRevisions(): any[] {
+    TrainsModule.currentTrain.trainRunsRevisions =
+      TrainsModule.currentTrain.trainRunsRevisions ?? [];
+    return TrainsModule.currentTrain.trainRunsRevisions!.sort(
+      (itemA: any, itemB: any) => {
+        const maxDate = moment(8640000000000000);
+        const minDate = moment(-8640000000000000);
+        const sortKeyA = moment.max(
+          moment(itemA.revisionValidFrom),
+          itemA.revisionValidTo ? moment(itemA.revisionValidTo) : minDate
+        );
+        const sortKeyB = moment.max(
+          moment(itemB.revisionValidFrom),
+          itemB.revisionValidTo ? moment(itemB.revisionValidTo) : minDate
+        );
+        return sortKeyB.diff(sortKeyA);
+      }
+    );
   }
 
   get train(): Train {
