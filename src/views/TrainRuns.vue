@@ -40,7 +40,22 @@
           v-model="search"
           @click:clear="searchDate = ''"
           append-icon="mdi-table-search"
-          label="  استعلام بأفراد التأمين أو برقم القطار"
+          label="استعلام بأفراد التأمين"
+          single-line
+          hide-details
+          clearable
+          class="d-print-none"
+        />
+        <v-spacer />
+        <v-text-field
+          v-model="searchTrainNumber"
+          @input="onTrainNumberSearchInput"
+          @click:clear="
+            searchDate = '';
+            search = '';
+          "
+          append-icon="mdi-table-search"
+          label="استعلام برقم القطار"
           single-line
           hide-details
           clearable
@@ -146,6 +161,7 @@ export default class TrainRuns extends Vue {
   searchDate = "";
   search = "";
   searchDateMenu: boolean = false;
+  searchTrainNumber = "";
 
   get trainRuns() {
     return TrainsModule.trainRuns.map(trainRun => {
@@ -167,6 +183,10 @@ export default class TrainRuns extends Vue {
     this.search = this.searchDate;
   }
 
+  onTrainNumberSearchInput(value: any) {
+    this.search = this.searchTrainNumber;
+  }
+
   filterTrainRuns(value: any, search: any, item: any) {
     if (value != null && search != null) {
       const dateFormat = "YYYY-MM-DD";
@@ -184,6 +204,13 @@ export default class TrainRuns extends Vue {
         );
       } else if (isValidDate && this.searchDate) {
         return moment(item.day).isSame(this.searchDate);
+      } else if (
+        item.trainNumber &&
+        !isValidDate &&
+        !this.searchDate &&
+        this.searchTrainNumber
+      ) {
+        return item.trainNumber.toString().toLocaleLowerCase() === search;
       } else {
         let policePeople = value;
         let indices: any[] = [];
@@ -231,13 +258,6 @@ export default class TrainRuns extends Vue {
                 .indexOf(search.toLocaleLowerCase())
             );
         }
-        if (item.trainNumber)
-          indices.push(
-            item.trainNumber
-              .toString()
-              .toLocaleLowerCase()
-              .indexOf(search.toLocaleLowerCase())
-          );
         return indices.some(index => index !== -1);
       }
     } else {
