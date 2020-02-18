@@ -16,7 +16,8 @@ import {
   PolicePerson,
   PoliceDepartment,
   Rank,
-  TrainRunRevision
+  TrainRunRevision,
+  Station
 } from "../models";
 
 import LinesModule from "@/store/modules/Lines";
@@ -481,6 +482,17 @@ class TrainsModule extends VuexModule implements TrainState {
     this.setCurrentTrain(train);
     this.toggleLoading();
     return train;
+  }
+
+  @Action
+  async getCurrentTrainStations() {
+    this.toggleLoading();
+    const stations: Station[] = await TrainsAPI.getStations(
+      this.currentTrain.id!
+    );
+    this.updateCurrentTrain({ data: { stations } });
+    this.toggleLoading();
+    return stations;
   }
 
   @Action

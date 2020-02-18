@@ -147,10 +147,14 @@ export class PolicePerson {
     fromStation?: {
       name?: string;
       id?: string;
+      departureTime?: Date;
+      arrivalTime?: Date;
     };
     toStation?: {
       name?: string;
       id?: string;
+      departureTime?: Date;
+      arrivalTime?: Date;
     };
   };
 }
@@ -217,6 +221,53 @@ export class TrainRunRevision extends TrainRun {
   revisionValidFrom!: Date;
   revisionValidTo!: Date;
   whoDunnit!: string;
+  trainNumber?: string;
+
+  constructor({
+    revisionId,
+    revisionValidFrom,
+    revisionValidTo,
+    whoDunnit,
+    id,
+    day,
+    createdAt,
+    updatedAt,
+    train,
+    trainId,
+    policePeople,
+    userId,
+    trainNumber
+  }: {
+    revisionId?: string;
+    revisionValidFrom?: Date;
+    revisionValidTo?: Date;
+    whoDunnit?: string;
+    id?: string;
+    day: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    train?: Train;
+    trainId?: string;
+    policePeople: PolicePerson[];
+    userId: string;
+    trainNumber?: string;
+  }) {
+    super({
+      id,
+      day,
+      createdAt,
+      updatedAt,
+      train,
+      trainId,
+      policePeople,
+      userId
+    });
+    this.revisionId = revisionId!;
+    this.revisionValidFrom = revisionValidFrom!;
+    this.revisionValidTo = revisionValidTo!;
+    this.whoDunnit = whoDunnit!;
+    this.trainNumber = trainNumber;
+  }
 }
 
 export class Train {

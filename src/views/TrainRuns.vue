@@ -66,18 +66,18 @@
         :loading="loading"
         :headers="headers"
         :items="trainRuns"
-        :sort-desc="true"
-        :group-desc="true"
         :search="search"
         :custom-filter="filterTrainRuns"
         :footer-props="{
           showFirstLastPage: true
         }"
+        :sort-desc="true"
+        :group-desc="true"
         group-by="trainNumber"
         sort-by="day"
         class="elevation-1"
       >
-        <template v-slot:top v-if="$can('manage', 'Train')">
+        <template v-slot:top v-if="$can('read', 'TrainRunRevision')">
           <div class="mx-4 d-print-none">
             <v-divider class="mx-4" inset vertical />
             <v-spacer />
@@ -131,7 +131,21 @@
             / {{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
             {{ policePerson.phoneNumber | convertToArabic }} من محطة:
-            {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
+            {{ policePerson.TrainRunPolicePerson.fromStation.name }}
+            <strong>
+              (الساعة:
+              {{
+                policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
+                  .departureTime
+                  ? policePerson.TrainRunPolicePerson.fromStation
+                      .LineTrainStation.departureTime
+                  : policePerson.TrainRunPolicePerson.fromStation
+                      .LineTrainStation.arrivalTime
+                    | formatTime
+                    | convertToArabic
+              }})
+            </strong>
+            الى محطة:
             {{ policePerson.TrainRunPolicePerson.toStation.name }}
           </div>
         </template>

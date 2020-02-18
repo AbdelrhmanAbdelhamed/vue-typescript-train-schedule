@@ -231,13 +231,12 @@ export default class TrainRunsRevisions extends Vue {
 
   get trainRunsRevisions(): any[] {
     const trainRunsRevisions: any[] = TrainsModule.trainRunsRevisions || [];
-    let revisions = [];
     return trainRunsRevisions.map(trainRunsRevision => {
-      return {
+      return new TrainRunRevision({
         ...trainRunsRevision,
         trainNumber: trainRunsRevision.train!.number,
         train: { ...trainRunsRevision.train, hide: false }
-      };
+      });
     });
   }
 

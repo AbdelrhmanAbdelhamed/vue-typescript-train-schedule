@@ -64,12 +64,52 @@
             <v-spacer />
             <v-text-field
               v-model="search"
+              @click:clear="
+                search = '';
+                searchFromDate = '';
+              "
               append-icon="mdi-table-search"
-              label="استعلام عن القطار"
+              label="بحث برقم القطار"
               single-line
               hide-details
               clearable
             />
+            <v-menu
+              ref="searchFromDateMenu"
+              v-model="searchFromDateMenu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="290px"
+              class="d-print-none"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  :value="searchFromDateFormatted"
+                  v-on="on"
+                  @click:clear="
+                    search = '';
+                    searchFromDate = '';
+                  "
+                  hide-details
+                  clearable
+                  readonly
+                  label="استعلام بوقت القيام"
+                  append-icon="mdi-calendar-search"
+                  class="d-print-none"
+                />
+              </template>
+              <v-time-picker
+                v-model="searchFromDate"
+                @change="onFromSearchInput"
+                @click:clear="search = ''"
+                scrollable
+                ampm-in-title
+                full-width
+                class="d-print-none"
+              />
+            </v-menu>
           </v-card-title>
 
           <v-data-table
@@ -81,6 +121,7 @@
             :footer-props="{
               showFirstLastPage: true
             }"
+            :custom-filter="filterTrains"
             :custom-sort="customSort"
             sort-by="departureStation.departureTime"
             class="elevation-1"
@@ -137,7 +178,7 @@ import StationsModule from "@/store/modules/Stations";
 import TrainsModule from "@/store/modules/Trains";
 import { Line, Train, Station } from "@/store/models";
 
-import { moment } from "@/utils";
+import { convertToArabic, convertToEnglish, formatTime, moment } from "@/utils";
 import orderBy from "lodash";
 
 @Component({
@@ -145,6 +186,19 @@ import orderBy from "lodash";
 })
 export default class TrainsSearch extends Vue {
   validSearch = false;
+  searchFromDate = "";
+  searchFromDateMenu: boolean = false;
+
+  get searchFromDateFormatted() {
+    return this.searchFromDate
+      ? convertToArabic(formatTime(this.searchFromDate))
+      : "";
+  }
+
+  onFromSearchInput(value: any) {
+    this.searchFromDateMenu = false;
+    this.search = value;
+  }
 
   headers = [
     { text: "رقم القطار", value: "number", sortable: true },
@@ -191,6 +245,39 @@ export default class TrainsSearch extends Vue {
       departureStation: this.departureStation,
       arrivalStation: this.arrivalStation
     });
+  }
+
+  filterTrains(value: any, search: string, item: any) {
+    if (value != null && search != null) {
+      const dateFormat = "HH:mm:ss";
+      const fromDateFormatted = moment(new Date(value)).format(dateFormat);
+      const isValidDate = moment(fromDateFormatted, dateFormat, true).isValid();
+      if (
+        (typeof value === "string" || typeof value === "number") &&
+        !isValidDate &&
+        !this.searchFromDate
+      ) {
+        return (
+          value
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase()) !== -1 ||
+          item.number
+            .toString()
+            .toLocaleLowerCase()
+            .indexOf(search.toLocaleLowerCase()) !== -1
+        );
+      } else if (isValidDate && this.searchFromDate) {
+        const arrivalTime =
+          item.departureStation!.departureTime ||
+          item.departureStation!.arrivalTime;
+        return moment(arrivalTime, dateFormat).isSameOrAfter(
+          moment(this.searchFromDate, dateFormat)
+        );
+      }
+    } else {
+      return false;
+    }
   }
 
   customSort(

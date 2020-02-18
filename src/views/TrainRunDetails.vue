@@ -67,7 +67,7 @@
             <v-divider class="mx-4" inset vertical />
             <v-spacer />
             <v-row>
-              <v-col v-if="$can('manage', 'Train')" cols="12">
+              <v-col v-if="$can('read', 'TrainRunRevision')" cols="12">
                 <v-btn
                   :to="{
                     name: `trains.run.revision.details`,
@@ -343,7 +343,21 @@
             / {{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
             {{ policePerson.phoneNumber | convertToArabic }} - من محطة:
-            {{ policePerson.TrainRunPolicePerson.fromStation.name }} الى محطة:
+            {{ policePerson.TrainRunPolicePerson.fromStation.name }}
+            <strong>
+              (الساعة:
+              {{
+                policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
+                  .departureTime
+                  ? policePerson.TrainRunPolicePerson.fromStation
+                      .LineTrainStation.departureTime
+                  : policePerson.TrainRunPolicePerson.fromStation
+                      .LineTrainStation.arrivalTime
+                    | formatTime
+                    | convertToArabic
+              }})
+            </strong>
+            الى محطة:
             {{ policePerson.TrainRunPolicePerson.toStation.name }}
           </div>
         </template>
@@ -364,7 +378,6 @@ import { Prop } from "vue-property-decorator";
 import TrainActions from "@/components/TrainActions.vue";
 import TrainRunsActions from "@/components/TrainRunsActions.vue";
 
-import StationsModule from "@/store/modules/Stations";
 import UsersModule from "@/store/modules/Users";
 import TrainsModule from "@/store/modules/Trains";
 import PolicePeopleModule from "@/store/modules/PolicePeople";
@@ -409,8 +422,7 @@ export default class TrainDetails extends Vue {
       PolicePeopleModule.loading ||
       RanksModule.loading ||
       PoliceDepartmentsModule.loading ||
-      UsersModule.loading ||
-      StationsModule.loading
+      UsersModule.loading
     );
   }
 
@@ -422,7 +434,15 @@ export default class TrainDetails extends Vue {
   }
 
   get stations() {
-    return StationsModule.stations;
+    if (TrainsModule.currentTrain.stations) {
+      return TrainsModule.currentTrain.stations!.filter(station => {
+        return (
+          station.LineTrainStation!.arrivalTime !== null ||
+          station.LineTrainStation!.departureTime !== null
+        );
+      });
+    }
+    return [];
   }
 
   get newTrainRun() {
@@ -589,7 +609,7 @@ export default class TrainDetails extends Vue {
     PolicePeopleModule.getAll();
     RanksModule.getAll();
     PoliceDepartmentsModule.getAll();
-    StationsModule.getAll();
+    TrainsModule.getCurrentTrainStations();
   }
 }
 </script>
