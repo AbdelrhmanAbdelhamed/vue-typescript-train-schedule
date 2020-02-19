@@ -166,10 +166,14 @@
         </template>
 
         <template v-slot:item.policePeople="{ item }">
-          <div v-for="policePerson in item.policePeople" :key="policePerson.id">
+          <div
+            v-for="policePerson in item.policePeople"
+            :key="policePerson.id"
+            class="my-2"
+          >
             <v-spacer />
             {{ policePerson.rank.name }}
-            / {{ policePerson.name }} -
+            /{{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
             {{ policePerson.phoneNumber | convertToArabic }} من محطة:
             {{ policePerson.TrainRunPolicePerson.fromStation.name }}
@@ -412,7 +416,7 @@ export default class TrainRuns extends Vue {
     return TrainsModule.trains;
   }
 
-  async beforeCreate() {
+  async created() {
     await TrainsModule.getAllTrainRuns();
     await TrainsModule.get();
   }

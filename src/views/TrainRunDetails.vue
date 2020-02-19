@@ -100,20 +100,6 @@
             <v-divider class="mx-4" inset vertical />
             <v-spacer />
             <v-row>
-              <v-col v-if="$can('read', 'TrainRunRevision')" cols="12">
-                <v-btn
-                  :to="{
-                    name: `trains.run.revision.details`,
-                    params: { id }
-                  }"
-                  outlined
-                  color="info"
-                  dark
-                  link
-                >
-                  سجل الخدمات
-                </v-btn>
-              </v-col>
               <v-col cols="12">
                 <v-dialog v-model="dialog" max-width="1000px">
                   <template v-slot:activator="{ on }">
@@ -368,10 +354,14 @@
         </template>
 
         <template v-slot:item.policePeople="{ item }">
-          <div v-for="policePerson in item.policePeople" :key="policePerson.id">
+          <div
+            v-for="policePerson in item.policePeople"
+            :key="policePerson.id"
+            class="my-2"
+          >
             <v-spacer />
             {{ policePerson.rank.name }}
-            / {{ policePerson.name }} -
+            /{{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
             {{ policePerson.phoneNumber | convertToArabic }} من محطة:
             {{ policePerson.TrainRunPolicePerson.fromStation.name }}

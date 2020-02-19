@@ -168,18 +168,6 @@ const routes: RouteConfig[] = [
       },
       {
         props: true,
-        name: "trains.run.revision.details",
-        path: ":id/runs/revisions",
-        // route level code-splitting
-        // this generates a separate chunk (trains.run.revision.details.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-          import(
-            /* webpackChunkName: "trains.run.revision.details" */ "../views/TrainRunRevisionDetails.vue"
-          )
-      },
-      {
-        props: true,
         name: "trains.line.stations",
         path: ":id/stations/line/:lineId",
         // route level code-splitting
