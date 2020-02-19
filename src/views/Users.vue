@@ -255,7 +255,8 @@ export default class Users extends Vue {
     { text: "اسم المستخدم", value: "username", sortable: true },
     { text: "جهة المستخدم", value: "policeDepartment.name", sortable: true },
     { text: "وظيفة المستخدم", value: "role", sortable: true },
-    { text: "", value: "action", sortable: false }
+    { text: "", value: "action", sortable: false },
+    { text: "قطارات المستخدم", value: "", sortable: false }
   ];
   search = "";
   dialog = false;
@@ -285,7 +286,13 @@ export default class Users extends Vue {
   }
 
   get users(): User[] {
-    return UsersModule.users;
+    return UsersModule.users.filter((user: User) => {
+      if (this.$can("update", "User")) {
+        return user;
+      } else {
+        return user.role!.name === "editor";
+      }
+    });
   }
 
   get roles(): Role[] {

@@ -18,7 +18,7 @@
             <v-text-field
               :value="searchDateFormatted"
               v-on="on"
-              @click:clear="search = ''"
+              @click:clear="searchDate = ''"
               hide-details
               clearable
               readonly
@@ -29,6 +29,7 @@
           </template>
           <v-date-picker
             v-model="searchDate"
+            @click:clear="searchDate = ''"
             @input="onDaySearchInput"
             scrollable
             no-title
@@ -36,9 +37,29 @@
           />
         </v-menu>
         <v-spacer />
+        <v-autocomplete
+          :loading="loading"
+          v-model="searchTrainNumber"
+          :items="trains"
+          item-value="number"
+          item-text="number"
+          prepend-icon="mdi-table-search"
+          label="استعلام برقم القطار"
+          single-line
+          hide-details
+          clearable
+          class="d-print-none"
+        >
+          <template v-slot:item="{ item }">
+            {{ item.number | convertToArabic }}
+          </template>
+        </v-autocomplete>
+
+        <v-spacer />
+
         <v-text-field
-          v-model="search"
-          @click:clear="searchDate = ''"
+          v-model="searchTrainPeople"
+          @click:clear="searchTrainPeople = ''"
           append-icon="mdi-table-search"
           label="استعلام بأفراد التأمين"
           single-line
@@ -46,28 +67,47 @@
           clearable
           class="d-print-none"
         />
+
         <v-spacer />
-        <v-text-field
-          v-model="searchTrainNumber"
-          @input="onTrainNumberSearchInput"
-          @click:clear="
-            searchDate = '';
-            search = '';
-          "
-          append-icon="mdi-table-search"
-          label="استعلام برقم القطار"
-          single-line
-          hide-details
-          clearable
+        <v-menu
+          ref="searchFromDateMenu"
+          v-model="searchFromDateMenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
           class="d-print-none"
-        />
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              :value="searchFromDateFormatted"
+              v-on="on"
+              @click:clear="searchFromDate = ''"
+              hide-details
+              clearable
+              readonly
+              label="استعلام بوقت القيام"
+              append-icon="mdi-calendar-search"
+              class="d-print-none"
+            />
+          </template>
+
+          <v-time-picker
+            v-model="searchFromDate"
+            @change="onFromSearchInput"
+            @click:clear="searchFromDate = ''"
+            scrollable
+            ampm-in-title
+            full-width
+            class="d-print-none"
+          />
+        </v-menu>
       </v-card-title>
       <v-data-table
         :loading="loading"
         :headers="headers"
         :items="trainRuns"
-        :search="search"
-        :custom-filter="filterTrainRuns"
         :footer-props="{
           showFirstLastPage: true
         }"
@@ -127,26 +167,94 @@
 
         <template v-slot:item.policePeople="{ item }">
           <div v-for="policePerson in item.policePeople" :key="policePerson.id">
+            <v-spacer />
             {{ policePerson.rank.name }}
             / {{ policePerson.name }} -
             {{ policePerson.policeDepartment.name }} -
             {{ policePerson.phoneNumber | convertToArabic }} من محطة:
             {{ policePerson.TrainRunPolicePerson.fromStation.name }}
-            <strong>
-              (الساعة:
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-chip
+                    :color="
+                      timeChipColor(
+                        item.day,
+                        policePerson.TrainRunPolicePerson.fromStation
+                          .LineTrainStation.departureTime ||
+                          policePerson.TrainRunPolicePerson.fromStation
+                            .LineTrainStation.arrivalTime
+                      )
+                    "
+                  >
+                    قيام:
+                    {{
+                      policePerson.TrainRunPolicePerson.fromStation
+                        .LineTrainStation.departureTime
+                        ? policePerson.TrainRunPolicePerson.fromStation
+                            .LineTrainStation.departureTime
+                        : policePerson.TrainRunPolicePerson.fromStation
+                            .LineTrainStation.arrivalTime
+                          | formatTime
+                          | convertToArabic
+                    }}
+                  </v-chip>
+                </span>
+              </template>
               {{
-                policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
-                  .departureTime
-                  ? policePerson.TrainRunPolicePerson.fromStation
-                      .LineTrainStation.departureTime
-                  : policePerson.TrainRunPolicePerson.fromStation
-                      .LineTrainStation.arrivalTime
-                    | formatTime
-                    | convertToArabic
-              }})
-            </strong>
+                `${item.day} 
+                ${
+                  policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
+                    .departureTime
+                    ? policePerson.TrainRunPolicePerson.fromStation
+                        .LineTrainStation.departureTime
+                    : policePerson.TrainRunPolicePerson.fromStation
+                        .LineTrainStation.arrivalTime
+                }` | timeFromNow(false)
+              }}
+            </v-tooltip>
             الى محطة:
             {{ policePerson.TrainRunPolicePerson.toStation.name }}
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-chip
+                    :color="
+                      timeChipColor(
+                        item.day,
+                        policePerson.TrainRunPolicePerson.toStation
+                          .LineTrainStation.arrivalTime ||
+                          policePerson.TrainRunPolicePerson.toStation
+                            .LineTrainStation.departureTime
+                      )
+                    "
+                  >
+                    وصول:
+                    {{
+                      policePerson.TrainRunPolicePerson.toStation
+                        .LineTrainStation.arrivalTime
+                        ? policePerson.TrainRunPolicePerson.toStation
+                            .LineTrainStation.arrivalTime
+                        : policePerson.TrainRunPolicePerson.toStation
+                            .LineTrainStation.departureTime
+                          | formatTime
+                          | convertToArabic
+                    }}
+                  </v-chip>
+                </span>
+              </template>
+              {{
+                `${item.day} 
+                ${
+                  policePerson.TrainRunPolicePerson.toStation.LineTrainStation
+                    .arrivalTime
+                    ? policePerson.TrainRunPolicePerson.toStation
+                        .LineTrainStation.arrivalTime
+                    : policePerson.TrainRunPolicePerson.toStation
+                        .LineTrainStation.departureTime
+                }` | timeFromNow(false)
+              }}
+            </v-tooltip>
           </div>
         </template>
       </v-data-table>
@@ -159,23 +267,57 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 import TrainsModule from "@/store/modules/Trains";
-import { TrainRun } from "@/store/models";
-import { convertToArabic, formatDayDate, moment } from "@/utils";
+import { TrainRun, PolicePerson } from "@/store/models";
+import { convertToArabic, formatDayDate, formatTime, moment } from "@/utils";
 
 @Component({
   components: {}
 })
 export default class TrainRuns extends Vue {
-  headers = [
-    { text: "تاريخ الخدمة", value: "day", sortable: true },
-    { text: "أفراد التأمين", value: "policePeople", sortable: true }
-  ];
+  searchFromDate = "";
+  searchFromDateMenu: boolean = false;
+
+  get searchFromDateFormatted() {
+    return this.searchFromDate
+      ? convertToArabic(formatTime(this.searchFromDate))
+      : "";
+  }
+
+  onFromSearchInput(value: any) {
+    this.searchFromDateMenu = false;
+  }
+
+  get headers() {
+    return [
+      {
+        text: "تاريخ الخدمة",
+        value: "day",
+        sortable: true,
+        filter: this.filterDay
+      },
+      {
+        text: "أفراد التأمين",
+        value: "policePeople",
+        sortable: true,
+        filter: this.filterTrainRuns
+      }
+    ];
+  }
   dialog: boolean = false;
   isNewLineValid = false;
   searchDate = "";
-  search = "";
+  searchTrainPeople = "";
   searchDateMenu: boolean = false;
   searchTrainNumber = "";
+
+  timeChipColor(day, time) {
+    const isPast = moment().isAfter(
+      moment(`${day} ${time}`, "YYYY-MM-DD HH:mm:ss")
+    );
+    const isToday = moment().isSame(moment(day, "YYYY-MM-DD"), "day");
+
+    return isToday && !isPast ? "success" : isPast ? "error" : "info";
+  }
 
   get trainRuns() {
     return TrainsModule.trainRuns.map(trainRun => {
@@ -194,89 +336,62 @@ export default class TrainRuns extends Vue {
 
   onDaySearchInput(value: any) {
     this.searchDateMenu = false;
-    this.search = this.searchDate;
   }
 
   onTrainNumberSearchInput(value: any) {
-    this.search = this.searchTrainNumber;
+    this.searchTrainPeople = this.searchTrainNumber;
   }
 
-  filterTrainRuns(value: any, search: any, item: any) {
-    if (value != null && search != null) {
-      const dateFormat = "YYYY-MM-DD";
-      const fromDateFormatted = moment(new Date(value)).format(dateFormat);
-      const isValidDate = moment(fromDateFormatted, dateFormat, true).isValid();
-      if (
-        (typeof value === "string" || typeof value === "number") &&
-        !isValidDate
-      ) {
-        return (
-          value
-            .toString()
-            .toLocaleLowerCase()
-            .indexOf(search.toLocaleLowerCase()) !== -1
-        );
-      } else if (isValidDate && this.searchDate) {
-        return moment(item.day).isSame(this.searchDate);
-      } else if (
-        item.trainNumber &&
-        !isValidDate &&
-        !this.searchDate &&
-        this.searchTrainNumber
-      ) {
-        return item.trainNumber.toString().toLocaleLowerCase() === search;
-      } else {
-        let policePeople = value;
-        let indices: any[] = [];
-        for (let policePerson of policePeople) {
-          if (policePerson?.name)
-            indices.push(
-              policePerson.name
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-          if (policePerson?.phoneNumber)
-            indices.push(
-              policePerson.phoneNumber
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-          if (policePerson?.policeDepartment?.name)
-            indices.push(
-              policePerson.policeDepartment.name
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-          if (policePerson?.rank?.name)
-            indices.push(
-              policePerson?.rank?.name
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-          if (policePerson?.TrainRunPolicePerson?.fromStation?.name)
-            indices.push(
-              policePerson?.TrainRunPolicePerson?.fromStation?.name
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-          if (policePerson?.TrainRunPolicePerson?.toStation?.name)
-            indices.push(
-              policePerson?.TrainRunPolicePerson?.toStation?.name
-                .toString()
-                .toLocaleLowerCase()
-                .indexOf(search.toLocaleLowerCase())
-            );
-        }
-        return indices.some(index => index !== -1);
-      }
-    } else {
-      return false;
+  filterDay(value: any, _, item: any) {
+    if (!this.searchDate) return true;
+    return moment(value).isSame(this.searchDate);
+  }
+
+  filterTrainRuns(value: any, _, item: any) {
+    let filters: any[] = [];
+
+    if (this.searchTrainNumber) {
+      filters.push((item: any) => item.trainNumber === this.searchTrainNumber);
     }
+
+    if (this.searchTrainPeople) {
+      filters.push((item: any) => {
+        return item.policePeople.some((policePerson: any) => {
+          return (
+            policePerson.name.includes(this.searchTrainPeople) ||
+            policePerson.phoneNumber.includes(this.searchTrainPeople) ||
+            policePerson.policeDepartment.name.includes(
+              this.searchTrainPeople
+            ) ||
+            policePerson.rank.name.includes(this.searchTrainPeople) ||
+            policePerson.TrainRunPolicePerson.fromStation.name.includes(
+              this.searchTrainPeople
+            ) ||
+            policePerson.TrainRunPolicePerson.toStation.name.includes(
+              this.searchTrainPeople
+            )
+          );
+        });
+      });
+    }
+
+    if (this.searchFromDate) {
+      filters.push((item: any) => {
+        const dateFormat = "HH:mm:ss";
+        return item.policePeople.some((policePerson: any) => {
+          const fromTime =
+            policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
+              .departureTime ||
+            policePerson.TrainRunPolicePerson.fromStation.LineTrainStation
+              .arrivalTime;
+          return moment(fromTime, dateFormat).isSameOrAfter(
+            moment(this.searchFromDate, dateFormat)
+          );
+        });
+      });
+    }
+
+    return filters.length > 0 ? filters.every(filter => filter(item)) : true;
   }
 
   get searchDateFormatted() {
@@ -289,8 +404,13 @@ export default class TrainRuns extends Vue {
     return TrainsModule.loading;
   }
 
+  get trains() {
+    return TrainsModule.trains;
+  }
+
   async beforeCreate() {
     await TrainsModule.getAllTrainRuns();
+    await TrainsModule.get();
   }
 }
 </script>

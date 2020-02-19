@@ -111,16 +111,19 @@
         </v-col>
         <v-col>
           <v-autocomplete
+            :readonly="!$can('update', 'User')"
             v-if="user.role.name === 'editor'"
             :value="user.trains"
             :return-object="true"
             :loading="loading"
             :items="trains"
             @change="onTrainsChange(user.id, $event)"
-            multiple
-            small-chips
-            deletable-chips
+            dark
             dense
+            color="primary"
+            multiple
+            chips
+            deletable-chips
             hide-details
             label="قطارات المستخدم"
             item-value="number"
