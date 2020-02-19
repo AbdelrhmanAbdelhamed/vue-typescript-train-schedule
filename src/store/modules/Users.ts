@@ -212,6 +212,20 @@ class UsersModule extends VuexModule implements UserState {
   }
 
   @Action
+  async deleteTrain({ id, trainId }: { id: string; trainId: any }) {
+    if (id && trainId) {
+      this.setLoading(true);
+      await UsersAPI.deleteTrain(id, trainId);
+      let userIndex = this.users.findIndex(user => user.id == id);
+      let trains = UsersModule.state.users[userIndex].trains.filter(
+        train => train.id !== trainId
+      );
+      this.updateUser({ id, data: { trains } });
+      this.setLoading(false);
+    }
+  }
+
+  @Action
   async update({ id, data }: { id: string; data: any }) {
     if (id && data && (data.username !== "" || data.fullName !== "")) {
       this.setLoading(true);

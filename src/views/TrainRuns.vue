@@ -61,7 +61,7 @@
           v-model="searchTrainPeople"
           @click:clear="searchTrainPeople = ''"
           append-icon="mdi-table-search"
-          label="استعلام بأفراد التأمين"
+          label="استعلام ببيانات أفراد التأمين"
           single-line
           hide-details
           clearable
@@ -276,6 +276,12 @@ import { convertToArabic, formatDayDate, formatTime, moment } from "@/utils";
 export default class TrainRuns extends Vue {
   searchFromDate = "";
   searchFromDateMenu: boolean = false;
+  dialog: boolean = false;
+  isNewLineValid = false;
+  searchDate = "";
+  searchTrainPeople = "";
+  searchDateMenu: boolean = false;
+  searchTrainNumber = "";
 
   get searchFromDateFormatted() {
     return this.searchFromDate
@@ -303,12 +309,6 @@ export default class TrainRuns extends Vue {
       }
     ];
   }
-  dialog: boolean = false;
-  isNewLineValid = false;
-  searchDate = "";
-  searchTrainPeople = "";
-  searchDateMenu: boolean = false;
-  searchTrainNumber = "";
 
   timeChipColor(day, time) {
     const isPast = moment().isAfter(
@@ -321,6 +321,10 @@ export default class TrainRuns extends Vue {
 
   get trainRuns() {
     return TrainsModule.trainRuns.map(trainRun => {
+      moment.locale("en");
+      let dayWithOutTime: any = moment(trainRun.day).format("YYYY-MM-DD");
+      trainRun.day = dayWithOutTime;
+      moment.locale("ar");
       return {
         ...trainRun,
         trainNumber: trainRun.train!.number,

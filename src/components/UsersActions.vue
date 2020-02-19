@@ -118,7 +118,6 @@
             :loading="loading"
             :items="trains"
             @change="onTrainsChange(user.id, $event)"
-            dark
             dense
             color="primary"
             multiple
@@ -129,8 +128,28 @@
             item-value="number"
             item-text="number"
           >
-            <template v-slot:activator="{}">
-              {{ user.item.description }}
+            <template
+              v-slot:selection="{
+                parent,
+                item,
+                selected
+              }"
+            >
+              <v-chip
+                v-bind="parent.$attrs"
+                :readonly="!$can('update', 'User')"
+                :input-value="selected"
+                :close="$can('update', 'User')"
+                @click:close="deleteUserTrain(user.id, item.id)"
+                :to="{
+                  name: `trains.run.details`,
+                  params: { id: item.id }
+                }"
+                color="info"
+                link
+              >
+                {{ item.number | convertToArabic }}
+              </v-chip>
             </template>
           </v-autocomplete>
         </v-col>
@@ -176,6 +195,10 @@ export default class UserActions extends Vue {
 
   onTrainsChange(id: string, value: any) {
     UsersModule.setTrains({ id, data: { trains: value } });
+  }
+
+  deleteUserTrain(id: string, trainId: any) {
+    UsersModule.deleteTrain({ id, trainId });
   }
 
   onPasswordChangeClick() {

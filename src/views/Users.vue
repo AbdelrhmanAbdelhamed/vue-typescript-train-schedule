@@ -255,8 +255,7 @@ export default class Users extends Vue {
     { text: "اسم المستخدم", value: "username", sortable: true },
     { text: "جهة المستخدم", value: "policeDepartment.name", sortable: true },
     { text: "وظيفة المستخدم", value: "role", sortable: true },
-    { text: "", value: "action", sortable: false },
-    { text: "قطارات المستخدم", value: "", sortable: false }
+    { text: "", value: "action", sortable: false }
   ];
   search = "";
   dialog = false;

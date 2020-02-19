@@ -44,6 +44,12 @@ export default class UsersAPI {
       .then(response => response.data);
   }
 
+  static deleteTrain(id: string, trainId) {
+    return axios
+      .delete(`${UsersAPI.END_POINT}/${id}/trains/${trainId}`)
+      .then(response => response.data);
+  }
+
   static delete(id: string) {
     return axios
       .delete(`${UsersAPI.END_POINT}/${id}`)
