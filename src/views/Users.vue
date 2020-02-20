@@ -187,6 +187,7 @@
             {{ props.item.policeDepartment.name }}
             <template v-slot:input>
               <v-combobox
+                v-if="$can('update', 'User')"
                 v-model="props.item.policeDepartment.name"
                 :return-object="false"
                 :loading="policeDepartmentsLoading"
@@ -210,6 +211,7 @@
                   {{ props.item.role.nameArabic }}
                   <template v-slot:input>
                     <v-autocomplete
+                      v-if="$can('update', 'User')"
                       v-model="props.item.role"
                       :return-object="true"
                       :loading="rolesLoading"
