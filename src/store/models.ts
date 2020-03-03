@@ -59,6 +59,8 @@ export class LineTrainStation {
   isDeprature!: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  trainId?: string;
+  lineStationId?: string;
 }
 
 export class LineStation {
