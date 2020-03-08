@@ -4,7 +4,7 @@
 | username | password | role   |
 |----------|----------|--------|
 | google   | test@123 | admin  |
-| tamer-k  | test@123 | editor |
+| tamen-k  | test@123 | editor |
 
 ## Project setup
 ```
