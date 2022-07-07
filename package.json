@@ -19,7 +19,7 @@
     "idle-vue": "^2.0.5",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.19",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "roboto-fontface": "*",
     "vue": "^2.6.11",
